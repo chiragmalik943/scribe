@@ -1,0 +1,2029 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIT-Scribe — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════ tokens ══════════════════════════════ */
+:root{
+  --rail:#FFF8F4; --surf:#FFFFFF; --sunk:#FDF8F5; --scrim:rgba(42,31,27,.34);
+  --line:#F0E4DE; --line2:#E7D8D0;
+  --ink:#2A1F1B; --ink2:#4A3D38; --sec:#736360; --ter:#786864;
+  --brand:#B34C2D; --brandOn:#FFFFFF; --brandInk:#9C4529; --tint:#FCEEE9; --tint2:#FDF6F3;
+  --danger:#B93E2F; --dangerInk:#A5301F; --dangerTint:#FDF1EF; --dangerLine:#F3D9D4;
+  --warn:#B54708; --warnInk:#8F3A08; --warnTint:#FFF8EC; --warnLine:#F5E3C6;
+  --ok:#0A7548; --okInk:#07603B; --okTint:#EDFAF2; --okLine:#CDEBDB;
+  --info:#175CD3; --infoTint:#EFF6FF;
+  --shadow:0 24px 70px rgba(42,31,27,.22),0 2px 8px rgba(42,31,27,.09);
+  --shadow2:0 16px 40px rgba(42,31,27,.16);
+  --backdrop:#E7E0D8;
+  --meterOff:#E5D6CF;
+}
+[data-theme="dark"]{
+  --rail:#141010; --surf:#1B1614; --sunk:#241D1A; --scrim:rgba(0,0,0,.58);
+  --line:#302724; --line2:#3E3230;
+  --ink:#F8F2EE; --ink2:#E3D8D2; --sec:#B7A9A3; --ter:#AC9E98;
+  --brand:#D9764F; --brandOn:#1B1614; --brandInk:#F0A183; --tint:#38211A; --tint2:#2A1A16;
+  --danger:#C94A38; --dangerInk:#F3A093; --dangerTint:#381D19; --dangerLine:#4E2A24;
+  --warn:#B26A16; --warnInk:#F0BB70; --warnTint:#33240F; --warnLine:#4A3518;
+  --ok:#1C8A57; --okInk:#79D3A7; --okTint:#122D20; --okLine:#1F4433;
+  --info:#5B95F0; --infoTint:#16243B;
+  --shadow:0 24px 70px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.4);
+  --shadow2:0 16px 40px rgba(0,0,0,.45);
+  --backdrop:#0C0908;
+  --meterOff:#4A3B36;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Inter,'Liberation Sans',Arial,sans-serif;background:var(--backdrop);color:var(--ink);
+  -webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;transition:background .25s}
+.h{font-family:Poppins,sans-serif}
+svg{display:block;flex:0 0 auto}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit;color:inherit;background:none;border:0;outline:0}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ══════════════════════════════ window frame ══════════════════════════════ */
+#frame.zoom{box-shadow:none}
+#frame{width:1440px;height:900px;background:var(--surf);border-radius:14px;overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.28),0 0 0 1px rgba(0,0,0,.06);
+  transform-origin:center center;transition:background .25s}
+.app{display:flex;height:900px;position:relative}
+
+/* ══════════════════════════════ rail ══════════════════════════════ */
+.rail{width:240px;flex:0 0 240px;background:var(--rail);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;padding:0 12px 14px;transition:width .18s,flex-basis .18s,background .25s}
+.app.railmin .rail{width:104px;flex:0 0 104px;padding:0 12px 14px}
+.app.railmin .rail .lbl,.app.railmin .rail .setupcard,.app.railmin .rail .acct .who,
+.app.railmin .rail .upg,.app.railmin .subnav{display:none}
+.app.railmin .nav a{justify-content:center;padding:0}
+.app.railmin .acct{justify-content:center;padding:8px}
+.brandrow{display:flex;align-items:center;gap:12px;height:64px;padding:0 6px}
+.lights{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.lights i{width:12px;height:12px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;color:rgba(0,0,0,.5)}
+.lights i svg{opacity:0;width:9px;height:9px}
+.lights:hover i svg{opacity:1}
+.lights .r{background:#FF5F57}.lights .y{background:#FEBC2E}.lights .g{background:#28C840}
+[data-theme="dark"] .lights .r{background:#E0443E}[data-theme="dark"] .lights .y{background:#DEA123}
+[data-theme="dark"] .lights .g{background:#1AAB29}
+.brandrow .tg{color:var(--sec);width:30px;height:30px;border-radius:8px;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.brandrow .tg:hover,.tbtn:hover{background:var(--sunk)}
+.nav{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.nav a{display:flex;align-items:center;gap:14px;height:36px;padding:0 10px;border-radius:8px;
+  font-family:Poppins,sans-serif;font-size:14px;font-weight:500;color:var(--ink2);
+  text-decoration:none;cursor:pointer;white-space:nowrap}
+.nav a:hover{background:var(--sunk)}
+.nav a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
+.nav a .ic{color:var(--sec)}
+.nav a.on .ic{color:var(--brandInk)}
+.subnav{display:flex;flex-direction:column;gap:2px;margin:2px 0 2px 26px;
+  border-left:1.5px solid var(--line2);padding-left:12px}
+.subnav a{display:flex;align-items:center;gap:9px;height:30px;padding:0 8px;border-radius:7px;
+  font-size:12.5px;color:var(--sec);cursor:pointer}
+.subnav a:hover{background:var(--sunk)}
+.subnav a.on{background:var(--tint2);color:var(--brandInk);font-weight:600}
+.spacer{flex:1}
+.setupcard{border:1px solid var(--line2);background:var(--surf);border-radius:12px;padding:14px;
+  margin-bottom:10px;cursor:pointer}
+.setupcard:hover{border-color:var(--brand)}
+.setupcard .t{display:flex;align-items:center;justify-content:space-between;
+  font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600}
+.setupcard .t span{font-size:11px;font-weight:600;color:var(--brandInk);background:var(--tint);
+  padding:2px 8px;border-radius:20px}
+.setupcard .s{font-size:12px;color:var(--sec);margin:8px 0 12px;line-height:1.4}
+.segs{display:flex;gap:6px}
+.segs i{flex:1;height:5px;border-radius:3px;background:var(--tint)}
+.segs i.f{background:var(--brand)}
+.acct{display:flex;flex-direction:column;gap:10px;padding:11px;border-radius:12px;
+  border:1px solid var(--line2);background:var(--surf);overflow:hidden}
+.acct .top{display:flex;align-items:center;gap:10px;min-width:0;width:100%}
+.acct .who{min-width:0;flex:1}
+.avat{width:28px;height:28px;border-radius:50%;background:var(--tint);color:var(--brandInk);
+  display:flex;align-items:center;justify-content:center;font-family:Poppins,sans-serif;
+  font-size:12px;font-weight:600;flex:0 0 auto}
+.acct .nm{font-size:13px;font-weight:600;line-height:1.25;display:block;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.acct .pl{font-size:11.5px;color:var(--sec);display:block}
+.upg{width:100%;justify-content:center;display:flex;align-items:center;gap:6px;white-space:nowrap;
+  font-family:Poppins,sans-serif;font-size:12px;font-weight:600;color:var(--ink2);
+  border:1px solid var(--line2);border-radius:8px;padding:7px 11px;background:var(--surf)}
+.upg:hover{border-color:var(--brand);color:var(--brandInk)}
+
+/* ══════════════════════════════ list column ══════════════════════════════ */
+.listcol{width:280px;flex:0 0 280px;background:var(--surf);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;overflow:hidden}
+.app.listmin .listcol{display:none}
+.lhead{height:64px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--line);flex:0 0 auto}
+.lhead b{font-family:Poppins,sans-serif;font-size:15px;font-weight:600}
+.lhead .act{margin-left:auto;display:flex;align-items:center;gap:5px;font-family:Poppins,sans-serif;
+  font-size:12.5px;font-weight:600;color:var(--brandInk)}
+.srch{display:flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--line2);
+  border-radius:8px;padding:8px 11px;margin:16px 16px 0;flex:0 0 auto}
+.srch:focus-within{border-color:var(--brand)}
+.srch input{font-size:13px;width:100%}
+.srch input::placeholder{color:var(--ter)}
+.lbody{padding:16px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex:1}
+.views{display:flex;flex-direction:column;gap:2px}
+.views a{display:flex;align-items:center;gap:12px;min-height:34px;padding:6px 10px;border-radius:8px;
+  font-size:13.5px;color:var(--ink2);cursor:pointer}
+.views a:hover{background:var(--sunk)}
+.views a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
+.views a .ic{color:var(--sec)}
+.views a.on .ic{color:var(--brandInk)}
+.views a .n{margin-left:auto;font-size:12px;color:var(--sec)}
+.views a.on .n{color:var(--brandInk);font-weight:700}
+.views a .pill{margin-left:auto;font-size:11px;font-weight:700;color:#fff;background:var(--danger);
+  border-radius:10px;padding:1px 7px}
+.slabel{font-family:Poppins,sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ter);padding:18px 10px 8px}
+.note{margin-top:14px;padding:11px 12px;border:1px dashed var(--line2);border-radius:10px;
+  font-size:12px;color:var(--sec);line-height:1.45}
+.emptylist{padding:28px 20px;text-align:center;font-size:12.5px;color:var(--sec);line-height:1.5}
+.emptylist b{display:block;color:var(--ink2);font-size:13.5px;font-family:Poppins,sans-serif;
+  font-weight:600;margin-bottom:6px}
+.convrow{display:block;padding:11px 12px;border-radius:9px;cursor:pointer}
+.convrow:hover{background:var(--sunk)}
+.convrow.on{background:var(--tint)}
+.convrow .t{font-size:13px;font-weight:600;color:var(--ink);line-height:1.35;display:block}
+.convrow.on .t{color:var(--brandInk)}
+.convrow .d{font-size:11.5px;color:var(--sec);margin-top:4px;display:block}
+
+/* ══════════════════════════════ main ══════════════════════════════ */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--surf)}
+.mhead{height:64px;display:flex;align-items:center;gap:12px;padding:0 24px;
+  border-bottom:1px solid var(--line);flex:0 0 auto}
+.mhead h1{font-family:Poppins,sans-serif;font-size:22px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.mhead .state{font-size:13.5px;color:var(--sec);white-space:nowrap}
+.mhead .r{margin-left:auto;display:flex;align-items:center;gap:6px}
+.tbtn{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--sec);position:relative;flex:0 0 auto}
+.tbtn.hasbadge:after{content:'';position:absolute;top:6px;right:6px;width:7px;height:7px;
+  border-radius:50%;background:var(--danger);border:1.5px solid var(--surf)}
+.crumb{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--sec)}
+.crumb .bk{cursor:pointer;display:flex;align-items:center;gap:6px}
+.crumb .bk:hover{color:var(--brandInk)}
+.crumb b{color:var(--ink);font-weight:600;font-family:Poppins,sans-serif;font-size:15px}
+.body{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column}
+
+/* ══════════════════════════════ buttons ══════════════════════════════ */
+.btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;font-family:Poppins,sans-serif;
+  font-size:13px;font-weight:600;border-radius:9px;padding:8px 15px;border:1px solid transparent;
+  white-space:nowrap;cursor:pointer}
+.btn.p{background:var(--brand);color:var(--brandOn)}
+.btn.p:hover{filter:brightness(1.08)}
+.btn.s{background:var(--surf);color:var(--ink2);border-color:var(--line2)}
+.btn.s:hover{background:var(--sunk)}
+.btn.t{background:transparent;color:var(--brandInk);padding:7px 9px}
+.btn.t:hover{background:var(--tint2)}
+.btn.d{background:var(--danger);color:#fff}
+.btn.d:hover{filter:brightness(1.08)}
+.btn.sm{font-size:12.5px;padding:6px 12px}
+.btn.dis{background:var(--sunk);color:var(--ter);border-color:var(--line);cursor:not-allowed}
+.btn .dot{width:8px;height:8px;border-radius:50%;background:var(--brand)}
+.link{font-family:Poppins,sans-serif;font-size:12.5px;font-weight:600;color:var(--brandInk);cursor:pointer}
+.link:hover{text-decoration:underline}
+
+/* ══════════════════════════════ generic ══════════════════════════════ */
+.card{background:var(--surf);border:1px solid var(--line);border-radius:14px}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.empty .ico{width:60px;height:60px;border-radius:50%;background:var(--tint2);display:flex;
+  align-items:center;justify-content:center;color:var(--brand);margin-bottom:18px}
+.empty h2{font-family:Poppins,sans-serif;font-size:20px;font-weight:600;margin-bottom:8px}
+.empty p{font-size:14px;color:var(--sec);line-height:1.6;max-width:470px}
+.notice{display:flex;align-items:center;gap:11px;border-radius:12px;padding:12px 14px;
+  font-size:13.5px;line-height:1.45}
+.notice .act{margin-left:auto}
+.notice.warn{background:var(--warnTint);border:1px solid var(--warnLine);color:var(--ink2)}
+.notice.warn .ic{color:var(--warnInk)}
+.notice.ok{background:var(--okTint);border:1px solid var(--okLine);color:var(--ink2)}
+.notice.ok .ic{color:var(--okInk)}
+.notice.dg{background:var(--dangerTint);border:1px solid var(--dangerLine);color:var(--ink2)}
+.notice.dg .ic{color:var(--dangerInk)}
+.kbd{flex:0 0 auto;font-size:12px;font-weight:700;background:var(--surf);border:1px solid var(--line2);
+  border-bottom-width:2px;border-radius:6px;padding:2px 7px;color:var(--ink);display:inline-block}
+.ghd{display:flex;align-items:center;gap:8px;font-family:Poppins,sans-serif;font-size:11.5px;
+  font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec);margin:0 2px 10px}
+.ghd.dg{color:var(--dangerInk)}
+.ghd .n{color:var(--ter);font-weight:500;letter-spacing:0;text-transform:none;font-size:12px}
+.meter{display:flex;align-items:center;gap:3px;height:38px;overflow:hidden}
+.meter i{width:3px;border-radius:2px;background:var(--brand);transition:height .12s}
+.meter.idle i{background:var(--meterOff)}
+.meter.live i{background:var(--danger)}
+.tog{width:44px;height:25px;border-radius:14px;background:var(--line2);position:relative;
+  flex:0 0 auto;cursor:pointer;transition:background .16s}
+.tog.on{background:var(--brand)}
+.tog i{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;
+  background:#fff;transition:left .16s}
+.tog.on i{left:22px}
+.tog.dis{opacity:.5;cursor:not-allowed}
+.inp{border:1px solid var(--line2);border-radius:9px;padding:9px 12px;font-size:13px;
+  background:var(--surf);display:flex;align-items:center;gap:8px}
+.inp:focus-within{border-color:var(--brand)}
+.inp input{width:100%}
+.inp input::placeholder,.inp .ph{color:var(--ter)}
+.sel{border:1px solid var(--line2);border-radius:9px;padding:7px 11px;font-size:13px;
+  background:var(--surf);display:inline-flex;align-items:center;gap:10px;cursor:pointer;white-space:nowrap}
+.sel:hover{border-color:var(--brand)}
+.cbx{width:18px;height:18px;border-radius:5px;border:1.8px solid var(--line2);flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;background:var(--surf);cursor:pointer;color:transparent}
+.cbx.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.rdo{width:18px;height:18px;border-radius:50%;border:1.8px solid var(--line2);flex:0 0 auto;cursor:pointer}
+.rdo.on{border:5px solid var(--brand)}
+.pri{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+  border-radius:6px;padding:2px 8px;font-family:Poppins,sans-serif;background:var(--sunk);color:var(--sec)}
+.pri.hi{background:var(--dangerTint);color:var(--dangerInk)}
+.pri.md{background:var(--warnTint);color:var(--warnInk)}
+.pri.ok{background:var(--okTint);color:var(--okInk)}
+.fchip{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink2);
+  border:1px solid var(--line2);border-radius:9px;padding:7px 13px;background:var(--surf);
+  cursor:pointer;white-space:nowrap}
+.fchip:hover{background:var(--sunk)}
+.fchip.on{background:var(--tint);color:var(--brandInk);font-weight:600;border-color:transparent}
+.fchip .b{font-size:11px;font-weight:700;color:#fff;background:var(--danger);border-radius:9px;padding:0 6px}
+.fchip.on .b{background:var(--brand)}
+/* ══════════════════════════════ meetings ══════════════════════════════ */
+.mrow{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer}
+.mrow+.mrow{border-top:1px solid var(--line)}
+.mrow:hover{background:var(--sunk)}
+.mrow .t{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;display:block}
+.mrow .s{font-size:12.5px;color:var(--sec);display:block;margin-top:3px}
+.mrow .rt{text-align:right;white-space:nowrap;flex:0 0 auto;min-width:118px}
+.mrow .rt .tg{font-size:12px;font-weight:600;font-family:Poppins,sans-serif;display:block}
+.mrow .rt .mt{font-size:12px;color:var(--sec);display:block;margin-top:4px}
+.mrow>span:first-child{flex:1;min-width:0}
+.mrow .macts{display:flex;gap:4px;flex:0 0 auto;opacity:0;pointer-events:none}
+.mrow:hover .macts{opacity:1;pointer-events:auto}
+.mrow .macts span{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;color:var(--sec);background:var(--surf);border:1px solid var(--line2)}
+.mrow .macts span:hover{border-color:var(--brand);color:var(--brandInk)}
+.mrow .macts span.dg:hover{border-color:var(--danger);color:var(--dangerInk)}
+.mrow .live{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  color:#fff;background:var(--danger);border-radius:20px;padding:2px 9px;font-family:Poppins,sans-serif}
+.setuphd{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.setuphd b{font-family:Poppins,sans-serif;font-size:14px}
+.setuphd .step{font-size:12px;font-weight:600;color:var(--brandInk);background:var(--tint);
+  padding:2px 9px;border-radius:20px}
+.setuphd .x{margin-left:auto;color:var(--sec);cursor:pointer}
+.setuprow{display:flex;align-items:center;gap:13px;padding:14px 16px}
+.setuprow+.setuprow{border-top:1px solid var(--line)}
+.setuprow .si{width:34px;height:34px;border-radius:10px;background:var(--tint);color:var(--brandInk);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.setuprow .t{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;display:block}
+.setuprow .s{font-size:12.5px;color:var(--sec);display:block;margin-top:3px;line-height:1.45;max-width:620px}
+.setuprow .a{margin-left:auto;flex:0 0 auto}
+
+/* ══════════════════════════════ meeting detail ══════════════════════════════ */
+.titleblk{margin-bottom:16px}
+.titleblk h1{font-family:Poppins,sans-serif;font-size:26px;font-weight:600;letter-spacing:-.015em}
+.titleblk h1 .edit{opacity:0;color:var(--sec);display:inline-flex;vertical-align:2px;margin-left:8px;
+  pointer-events:none}
+.titleblk:hover h1 .edit{opacity:1}
+.metarow{display:flex;align-items:center;gap:10px;margin-top:9px;font-size:13px;color:var(--sec);flex-wrap:wrap}
+.metarow .fchipx{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);
+  border-radius:8px;padding:4px 10px;font-size:12.5px;color:var(--ink2);font-weight:600;
+  font-family:Poppins,sans-serif;cursor:pointer}
+.metarow .fchipx:hover{border-color:var(--brand)}
+.metarow .sp{width:3px;height:3px;border-radius:50%;background:var(--ter)}
+.faces{display:flex;align-items:center}
+.faces i{width:24px;height:24px;border-radius:50%;border:2px solid var(--surf);margin-left:-7px;
+  font-style:normal;font-size:10.5px;font-weight:700;color:#fff;display:flex;align-items:center;
+  justify-content:center;font-family:Poppins,sans-serif}
+.faces i:first-child{margin-left:0}
+.addp{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--line2);border-radius:20px;
+  padding:4px 11px 4px 9px;font-size:12.5px;color:var(--sec);cursor:pointer;
+  font-family:Poppins,sans-serif;font-weight:600}
+.addp:hover{border-color:var(--brand);color:var(--brandInk);border-style:solid}
+.recbar{display:flex;align-items:center;gap:12px;background:var(--dangerTint);
+  border:1px solid var(--dangerLine);border-radius:12px;padding:12px 16px}
+.recbar.pause{background:var(--warnTint);border-color:var(--warnLine)}
+.recbar .rdot{width:10px;height:10px;border-radius:50%;background:var(--danger);flex:0 0 auto;
+  box-shadow:0 0 0 4px rgba(185,62,47,.16);animation:pulse 1.6s infinite}
+.recbar.pause .rdot{background:var(--warnInk);animation:none;box-shadow:0 0 0 4px rgba(181,71,8,.14)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.recbar b{font-family:Poppins,sans-serif;font-size:14px;font-weight:600}
+.recbar .t{font-family:Poppins,sans-serif;font-size:15px;font-weight:700;color:var(--dangerInk);
+  font-variant-numeric:tabular-nums}
+.recbar.pause .t{color:var(--warnInk)}
+.recbar .s{font-size:12.5px;color:var(--sec);min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.recbar .a{margin-left:auto;display:flex;gap:8px;flex:0 0 auto}
+.tabs{display:flex;gap:26px;border-bottom:1px solid var(--line);margin:20px 0 18px;flex:0 0 auto}
+.tabs a{display:flex;align-items:center;gap:8px;padding-bottom:11px;font-family:Poppins,sans-serif;
+  font-size:14px;font-weight:600;color:var(--sec);border-bottom:2px solid transparent;
+  margin-bottom:-1px;cursor:pointer}
+.tabs a:hover{color:var(--ink)}
+.tabs a.on{color:var(--brandInk);border-bottom-color:var(--brand)}
+.tabs a.off{color:var(--ter);cursor:not-allowed}
+.tabs a.off:hover{color:var(--ter)}
+.tabs a .cnt{font-size:11.5px;font-weight:700;background:var(--tint);color:var(--brandInk);
+  border-radius:9px;padding:1px 7px}
+.tabs a.off .cnt{background:var(--sunk);color:var(--ter)}
+.sec{margin-bottom:18px}
+.sec h3{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;margin-bottom:9px;
+  display:flex;align-items:center;gap:8px}
+.sec h3 .ic{color:var(--brandInk)}
+.sec p{font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.bul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.bul li{display:flex;gap:10px;font-size:13.5px;line-height:1.55;color:var(--ink2)}
+.bul li .dot{width:5px;height:5px;border-radius:50%;background:var(--brand);flex:0 0 auto;margin-top:8px}
+.jump{font-size:12px;color:var(--brandInk);white-space:nowrap;margin-left:auto;flex:0 0 auto;
+  font-family:Poppins,sans-serif;font-weight:600;cursor:pointer}
+.jump:hover{text-decoration:underline}
+.notebox{border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-height:150px}
+.notebox:focus-within{border-color:var(--brand)}
+.notebox .ln{font-size:13.5px;line-height:1.8;color:var(--ink2);outline:0;min-height:80px}
+.notebox .hint{font-size:12.5px;color:var(--ter)}
+.trs{display:flex;gap:14px;padding:12px 14px;border-radius:10px}
+.trs.hl{background:var(--tint2);border:1px solid var(--tint)}
+.trs .tm{font-size:12px;color:var(--sec);font-variant-numeric:tabular-nums;width:44px;
+  flex:0 0 auto;padding-top:2px;cursor:pointer}
+.trs .tm:hover{color:var(--brandInk)}
+.trs .spk{font-family:Poppins,sans-serif;font-size:13px;font-weight:600;display:block;margin-bottom:3px}
+.trs .tx{font-size:13.5px;line-height:1.6;color:var(--ink2)}
+.trs .tx mark{background:var(--tint);color:var(--brandInk);border-radius:3px}
+.trs .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+  color:var(--brandInk);background:var(--tint);border-radius:14px;padding:2px 9px;margin-top:7px;
+  font-family:Poppins,sans-serif}
+.player{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;
+  padding:12px 16px;margin-top:16px;flex:0 0 auto}
+.player .pb{width:36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer}
+.player .tm{font-size:12.5px;color:var(--sec);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.scrub{flex:1;height:26px;display:flex;align-items:center;gap:2px;cursor:pointer}
+.scrub i{width:3px;border-radius:2px;background:var(--meterOff)}
+.scrub i.p{background:var(--brand)}
+
+/* ══════════════════════════════ speech ══════════════════════════════ */
+.holdbtn{display:flex;align-items:center;gap:10px;background:var(--brand);color:var(--brandOn);
+  border-radius:12px;padding:12px 18px;font-family:Poppins,sans-serif;font-size:14px;
+  font-weight:600;flex:0 0 auto;cursor:pointer;user-select:none}
+.holdbtn:hover{filter:brightness(1.08)}
+.holdbtn.live{background:var(--danger);filter:none}
+.holdbtn .kb{font-size:12px;font-weight:700;background:rgba(255,255,255,.30);border-radius:6px;
+  padding:2px 7px;color:var(--brandOn)}
+[data-theme="light"] .holdbtn .kb{background:rgba(0,0,0,.28)}
+.statusline{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink2);flex-wrap:wrap}
+.statusline .d{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.sub{font-size:12.5px;color:var(--sec);margin-top:5px}
+.trow{display:flex;align-items:flex-start;gap:12px;padding:13px 14px}
+.trow+.trow{border-top:1px solid var(--line)}
+.trow:hover{background:var(--sunk)}
+.trow .tx{font-size:13.5px;color:var(--ink);line-height:1.45;display:block;outline:0}
+.trow .tm{font-size:12px;color:var(--sec);margin-top:4px;display:block}
+.acts{margin-left:auto;display:flex;gap:4px;flex:0 0 auto;opacity:0;pointer-events:none}
+.trow:hover .acts{opacity:1;pointer-events:auto}
+.acts span{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;color:var(--sec);background:var(--surf);border:1px solid var(--line2);cursor:pointer}
+.acts span:hover{border-color:var(--brand);color:var(--brandInk)}
+.acts span.dg:hover{border-color:var(--danger);color:var(--dangerInk)}
+.metrics{display:flex;align-items:center;gap:22px;font-size:13px;color:var(--sec);
+  margin-top:16px;padding:0 2px;flex-wrap:wrap}
+.metrics b{color:var(--ink);font-family:Poppins,sans-serif;font-weight:600}
+.metrics .sp{width:1px;height:14px;background:var(--line2)}
+
+/* ══════════════════════════════ tasks ══════════════════════════════ */
+.toolrow{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;flex:0 0 auto}
+.toolrow .r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer}
+.addrow{display:flex;align-items:center;gap:11px;border:1px solid var(--line2);background:var(--surf);
+  border-radius:11px;padding:12px 14px;margin-bottom:18px;color:var(--sec);flex:0 0 auto}
+.addrow:focus-within{border-color:var(--brand)}
+.addrow input{font-size:13.5px;width:100%}
+.addrow input::placeholder{color:var(--ter)}
+.trk{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;cursor:pointer}
+.trk+.trk{border-top:1px solid var(--line)}
+.trk:hover{background:var(--sunk)}
+.trk.sel{background:var(--tint2)}
+.trk .t{font-size:13.5px;color:var(--ink);line-height:1.4;display:block}
+.trk.done .t{text-decoration:line-through;color:var(--sec)}
+.trk .m{font-size:12px;color:var(--sec);margin-top:5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.trk .due{margin-left:auto;font-size:12.5px;color:var(--sec);flex:0 0 auto;white-space:nowrap}
+.trk .due.dg{color:var(--dangerInk);font-weight:700}
+.trk .kb2{opacity:0;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;
+  justify-content:center;color:var(--sec);flex:0 0 auto;pointer-events:none}
+.trk:hover .kb2{opacity:1;pointer-events:auto}
+.trk .kb2:hover{background:var(--line)}
+
+/* ══════════════════════════════ assistant ══════════════════════════════ */
+.chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px;max-width:620px}
+.chip{display:flex;align-items:center;gap:8px;border:1px solid var(--line2);background:var(--surf);
+  border-radius:22px;padding:9px 16px;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.chip:hover{border-color:var(--brand);color:var(--brandInk)}
+.chip.off{background:var(--sunk);border-style:dashed;color:var(--ter);cursor:not-allowed}
+.chip.off:hover{border-color:var(--line2);color:var(--ter)}
+.scope{font-size:12.5px;color:var(--sec);margin-top:16px}
+.comp{margin-top:auto;padding-top:14px;flex:0 0 auto}
+.compbox{display:flex;align-items:center;gap:11px;border:1px solid var(--line2);background:var(--surf);
+  border-radius:13px;padding:12px 14px}
+.compbox:focus-within{border-color:var(--brand)}
+.compbox.off{background:var(--sunk);border-color:var(--line)}
+.compbox input{flex:1;font-size:13.5px}
+.compbox input::placeholder{color:var(--ter)}
+.compbox .ic{color:var(--sec)}
+.compbox.off .ic{color:var(--ter);opacity:.6}
+.sendb{width:32px;height:32px;border-radius:9px;background:var(--brand);color:#fff;display:flex;
+  align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer}
+.sendb.off{background:var(--line2);color:var(--ter);cursor:not-allowed}
+.msg{display:flex;gap:12px;margin-bottom:20px}
+.msg .who{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;font-family:Poppins,sans-serif;font-size:12px;font-weight:600}
+.msg.u .who{background:var(--tint);color:var(--brandInk)}
+.msg.a .who{background:var(--ink);color:var(--surf)}
+.msg .tx{font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.msg .tx b{color:var(--ink)}
+.src{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;
+  color:var(--brandInk);background:var(--tint2);border:1px solid var(--tint);border-radius:16px;
+  padding:4px 11px;cursor:pointer}
+.src:hover{background:var(--tint)}
+.typing i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--sec);
+  margin-right:4px;animation:bl 1.1s infinite}
+.typing i:nth-child(2){animation-delay:.18s}.typing i:nth-child(3){animation-delay:.36s}
+@keyframes bl{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+/* ══════════════════════════════ modal / menu / toast ══════════════════════════════ */
+.scrim{position:absolute;inset:0;background:var(--scrim);z-index:20}
+.modal{position:absolute;z-index:21;background:var(--surf);border-radius:18px;box-shadow:var(--shadow);
+  overflow:hidden;display:flex}
+.mnav{width:236px;flex:0 0 auto;background:var(--rail);border-right:1px solid var(--line);
+  padding:18px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.mnav h3{font-family:Poppins,sans-serif;font-size:16px;font-weight:600;padding:2px 10px 14px}
+.mnav .gl{font-family:Poppins,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ter);padding:14px 10px 6px}
+.mnav a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:8px;
+  color:var(--ink2);font-size:13px;cursor:pointer}
+.mnav a:hover{background:var(--sunk)}
+.mnav a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
+.mnav a .ic{color:var(--sec)}
+.mnav a.on .ic{color:var(--brandInk)}
+.mbody{flex:1;display:flex;flex-direction:column;min-width:0}
+.mtop{display:flex;align-items:flex-start;gap:12px;padding:20px 22px 16px;border-bottom:1px solid var(--line)}
+.mtop h2{font-family:Poppins,sans-serif;font-size:17px;font-weight:600}
+.mtop p{font-size:12.5px;color:var(--sec);margin-top:3px}
+.mtop .x{margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;color:var(--sec);flex:0 0 auto;cursor:pointer}
+.mtop .x:hover{background:var(--sunk)}
+.mcont{flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.sgroup{border:1px solid var(--line);border-radius:14px;overflow:hidden;flex:0 0 auto}
+.sghd{display:flex;align-items:center;gap:11px;padding:13px 16px;background:var(--sunk);
+  border-bottom:1px solid var(--line)}
+.sghd .si{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;flex:0 0 auto;background:var(--tint);color:var(--brandInk)}
+.sghd b{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;display:block}
+.sghd span{font-size:12px;color:var(--sec);display:block;margin-top:1px}
+.srow{display:flex;align-items:center;gap:14px;padding:13px 16px}
+.srow+.srow{border-top:1px solid var(--line)}
+.srow .t{font-size:13.5px;font-weight:600;display:block;font-family:Poppins,sans-serif}
+.srow .s{font-size:12px;color:var(--sec);display:block;margin-top:3px;line-height:1.45;max-width:600px}
+.srow .a{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:9px}
+.menu{position:absolute;z-index:22;background:var(--surf);border:1px solid var(--line2);
+  border-radius:12px;box-shadow:var(--shadow2);padding:6px;min-width:214px}
+.menu a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:8px;font-size:13px;
+  color:var(--ink2);cursor:pointer}
+.menu a:hover{background:var(--sunk)}
+.menu a .ic{color:var(--sec)}
+.menu a.dg{color:var(--dangerInk)}
+.menu a.dg .ic{color:var(--dangerInk)}
+.menu a .k{margin-left:auto;font-size:11.5px;color:var(--sec)}
+.menu hr{border:0;border-top:1px solid var(--line);margin:5px 8px}
+.menu .mh{font-size:11px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ter);padding:8px 10px 4px}
+.menu .fn{font-size:11.5px;color:var(--sec);padding:2px 10px 8px;line-height:1.45}
+.panel{width:400px;flex:0 0 400px;border-left:1px solid var(--line);background:var(--surf);
+  display:flex;flex-direction:column}
+.panel .ph{display:flex;align-items:center;gap:10px;height:64px;padding:0 20px;
+  border-bottom:1px solid var(--line);flex:0 0 auto}
+.panel .ph b{font-family:Poppins,sans-serif;font-size:14px;font-weight:600}
+.panel .pb2{padding:20px;display:flex;flex-direction:column;gap:18px;overflow-y:auto}
+.frow{display:flex;align-items:center;gap:12px;font-size:13px}
+.frow .lb{width:88px;flex:0 0 auto;color:var(--sec)}
+.quote{border-left:3px solid var(--tint);padding:2px 0 2px 14px;font-size:13px;line-height:1.6;
+  color:var(--ink2);font-style:italic}
+#toasts{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:40;
+  display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{background:var(--ink);color:var(--surf);font-size:13px;padding:10px 16px;border-radius:10px;
+  box-shadow:var(--shadow2);animation:tin .22s;max-width:520px;text-align:center}
+.toast b{font-family:Poppins,sans-serif;font-weight:600}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}}
+
+/* ══════════════════════════════ vocab / insights ══════════════════════════════ */
+.vtable{width:100%;border-collapse:collapse}
+.vtable th{text-align:left;font-family:Poppins,sans-serif;font-size:11.5px;font-weight:600;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--sec);padding:11px 16px;
+  border-bottom:1px solid var(--line)}
+.vtable td{padding:13px 16px;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.vtable tr:last-child td{border-bottom:0}
+.vtable tr:hover td{background:var(--sunk)}
+.vtable td.tm{font-family:Poppins,sans-serif;font-weight:600;color:var(--ink)}
+.pillx{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+  border-radius:6px;padding:2px 8px;font-family:Poppins,sans-serif;background:var(--sunk);color:var(--sec)}
+.pillx.ai{background:var(--tint);color:var(--brandInk)}
+.stat{border:1px solid var(--line);border-radius:14px;padding:18px;flex:1;min-width:0}
+.stat .lb{font-size:12.5px;color:var(--sec)}
+.stat .big{font-family:Poppins,sans-serif;font-size:30px;font-weight:600;letter-spacing:-.02em;
+  margin-top:8px;line-height:1}
+.stat .dl{font-size:12px;color:var(--sec);margin-top:8px;display:flex;align-items:center;gap:6px}
+.chart{display:flex;align-items:flex-end;gap:14px;height:148px;position:relative;padding-top:6px}
+.chart .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  height:100%;position:relative;cursor:default}
+.chart .bar{width:100%;max-width:34px;background:var(--brand);border-radius:4px 4px 0 0;transition:height .3s}
+.chart .bar.mute{background:var(--tint)}
+.chart .col:hover .ttip{opacity:1}
+.gridl{position:absolute;left:0;right:0;border-top:1px solid var(--line);font-size:11px;color:var(--sec)}
+.gridl span{position:absolute;left:-34px;top:-8px}
+.xax{display:flex;gap:14px;margin-top:9px;border-top:1px solid var(--line2);padding-top:9px}
+.xax span{flex:1;text-align:center;font-size:11.5px;color:var(--sec)}
+.hbar{display:flex;align-items:center;gap:12px;padding:7px 0}
+.hbar .lb{width:112px;flex:0 0 auto;font-size:13px;color:var(--ink2)}
+.hbar .tr{flex:1;height:14px;background:var(--sunk);border-radius:4px;overflow:hidden}
+.hbar .tr i{display:block;height:14px;background:var(--brand);border-radius:4px;transition:width .3s}
+.hbar .vv{width:38px;text-align:right;font-size:12.5px;color:var(--sec);flex:0 0 auto}
+.ttip{position:absolute;background:var(--ink);color:var(--surf);font-size:11.5px;padding:6px 9px;
+  border-radius:7px;white-space:nowrap;z-index:3;opacity:0;transition:opacity .12s;pointer-events:none}
+.ttip b{display:block;font-size:12.5px;font-family:Poppins,sans-serif;font-weight:600}
+.opt{display:flex;gap:13px;border:1px solid var(--line2);border-radius:12px;padding:14px 16px;
+  flex:1;cursor:pointer}
+.opt.on{border-color:var(--brand);background:var(--tint2)}
+.opt .t{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;display:block}
+.opt .s{font-size:12.5px;color:var(--sec);display:block;margin-top:5px;line-height:1.5}
+.opt ul{list-style:none;margin-top:9px;display:flex;flex-direction:column;gap:5px}
+.opt li{display:flex;gap:7px;font-size:12px;color:var(--ink2);align-items:flex-start;line-height:1.4}
+.step{display:flex;gap:13px;padding:14px 16px}
+.step+.step{border-top:1px solid var(--line)}
+.step .num{width:24px;height:24px;border-radius:50%;background:var(--tint);color:var(--brandInk);
+  font-family:Poppins,sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;
+  justify-content:center;flex:0 0 auto;margin-top:1px}
+.step .num.done{background:var(--ok);color:#fff}
+.step .num.wait{background:var(--sunk);color:var(--ter)}
+.step .t{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;display:block}
+.step .s{font-size:12.5px;color:var(--sec);display:block;margin-top:4px;line-height:1.5;max-width:640px}
+.step .a{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:9px}
+.keycap{font-family:Poppins,sans-serif;font-size:13px;font-weight:700;background:var(--sunk);
+  border:1px solid var(--line2);border-bottom-width:2px;border-radius:7px;padding:5px 11px;color:var(--ink)}
+.tips{display:flex;flex-direction:column;gap:9px;padding:14px 16px}
+.tips div{display:flex;gap:10px;font-size:12.5px;color:var(--ink2);line-height:1.45}
+.hint{font-size:12.5px;color:var(--ter)}
+.dim{color:var(--sec)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="frame"><div id="app"></div><div id="toasts"></div></div>
+<script>
+/* ══════════════════════════════════ icons ══════════════════════════════════ */
+const P={
+cal:'<rect x="2.2" y="3.4" width="11.6" height="10.4" rx="2.2"/><path d="M2.2 6.6h11.6M5.5 2v2.6M10.5 2v2.6"/>',
+mic:'<rect x="5.9" y="1.7" width="4.2" height="7.6" rx="2.1"/><path d="M3.4 7.6a4.6 4.6 0 0 0 9.2 0"/><path d="M8 12.2v2.1"/>',
+checkc:'<circle cx="8" cy="8" r="6.2"/><path d="M5.3 8.2l1.9 1.9 3.6-4.2"/>',
+spark:'<path d="M6.6 2.2l1.3 3.4 3.4 1.3-3.4 1.3-1.3 3.4-1.3-3.4L1.9 6.9l3.4-1.3z"/><path d="M12 9.6l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z"/>',
+wave:'<path d="M2 6.6v2.8M4.6 4.4v7.2M7.2 2.4v11.2M9.8 5v6M12.4 3.4v9.2"/>',
+panelL:'<rect x="1.8" y="2.6" width="12.4" height="10.8" rx="2"/><path d="M6.2 2.6v10.8"/>',
+panelR:'<rect x="1.8" y="2.6" width="12.4" height="10.8" rx="2"/><path d="M9.8 2.6v10.8"/>',
+gear:'<circle cx="8" cy="8" r="2.4"/><path d="M8 1.6l.9 1.7 1.9-.3.5 1.9 1.8.7-.8 1.7.8 1.7-1.8.7-.5 1.9-1.9-.3L8 14.4l-.9-1.7-1.9.3-.5-1.9-1.8-.7.8-1.7-.8-1.7 1.8-.7.5-1.9 1.9.3z"/>',
+help:'<circle cx="8" cy="8" r="6.3"/><path d="M6.3 6.3a1.8 1.8 0 1 1 2.4 1.7c-.5.2-.7.6-.7 1.1v.4"/><circle cx="8" cy="11.7" r=".55" fill="currentColor" stroke="none"/>',
+kbd:'<rect x="1.4" y="4" width="13.2" height="8" rx="1.8"/><path d="M4 6.6h.01M6.4 6.6h.01M8.8 6.6h.01M11.2 6.6h.01M4.6 9.4h6.8"/>',
+bell:'<path d="M4.2 7a3.8 3.8 0 0 1 7.6 0c0 3 1 4.2 1 4.2H3.2S4.2 10 4.2 7z"/><path d="M6.6 13.2a1.6 1.6 0 0 0 2.8 0"/>',
+search:'<circle cx="7.2" cy="7.2" r="4.4"/><path d="M10.6 10.6L14 14"/>',
+plus:'<path d="M8 3.4v9.2M3.4 8h9.2"/>',
+home:'<path d="M2.4 7.2L8 2.6l5.6 4.6v6a1 1 0 0 1-1 1H3.4a1 1 0 0 1-1-1z"/>',
+clock:'<circle cx="8" cy="8" r="6"/><path d="M8 4.6V8l2.4 1.6"/>',
+folder:'<path d="M1.9 5.1a1.6 1.6 0 0 1 1.6-1.6h2.3l1.3 1.6h4.4a1.6 1.6 0 0 1 1.6 1.6v4.8a1.6 1.6 0 0 1-1.6 1.6H3.5a1.6 1.6 0 0 1-1.6-1.6z"/>',
+folderplus:'<path d="M1.9 5.1a1.6 1.6 0 0 1 1.6-1.6h2.3l1.3 1.6h4.4a1.6 1.6 0 0 1 1.6 1.6v4.8a1.6 1.6 0 0 1-1.6 1.6H3.5a1.6 1.6 0 0 1-1.6-1.6z"/><path d="M8 7.6v3.2M6.4 9.2h3.2"/>',
+users:'<path d="M11 14.5a4 4 0 0 0-8 0"/><circle cx="7" cy="6.5" r="2.6"/><path d="M12.4 9.6a3.2 3.2 0 0 0 0-6.2"/><path d="M13.6 14.5a3.4 3.4 0 0 0-1.6-2.9"/>',
+file:'<path d="M9 1.9H4.6a1.6 1.6 0 0 0-1.6 1.6v9a1.6 1.6 0 0 0 1.6 1.6h6.8a1.6 1.6 0 0 0 1.6-1.6V5.8z"/><path d="M9 1.9v3.9h4"/>',
+copy:'<rect x="5.4" y="5.4" width="8.2" height="8.2" rx="1.8"/><path d="M10.6 5.4V4.1a1.7 1.7 0 0 0-1.7-1.7H4.1A1.7 1.7 0 0 0 2.4 4.1v4.8a1.7 1.7 0 0 0 1.7 1.7h1.3"/>',
+edit:'<path d="M11.1 2.6l2.3 2.3-7.5 7.5-3 .7.7-3z"/>',
+trash:'<path d="M2.8 4.4h10.4M6.3 4.4V3.1a1 1 0 0 1 1-1h1.4a1 1 0 0 1 1 1v1.3M4.2 4.4l.6 8.3a1.2 1.2 0 0 0 1.2 1.1h4a1.2 1.2 0 0 0 1.2-1.1l.6-8.3"/>',
+play:'<path d="M5.4 3.4l7 4.6-7 4.6z"/>',
+pause:'<path d="M5.8 3.4v9.2M10.2 3.4v9.2"/>',
+stop:'<rect x="4.2" y="4.2" width="7.6" height="7.6" rx="1.6"/>',
+link:'<path d="M6.6 9.4a2.6 2.6 0 0 0 3.9.3l2-2a2.7 2.7 0 0 0-3.8-3.8l-1.1 1.1"/><path d="M9.4 6.6a2.6 2.6 0 0 0-3.9-.3l-2 2a2.7 2.7 0 0 0 3.8 3.8l1.1-1.1"/>',
+dots:'<circle cx="3.4" cy="8" r="1.15" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r="1.15" fill="currentColor" stroke="none"/><circle cx="12.6" cy="8" r="1.15" fill="currentColor" stroke="none"/>',
+back:'<path d="M10 3.6L5.6 8l4.4 4.4"/>',
+chev:'<path d="M6.2 3.6L10.6 8l-4.4 4.4"/>',
+chevd:'<path d="M3.6 6L8 10.4 12.4 6"/>',
+x:'<path d="M4 4l8 8M12 4l-8 8"/>',
+alert:'<path d="M8 2.4l6 10.4H2z"/><path d="M8 6.6v3"/><circle cx="8" cy="11.2" r=".55" fill="currentColor" stroke="none"/>',
+alertc:'<circle cx="8" cy="8" r="6.2"/><path d="M8 4.8v3.6"/><circle cx="8" cy="11.2" r=".6" fill="currentColor" stroke="none"/>',
+info:'<circle cx="8" cy="8" r="6.2"/><path d="M8 7.4v4"/><circle cx="8" cy="4.9" r=".6" fill="currentColor" stroke="none"/>',
+check:'<path d="M2.8 8.4l3.4 3.4 7-7.6"/>',
+eye:'<path d="M1.4 8s2.5-4.4 6.6-4.4S14.6 8 14.6 8s-2.5 4.4-6.6 4.4S1.4 8 1.4 8z"/><circle cx="8" cy="8" r="2"/>',
+book:'<path d="M2.6 3.4a1.4 1.4 0 0 1 1.4-1.4H12a1.4 1.4 0 0 1 1.4 1.4v9.2A1.4 1.4 0 0 1 12 14H4a1.4 1.4 0 0 1-1.4-1.4z"/><path d="M5.4 5.2h5.2M5.4 8h5.2M5.4 10.8h3"/>',
+chart:'<path d="M2.6 13.4V9.2M6.8 13.4V4.4M11 13.4V7"/>',
+share:'<circle cx="12" cy="4" r="1.9"/><circle cx="4" cy="8" r="1.9"/><circle cx="12" cy="12" r="1.9"/><path d="M5.7 7.1l4.6-2.2M5.7 8.9l4.6 2.2"/>',
+cloud:'<path d="M4.4 12.4a3 3 0 0 1-.3-6 4.2 4.2 0 0 1 8 1 2.5 2.5 0 0 1-.4 5z"/>',
+chip:'<rect x="4.4" y="4.4" width="7.2" height="7.2" rx="1.6"/><path d="M6.6 1.8v2.6M9.4 1.8v2.6M6.6 11.6v2.6M9.4 11.6v2.6M1.8 6.6h2.6M1.8 9.4h2.6M11.6 6.6h2.6M11.6 9.4h2.6"/>',
+shield:'<path d="M8 1.8l5.2 2v4c0 3.2-2.2 5.4-5.2 6.4-3-1-5.2-3.2-5.2-6.4v-4z"/><path d="M5.8 7.9l1.6 1.6 3-3.2"/>',
+flag:'<path d="M3.6 14V2.4h7.2l-1.2 2.6 1.2 2.6H3.6"/>',
+list:'<path d="M5.6 4.2h8.2M5.6 8h8.2M5.6 11.8h8.2"/><circle cx="2.6" cy="4.2" r=".9" fill="currentColor" stroke="none"/><circle cx="2.6" cy="8" r=".9" fill="currentColor" stroke="none"/><circle cx="2.6" cy="11.8" r=".9" fill="currentColor" stroke="none"/>',
+rec:'<circle cx="8" cy="8" r="3"/><path d="M3.6 3.6a6.2 6.2 0 0 0 0 8.8M12.4 3.6a6.2 6.2 0 0 1 0 8.8"/>',
+down:'<path d="M8 2.6v8M4.6 7.4L8 10.8l3.4-3.4M2.8 13.4h10.4"/>',
+key:'<circle cx="5.4" cy="10.6" r="2.8"/><path d="M7.4 8.6l5.4-5.4M10.4 5.6l1.6 1.6M12 4l1.4 1.4"/>',
+plug:'<path d="M6 2.2v3.4M10 2.2v3.4M4.2 5.6h7.6v2.6a3.8 3.8 0 0 1-7.6 0z"/><path d="M8 12v2.2"/>',
+send:'<path d="M8 13.2V3.4M4 7.2L8 3.2l4 4"/>',
+clip:'<path d="M12.6 7.4l-5 5a2.9 2.9 0 0 1-4.1-4.1l5.4-5.4a1.9 1.9 0 0 1 2.7 2.7l-5.3 5.3a.9.9 0 0 1-1.3-1.3l4.8-4.8"/>',
+sliders:'<path d="M3.4 13V9.4M3.4 6.6V3M8 13V8M8 5.2V3M12.6 13v-2.2M12.6 8V3"/><circle cx="3.4" cy="8" r="1.5"/><circle cx="8" cy="6.6" r="1.5"/><circle cx="12.6" cy="9.4" r="1.5"/>',
+sun:'<circle cx="8" cy="8" r="3.2"/><path d="M8 1.4v1.8M8 12.8v1.8M1.4 8h1.8M12.8 8h1.8M3.3 3.3l1.3 1.3M11.4 11.4l1.3 1.3M12.7 3.3l-1.3 1.3M4.6 11.4l-1.3 1.3"/>',
+moon:'<path d="M13.2 9.4A5.6 5.6 0 0 1 6.6 2.8a5.8 5.8 0 1 0 6.6 6.6z"/>',
+reset:'<path d="M2.6 8a5.4 5.4 0 1 1 1.6 3.8"/><path d="M2.2 12.4V8.4h4"/>',
+minus:'<path d="M3.4 8h9.2"/>',
+expand:'<path d="M3.2 3.2h5.6L3.2 8.8z" fill="currentColor" stroke="none"/><path d="M12.8 12.8H7.2l5.6-5.6z" fill="currentColor" stroke="none"/>',
+md:'<rect x="1.6" y="3.4" width="12.8" height="9.2" rx="1.8"/><path d="M4.2 10.4V5.6l2 2.4 2-2.4v4.8M11 5.6v4.8M9.4 8.8L11 10.4l1.6-1.6"/>',
+userplus:'<circle cx="6.4" cy="5.6" r="2.7"/><path d="M1.9 13.6a4.5 4.5 0 0 1 9 0"/><path d="M12.6 5.2v4M14.6 7.2h-4"/>'
+};
+const ic=(n,s=16,w=1.7)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${P[n]||''}</svg>`;
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ══════════════════════════════════ data ══════════════════════════════════ */
+const AV={J:'#B34C2D',T:'#175CD3',M:'#0A7548',E:'#7C3AED',D:'#B54708',R:'#0E7490',A:'#BE185D',K:'#4D7C0F'};
+const F=(n,i)=>({n,i,c:AV[i]||'#B34C2D'});
+
+function seed(){return{
+user:{name:'Michael Carter',initial:'M',plan:'Free'},
+folders:[{id:'client',name:'Client Calls'},{id:'interviews',name:'Interviews'},
+         {id:'projects',name:'Projects'},{id:'internal',name:'Internal'}],
+meetings:[
+ {id:'m1',title:'Acme kickoff',people:[F('Jennifer Walsh','J'),F('Tom Ellis','T'),F('you','M')],
+  group:'Today',day:'11 Aug 2026',time:'2:14 pm',dur:'34:02',folder:'client',fups:3,
+  notes:{summary:'Kickoff for the Acme rollout. Jennifer confirmed a 400-seat starting licence with a March go-live, contingent on revised pricing landing before her internal review on Friday. Tom raised the data-processing addendum as a blocker for signature, and both sides agreed a technical deep-dive is needed before scoping the migration.',
+   decisions:[['400 seats at the starting tier, revisited at 90 days.','12:04'],
+              ['Go-live targeted for the first week of March.','18:40'],
+              ["Acme's platform team joins the deep-dive, not just procurement.",'27:12']],
+   questions:[["Who owns SSO configuration on Acme's side? Not answered on the call.",'21:55']]},
+  mynotes:'Jennifer wants the revised pricing before Friday — she is presenting internally.\nLegal need to see the DPA; Tom will not sign without it.\nTechnical deep-dive: week of the 25th, 90 minutes, with their platform team.',
+  transcript:[
+   ['11:48','Jennifer Walsh','Before anything else — I need the revised pricing in front of me before Friday. I am presenting it internally and I cannot go in with the old numbers.','Source of follow-up 1'],
+   ['12:04','You','Understood. I will send the revised sheet through by Thursday so you have a day to look at it.',''],
+   ['12:19','Tom Ellis','And on our side the data-processing addendum has to be reviewed before I can sign anything. That is the blocker, not the commercials.','Source of follow-up 2'],
+   ['12:41','You','I will get Legal on the DPA this week.',''],
+   ['18:40','Jennifer Walsh','On timing — we are aiming for the first week of March. That is firm on our side; the training window sits behind it.',''],
+   ['21:55','You','And who owns SSO configuration on your side?',''],
+   ['22:03','Tom Ellis','Good question. I will have to come back to you on that one.',''],
+   ['27:12','Jennifer Walsh','For the deep-dive, I want our platform team in the room, not just procurement.','Source of follow-up 3']]},
+ {id:'m2',title:'Design review — onboarding',people:[F('Emily Foster','E'),F('you','M')],
+  group:'Today',day:'11 Aug 2026',time:'11:00 am',dur:'22:41',folder:'internal',fups:1,
+  notes:{summary:'Walkthrough of the reworked onboarding flow. Emily approved the three-step setup but pushed back on the empty-state copy, which she felt over-explains the mechanics rather than the next action.',
+   decisions:[['Three-step setup checklist ships as designed.','04:10'],['Empty-state copy to be rewritten before handoff.','15:22']],
+   questions:[['Does the checklist survive a reinstall, or reset?','19:05']]},
+  mynotes:'Emily happy with the 3-step checklist.\nEmpty state copy needs a rewrite — too much plumbing.',
+  transcript:[['04:10','Emily Foster','The three steps work. I would ship that as it is.',''],
+   ['15:22','Emily Foster','The empty state is explaining how it is built rather than what I should do next. Rewrite that before handoff.','Source of follow-up 1'],
+   ['19:05','You','Does the checklist reset if someone reinstalls?','']]},
+ {id:'m3',title:'Candidate screen — Backend',people:[F('David Kim','D'),F('you','M')],
+  group:'Yesterday',day:'10 Aug 2026',time:'4:30 pm',dur:'41:18',folder:'interviews',fups:2,
+  notes:{summary:'Screen for the senior backend role. Strong on distributed systems and incident response; lighter on the data modelling side than the role calls for. Recommends progressing to the technical round with a scoped take-home.',
+   decisions:[['Progress to technical round.','36:40'],['Take-home scoped to data modelling.','38:02']],questions:[]},
+  mynotes:'Strong on distributed systems. Data modelling is the gap.',
+  transcript:[['36:40','You','I think we take this to the technical round.',''],
+   ['38:02','David Kim','I would scope the take-home around data modelling, since that is where the gap is.','Source of follow-up 1']]},
+ {id:'m4',title:'Northwind renewal',people:[F('Robert Hayes','R'),F('you','M')],
+  group:'Yesterday',day:'10 Aug 2026',time:'1:05 pm',dur:'27:55',folder:'client',fups:4,
+  notes:{summary:'Renewal conversation for Northwind. Robert wants the uplift held at 4% and is prepared to sign a two-year term to get it. He needs the final figure confirmed in writing before he takes it to finance.',
+   decisions:[['Uplift held at 4% for a two-year term.','09:30'],['Final figure to be confirmed in writing.','21:14']],
+   questions:[['Does the two-year term change the support tier?','24:02']]},
+  mynotes:'4% uplift, 2-year term. Confirm figure in writing before finance.',
+  transcript:[['09:30','Robert Hayes','Hold the uplift at four percent and I will sign for two years.',''],
+   ['21:14','Robert Hayes','Send me the final figure in writing before I take it to finance.','Source of follow-up 1']]},
+ {id:'m5',title:'Q3 planning',people:[F('Ashley Nguyen','A'),F('Daniel Brooks','D'),F('you','M')],
+  group:'Monday',day:'8 Aug 2026',time:'10:00 am',dur:'52:10',folder:'projects',fups:2,
+  notes:{summary:'Quarter planning across the three workstreams. Headcount is the constraint, not scope; Ashley needs final numbers before the budget lock on Friday.',
+   decisions:[['Migration work moves ahead of the reporting rebuild.','22:15']],
+   questions:[['Where does the contractor budget sit after the freeze?','44:30']]},
+  mynotes:'Headcount is the constraint. Numbers to Ashley before Friday.',
+  transcript:[['22:15','Daniel Brooks','Migration has to go first. Reporting can wait a quarter.',''],
+   ['31:08','Ashley Nguyen','I need the headcount numbers before the budget locks on Friday.','Source of follow-up 1']]},
+ {id:'m6',title:'Weekly sync',people:[F('Ashley Nguyen','A'),F('Emily Foster','E'),F('you','M')],
+  group:'Monday',day:'8 Aug 2026',time:'9:00 am',dur:'18:22',folder:'internal',fups:0,
+  notes:{summary:'Standing team sync. No blockers raised; two items carried over from last week.',decisions:[],questions:[]},
+  mynotes:'Nothing blocking.',transcript:[['02:11','Ashley Nguyen','Nothing blocking from my side this week.','']]},
+ {id:'m7',title:'Vendor call — Lawson Group',people:[F('Karen Doyle','K'),F('you','M')],
+  group:'Friday',day:'5 Aug 2026',time:'3:30 pm',dur:'31:07',folder:'client',fups:1,
+  notes:{summary:'Scoping call with Lawson Group. Karen will send a draft statement of work covering the two integration phases.',
+   decisions:[['Two-phase integration, SOW to follow.','14:40']],questions:[]},
+  mynotes:'SOW covers 2 phases. Karen sends draft.',
+  transcript:[['14:40','Karen Doyle','I will get you a draft SOW covering both phases by the end of next week.','Source of follow-up 1']]},
+ {id:'m8',title:'Candidate screen — Frontend',people:[F('Tom Ellis','T'),F('you','M')],
+  group:'Friday',day:'5 Aug 2026',time:'11:15 am',dur:'38:44',folder:'interviews',fups:1,
+  notes:{summary:'Frontend screen. Good product instincts and accessibility awareness; wants clarity on the take-home time budget before committing.',
+   decisions:[['Send the take-home with an explicit four-hour cap.','33:20']],questions:[]},
+  mynotes:'Good a11y awareness. Wants a time cap on the take-home.',
+  transcript:[['33:20','Tom Ellis','Send it over with a hard four-hour cap and I will do it this weekend.','Source of follow-up 1']]}],
+tasks:[
+ {id:'t1',title:'Send the revised pricing sheet to Jennifer',mid:'m1',due:'2 days late',late:true,pri:'hi',done:false,grp:'Overdue',quote:'I need the revised pricing in front of me before Friday. I am presenting it internally and I cannot go in with the old numbers.',who:'Jennifer Walsh',at:'11:48'},
+ {id:'t2',title:'Loop in Legal on the data-processing addendum',mid:'m1',due:'Yesterday',late:true,pri:'hi',done:false,grp:'Overdue',quote:'The data-processing addendum has to be reviewed before I can sign anything.',who:'Tom Ellis',at:'12:19'},
+ {id:'t3',title:'Share the onboarding flow with Emily for review',mid:'m2',due:'5:00 pm',late:false,pri:'md',done:false,grp:'Today',quote:'Rewrite that before handoff.',who:'Emily Foster',at:'15:22'},
+ {id:'t4',title:'Confirm the renewal figure with Robert before sending',mid:'m4',due:'Today',late:false,pri:'md',done:false,grp:'Today',quote:'Send me the final figure in writing before I take it to finance.',who:'Robert Hayes',at:'21:14'},
+ {id:'t5',title:'Book a technical deep-dive for the week of the 25th',mid:'m1',due:'Thu 14 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I want our platform team in the room, not just procurement.',who:'Jennifer Walsh',at:'27:12'},
+ {id:'t6',title:'Send Q3 headcount numbers to Ashley',mid:'m5',due:'Fri 15 Aug',late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I need the headcount numbers before the budget locks on Friday.',who:'Ashley Nguyen',at:'31:08'},
+ {id:'t7',title:'Scope the take-home around data modelling',mid:'m3',due:'Mon 18 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I would scope the take-home around data modelling.',who:'David Kim',at:'38:02'},
+ {id:'t8',title:'Chase Karen for the draft SOW',mid:'m7',due:'Tue 19 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I will get you a draft SOW covering both phases.',who:'Karen Doyle',at:'14:40'},
+ {id:'t9',title:'Send Tom the take-home with a four-hour cap',mid:'m8',due:'Wed 20 Aug',late:false,pri:'md',done:false,grp:'Upcoming',quote:'Send it over with a hard four-hour cap.',who:'Tom Ellis',at:'33:20'}],
+transcripts:[
+ {id:'s1',tx:'A golden shaft of late afternoon sunlight cut through the dusty window',time:'2:41 pm',dest:'pasted into Notes',when:'today'},
+ {id:'s2',tx:'The old wooden clock on the wall ticked slowly, marking the quiet passage of time',time:'2:39 pm',dest:'pasted into Notes · edited',when:'today'},
+ {id:'s3',tx:'Hi, this is a test',time:'2:37 pm',dest:'copied',when:'today'},
+ {id:'s4',tx:'Please send the revised statement of work to Karen before Thursday',time:'Yesterday, 5:12 pm',dest:'pasted into Mail',when:'week'},
+ {id:'s5',tx:'Reminder to review the Q3 headcount spreadsheet before the planning call',time:'Yesterday, 9:40 am',dest:'pasted into Notes',when:'week'},
+ {id:'s6',tx:'The migration window should sit after the training block, not before it',time:'Mon, 4:02 pm',dest:'copied',when:'week'}],
+convos:[
+ {id:'c1',title:'Acme kickoff follow-ups',when:'Today, 2:14 pm',msgs:[
+  {r:'u',tx:'What did I commit to on the Acme kickoff?'},
+  {r:'a',tx:"You made three commitments on that call:<br>&nbsp;&nbsp;1.&nbsp; Send the revised pricing sheet to Jennifer by <b>Friday</b>.<br>&nbsp;&nbsp;2.&nbsp; Loop in Legal on the data-processing addendum.<br>&nbsp;&nbsp;3.&nbsp; Book a technical deep-dive for the week of the 25th.<br>All three are already on your follow-ups list.",src:['m1','Acme kickoff · 11 Aug · from 12:04']}]},
+ {id:'c2',title:'Summarise the Q3 planning call',when:'Monday',msgs:[
+  {r:'u',tx:'Summarise the Q3 planning call in three lines.'},
+  {r:'a',tx:'Headcount is the constraint this quarter, not scope. Migration work moves ahead of the reporting rebuild. Ashley needs final headcount numbers before the budget locks on Friday.',src:['m5','Q3 planning · 8 Aug']}]},
+ {id:'c3',title:'Draft a recap for Northwind',when:'Fri 8 Aug',msgs:[
+  {r:'u',tx:'Draft a short recap email for Robert at Northwind.'},
+  {r:'a',tx:"Hi Robert,<br><br>Thanks for the time today. To confirm what we agreed: the uplift holds at 4% on a two-year term, and I will send the final figure in writing before you take it to finance.<br><br>Best,<br>Michael",src:['m4','Northwind renewal · 10 Aug']}]}],
+vocab:[
+ {t:'AIT-Scribe',h:'eight scribe, IT scribe',n:31,s:'you'},
+ {t:'Parakeet',h:'paraquet, para keet',n:24,s:'ai'},
+ {t:'Northwind',h:'north wind, northwood',n:18,s:'ai'},
+ {t:'DPA',h:'D.P.A., the PA',n:15,s:'you'},
+ {t:'Jennifer Walsh',h:'jennifer welsh, jen walsh',n:11,s:'ai'},
+ {t:'Acme',h:'acmi, ackme',n:7,s:'you'},
+ {t:'Lawson Group',h:'lawsen, lorson',n:5,s:'ai'}],
+settings:{detect:true,screenRec:true,hearOthers:true,recScreen:false,autoFile:true,calendar:false,
+  engine:'local',lang:'English (US)',useVocab:true,hotkey:'Fn',mode:'Hold to talk',
+  convo:false,anthropicKey:'',spoken:false,convoHotkey:'⌃⌥Space',askFirst:true,
+  gmail:false,gcal:false,slack:false,actFollowups:true,
+  extract:true,onlyNamed:false,names:['Michael','Mike','MC'],daily:true,dailyAt:'6:00 PM',
+  overdue:true,overdueAt:'9:00 AM',noInterrupt:true,theme:'light'},
+setupDone:3
+};}
+
+/* ══════════════════════════════════ state ══════════════════════════════════ */
+let db=seed();
+const S={route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:'c1',
+  settings:false,spane:'appearance',share:false,menu:null,panel:false,
+  railmin:false,listmin:false,q:'',tq:'',vq:'',taskFilter:'all',showDone:false,
+  speakers:'All speakers',range:'week',
+  rec:null,playing:false,playPos:44,busy:false,typing:false,firstRun:false,
+  addPerson:false,menuXY:null,zoom:false};
+let timers=[];
+const clearTimers=()=>{timers.forEach(t=>clearInterval(t));timers=[]};
+const $=s=>document.querySelector(s);
+function toast(msg,ms=2600){const w=$('#toasts');const d=document.createElement('div');
+  d.className='toast';d.innerHTML=msg;w.appendChild(d);
+  setTimeout(()=>{d.style.transition='opacity .3s';d.style.opacity='0';setTimeout(()=>d.remove(),320)},ms);}
+const demo=w=>toast(`<b>Demo</b> — this would ${w}.`);
+const meeting=id=>db.meetings.find(m=>m.id===id);
+const task=id=>db.tasks.find(t=>t.id===id);
+const folderName=id=>(db.folders.find(f=>f.id===id)||{name:'Unfiled'}).name;
+const folderColor=id=>({client:'var(--brandInk)',internal:'var(--okInk)',interviews:'var(--info)',projects:'var(--warnInk)'}[id]||'var(--sec)');
+const openTasks=()=>db.tasks.filter(t=>!t.done);
+const fupCount=id=>db.tasks.filter(t=>t.mid===id).length;
+const overdue=()=>db.tasks.filter(t=>!t.done&&t.late);
+/* ══════════════════════════════════ chrome ══════════════════════════════════ */
+const NAV=[['meetings','Meetings','cal'],['speech','Speech to Text','mic'],
+           ['tasks','Tasks','checkc'],['assistant','AI Assistant','spark']];
+const isSpeech=r=>['speech','vocabulary','insights'].includes(r);
+
+function rail(){
+  const s=db.setupDone,left=3-s;
+  const items=NAV.map(([k,label,icon])=>{
+    const on=(k===S.route)||(k==='speech'&&isSpeech(S.route));
+    let h=`<a class="${on?'on':''}" data-a="go" data-p="${k}">${ic(icon,17)}<span class="lbl">${label}</span></a>`;
+    if(k==='speech'&&isSpeech(S.route)&&!S.railmin)
+      h+=`<div class="subnav">
+        <a class="${S.route==='vocabulary'?'on':''}" data-a="go" data-p="vocabulary">${ic('book',14,1.8)}Vocabulary</a>
+        <a class="${S.route==='insights'?'on':''}" data-a="go" data-p="insights">${ic('chart',14,1.8)}Insights</a></div>`;
+    return h;}).join('');
+  const setup=left>0?`<div class="setupcard" data-a="settings" data-p="meet">
+      <div class="t">Setup <span>${left} left</span></div>
+      <div class="s">Turn on call detection and pick your hotkey.</div>
+      <div class="segs">${[0,1,2].map(i=>`<i class="${i<s?'f':''}"></i>`).join('')}</div></div>`:'';
+  return `<div class="rail">
+    <div class="brandrow">
+      <span class="lights">
+        <i class="r" data-a="win" data-p="close" title="Close">${ic('x',8,3)}</i>
+        <i class="y" data-a="win" data-p="min" title="Minimize">${ic('minus',8,3)}</i>
+        <i class="g" data-a="win" data-p="zoom" title="Zoom">${ic('expand',8,3)}</i></span>
+      <span class="tg" data-a="railmin" title="${S.railmin?'Expand':'Collapse'} sidebar">${
+        ic(S.railmin?'panelR':'panelL',17)}</span></div>
+    <div class="nav">${items}</div><div class="spacer"></div>${setup}
+    <div class="acct"><span class="top"><span class="avat">${db.user.initial}</span>
+      <span class="who"><span class="nm">${db.user.name}</span><span class="pl">${db.user.plan} plan</span></span></span>
+      <button class="upg" data-a="demo" data-p="open the upgrade flow">${ic('spark',13)}Upgrade</button></div></div>`;
+}
+function tools(extra=''){
+  const n=overdue().length;
+  return `${extra}<span class="tbtn" data-a="settings" data-p="appearance" title="Settings">${ic('gear',18)}</span>
+    <span class="tbtn" data-a="shortcuts" title="Keyboard shortcuts">${ic('kbd',18)}</span>
+    <span class="tbtn ${n?'hasbadge':''}" data-a="notifs" title="Notifications">${ic('bell',18)}</span>`;
+}
+function mhead(title,state,actions='',crumb=null){
+  const tg=S.route==='assistant'||['meetings','speech','tasks','vocabulary','insights'].includes(S.route)
+    ?`<span class="tbtn" data-a="listmin" title="Collapse list">${ic('panelR',18)}</span>`:'';
+  const head=crumb?`<div class="crumb">${crumb}</div>`
+    :`<h1 class="h">${title}</h1>${state?`<span class="state">${state}</span>`:''}`;
+  return `<div class="mhead">${tg}${head}<span class="r">${tools()}${actions}</span></div>`;
+}
+const v=(on,icon,label,right,act,par)=>`<a class="${on?'on':''}" data-a="${act}" data-p="${par}">${ic(icon,16)}${label}${right||''}</a>`;
+const cnt=n=>`<span class="n">${n}</span>`;
+const pill=n=>`<span class="pill">${n}</span>`;
+
+/* ══════════════════════════════════ list columns ══════════════════════════════════ */
+function listMeetings(){
+  const all=db.meetings.length,rec=db.meetings.filter(m=>['Today','Yesterday'].includes(m.group)).length;
+  return `<div class="listcol">
+   <div class="srch">${ic('search',15)}<input placeholder="Search meetings and transcripts" data-a="q" value="${esc(S.q)}"></div>
+   <div class="lbody">
+    <div class="views">
+     ${v(S.view==='all','home','All meetings',cnt(all),'view','all')}
+     ${v(S.view==='recent','clock','Recent',cnt(rec),'view','recent')}
+    </div>
+    ${db.meetings.length?`<div class="slabel">Folders</div>
+    <div class="views">
+     ${db.folders.map(f=>v(S.view==='f:'+f.id,'folder',f.name,
+        cnt(db.meetings.filter(m=>m.folder===f.id).length),'view','f:'+f.id)).join('')}
+     <a data-a="demo" data-p="create a folder" style="color:var(--sec)">${ic('folderplus',16)}New folder</a>
+    </div>`:`<div class="note">Folders appear here once AIT&#8209;Scribe files your first call.</div>`}
+    </div></div>`;
+}
+function listSpeech(){
+  const t=db.transcripts.filter(x=>x.when==='today').length;
+  return `<div class="listcol">
+   <div class="srch">${ic('search',15)}<input placeholder="Search transcripts" data-a="q" value="${esc(S.q)}"></div>
+   <div class="lbody"><div class="views">
+     ${v(S.view==='today','clock','Today',cnt(t),'view','today')}
+     ${v(S.view==='week','cal','This week',cnt(db.transcripts.length),'view','week')}
+     ${v(S.view==='all','file','All transcripts',cnt(db.transcripts.length?48:0),'view','all')}
+   </div><div class="note">Transcripts stay on this Mac until you delete them.</div></div></div>`;
+}
+function listVocab(){
+  return `<div class="listcol">
+   <div class="srch">${ic('search',15)}<input placeholder="Search terms" data-a="vq" value="${esc(S.vq)}"></div>
+   <div class="lbody"><div class="views">
+     ${v(S.view==='all','book','All terms',cnt(db.vocab.length),'view','all')}
+     ${v(S.view==='you','edit','Added by you',cnt(db.vocab.filter(x=>x.s==='you').length),'view','you')}
+     ${v(S.view==='ai','spark','Learned from corrections',cnt(db.vocab.filter(x=>x.s==='ai').length),'view','ai')}
+   </div><div class="note">Terms apply to dictation and meeting transcripts alike.</div></div></div>`;
+}
+function listInsights(){
+  return `<div class="listcol"><div class="lbody" style="padding-top:20px"><div class="views">
+     ${v(S.range==='week','cal','This week','','range','week')}
+     ${v(S.range==='month','cal','This month','','range','month')}
+     ${v(S.range==='all','clock','All time','','range','all')}
+   </div><div class="note">Insights are computed on this Mac from your own activity. Nothing is uploaded.</div>
+   </div></div>`;
+}
+function listTasks(){
+  const o=openTasks().length,od=overdue().length,
+        up=db.tasks.filter(t=>!t.done&&t.grp==='Upcoming').length,
+        dn=db.tasks.filter(t=>t.done).length+(db.meetings.length?23:0);
+  const byM=db.meetings.filter(m=>db.tasks.some(t=>t.mid===m.id&&!t.done)).slice(0,4);
+  return `<div class="listcol"><div class="lbody" style="padding-top:20px">
+   <div class="views">
+    ${v(S.view==='all','list','All follow-ups',cnt(o),'view','all')}
+    ${v(S.view==='overdue','alertc','Overdue',od?pill(od):cnt(0),'view','overdue')}
+    ${v(S.view==='upcoming','clock','Upcoming',cnt(up),'view','upcoming')}
+    ${v(S.view==='done','checkc','Completed',cnt(dn),'view','done')}
+   </div>
+   <div class="slabel">By meeting</div>
+   <div class="views">${byM.map(m=>v(S.view==='m:'+m.id,'users',m.title,
+      cnt(db.tasks.filter(t=>t.mid===m.id&&!t.done).length),'view','m:'+m.id)).join('')}</div>
+  </div></div>`;
+}
+function listConvos(){
+  const rows=db.convos.length?db.convos.map(c=>`<div class="convrow ${S.cid===c.id?'on':''}" data-a="convo" data-p="${c.id}">
+      <span class="t">${esc(c.title)}</span><span class="d">${c.when}</span></div>`).join('')
+    :`<div class="emptylist"><b>No conversations yet</b>Your chats appear here once you send a message.</div>`;
+  return `<div class="listcol"><div class="lhead"><b>Conversations</b>
+    <span class="act" data-a="newchat" style="cursor:pointer">${ic('plus',15)}New</span></div>
+    <div class="lbody">${rows}</div></div>`;
+}
+
+/* ══════════════════════════════════ meters ══════════════════════════════════ */
+function meterBars(n,live,seedv=0){
+  let out='';
+  for(let i=0;i<n;i++){
+    const h=live?Math.max(4,Math.round(6+30*Math.abs(Math.sin(i*0.7+seedv))*Math.abs(Math.cos(i*0.31+seedv*0.6))))
+                :4+((i*7)%4);
+    out+=`<i style="height:${h}px"></i>`;}
+  return `<span class="meter ${live?'live':'idle'}">${out}</span>`;
+}
+
+/* ══════════════════════════════════ meetings ══════════════════════════════════ */
+function viewMeetings(){
+  let list=db.meetings.slice();
+  if(S.view.startsWith('f:'))list=list.filter(m=>m.folder===S.view.slice(2));
+  if(S.view==='recent')list=list.filter(m=>['Today','Yesterday'].includes(m.group));
+  if(S.q)list=list.filter(m=>(m.title+' '+m.people.map(p=>p.n).join(' ')+' '+
+    m.transcript.map(t=>t[2]).join(' ')).toLowerCase().includes(S.q.toLowerCase()));
+  const setup=db.setupDone<3?`<div class="card" style="margin-bottom:22px">
+    <div class="setuphd"><b>Finish setting up</b><span class="step">${3-db.setupDone} steps left</span>
+      <span class="x" data-a="dismissSetup">${ic('x',15)}</span></div>
+    <div class="setuprow"><span class="si">${ic('rec',17)}</span>
+      <span><span class="t">Never miss a call</span><span class="s">Spot Zoom, Meet, Teams calls and Slack
+      huddles, and offer to take notes. Without this, nothing is recorded or filed automatically.</span></span>
+      <span class="a"><button class="btn ${db.settings.detect?'s':'p'} sm" data-a="toggleDetect">${
+        db.settings.detect?ic('check',14)+'Call detection on':'Turn on call detection'}</button></span></div>
+    <div class="setuprow"><span class="si">${ic('cal',17)}</span>
+      <span><span class="t">See what's coming up</span><span class="s">Connect Google Calendar for your
+      schedule and a nudge before each call. Optional.</span></span>
+      <span class="a"><button class="btn s sm" data-a="connectCal">${
+        db.settings.calendar?ic('check',14)+'Connected':'Connect calendar'}</button></span></div></div>`:'';
+  if(!list.length) return `<div class="body">${setup}
+    <div class="empty" style="${setup?'justify-content:flex-start;padding-top:64px':''}">
+      <span class="ico">${ic('cal',27,1.5)}</span>
+      <h2>${S.q?'No meetings match':'No meetings yet'}</h2>
+      <p>${S.q?'Try a different search, or clear it to see everything.':
+        'Turn on call detection and AIT-Scribe will take the notes, work out which folder the call belongs in, and file it for you. You can also record one now.'}</p>
+      ${S.q?'<button class="btn s sm" style="margin-top:16px" data-a="clearq">Clear search</button>':''}
+    </div></div>`;
+  const groups=[];
+  list.forEach(m=>{let g=groups.find(x=>x.g===m.group);if(!g){g={g:m.group,items:[]};groups.push(g)}g.items.push(m)});
+  const done=db.setupDone>=3&&!db.dismissedOk?`<div class="notice ok" style="margin-bottom:20px">${ic('check',17)}
+    <span><b>Setup complete.</b> Call detection is on — AIT-Scribe will offer to take notes when your next call starts.</span>
+    <span class="act"><button class="btn t sm" data-a="dismissOk">Dismiss</button></span></div>`:'';
+  return `<div class="body">${setup}${done}${groups.map(g=>`
+    <div class="ghd">${g.g} <span class="n">· ${g.items.length} meeting${g.items.length>1?'s':''}</span></div>
+    <div class="card" style="margin-bottom:22px">${g.items.map(m=>{
+      const live=S.rec&&S.rec.mid===m.id;
+      return `<div class="mrow" data-a="open" data-p="${m.id}">
+      <span><span class="t">${esc(m.title)}</span>
+        <span class="s">${m.people.map(p=>p.n).join(', ')} · ${live?'recording now':m.dur}</span></span>
+      ${live?'':`<span class="macts">
+        <span data-a="menu" data-p="folder:${m.id}" title="Move to folder">${ic('folder',14)}</span>
+        <span data-a="share" data-p="${m.id}" title="Share">${ic('share',14)}</span>
+        <span class="dg" data-a="confirmDelete" data-p="${m.id}" title="Delete">${ic('trash',14)}</span></span>`}
+      <span class="rt">${live?`<span class="live">${ic('rec',12)}Recording</span>`:
+        `<span class="tg" style="color:${folderColor(m.folder)}">${folderName(m.folder)}</span>
+         <span class="mt">${m.time} · ${fupCount(m.id)} follow-up${fupCount(m.id)===1?'':'s'}</span>`}</span></div>`}).join('')}
+    </div>`).join('')}</div>`;
+}
+/* ══════════════════════════════════ meeting detail ══════════════════════════════════ */
+function faces(m){return `<span class="faces">${m.people.map(p=>
+  `<i style="background:${p.c}" title="${esc(p.n)}">${p.i}</i>`).join('')}</span>`;}
+function titleBlock(m,extra){
+  return `<div class="titleblk"><h1 class="h" data-a="rename" data-p="${m.id}" style="cursor:text">${esc(m.title)}
+      <span class="edit">${ic('edit',15)}</span></h1>
+    <div class="metarow">${faces(m)}<span>${m.people.map(p=>p.n).join(', ')}</span>
+      <span class="addp" data-a="addperson" data-p="${m.id}">${ic('userplus',13)}Add person</span><span class="sp"></span>
+      <span>${m.day}, ${m.time}</span>${extra}<span class="sp"></span>
+      <span class="fchipx" data-a="menu" data-p="folder:${m.id}">${ic('folder',14)}${folderName(m.folder)} ${ic('chevd',12)}</span>
+    </div></div>`;
+}
+function viewMeeting(){
+  const m=meeting(S.mid);if(!m)return `<div class="body"><div class="empty"><h2>Meeting not found</h2></div></div>`;
+  const rec=S.rec&&S.rec.mid===m.id;
+  const tabs=`<div class="tabs">
+    ${rec?`<a class="${S.tab==='mynotes'?'on':''}" data-a="tab" data-p="mynotes">My notes</a>
+      <a class="off">${ic('spark',14)}AI notes <span class="cnt">after you stop</span></a>
+      <a class="${S.tab==='transcript'?'on':''}" data-a="tab" data-p="transcript">Transcript <span class="cnt">live</span></a>`
+     :`<a class="${S.tab==='notes'?'on':''}" data-a="tab" data-p="notes">${ic('spark',14)}AI notes</a>
+      <a class="${S.tab==='mynotes'?'on':''}" data-a="tab" data-p="mynotes">My notes</a>
+      <a class="${S.tab==='transcript'?'on':''}" data-a="tab" data-p="transcript">Transcript</a>`}</div>`;
+  let body='';
+  if(rec){
+    const r=S.rec,mm=String(Math.floor(r.secs/60)).padStart(2,'0'),ss=String(r.secs%60).padStart(2,'0');
+    body=`<div class="recbar ${r.paused?'pause':''}"><span class="rdot"></span>
+      <b>${r.paused?'Paused':'Recording'}</b><span class="t">${mm}:${ss}</span>
+      <span class="s">· ${r.paused?'nothing is being captured':'both sides captured'}</span>
+      <span class="a"><button class="btn s sm" data-a="pauseRec">${r.paused?ic('play',14)+'Resume':ic('pause',14)+'Pause'}</button>
+        <button class="btn d sm" data-a="stopRec">${ic('stop',14)}Stop &amp; generate notes</button></span></div>
+     <div style="margin-top:12px">${meterBars(74,!r.paused,r.secs)}</div>${tabs}`;
+    if(S.tab==='transcript'){
+      body+=`<div style="flex:1;overflow-y:auto">${r.lines.map(l=>
+        `<div class="trs"><span class="tm">${l[0]}</span><span><span class="spk">${l[1]}</span>
+          <span class="tx">${esc(l[2])}</span></span></div>`).join('')||
+        `<div class="hint" style="padding:20px 4px">Listening… lines appear here as people speak.</div>`}</div>`;
+    }else{
+      body+=`<div class="notebox"><div class="ln" contenteditable="true" data-a="noop">${
+        esc(m.mynotes).replace(/\n/g,'<br>')}</div>
+        <div class="hint" style="margin-top:10px">Jot key points as they come up — AI notes expand them into
+        a summary, decisions and follow-ups when you stop.</div></div>`;
+    }
+    body+=`<div class="comp"><div class="compbox">${ic('spark',17)}
+      <input placeholder="Ask anything about this meeting so far…" data-a="askMeeting">
+      <span class="sendb" data-a="askSend">${ic('send',15,2)}</span></div></div>`;
+    return `<div class="body">${titleBlock(m,'')}${body}</div>`;
+  }
+  if(S.busy){
+    return `<div class="body">${titleBlock(m,`<span class="sp"></span><span>${m.dur}</span>`)}
+      <div class="empty"><span class="ico">${ic('spark',27,1.5)}</span>
+      <h2>Generating notes…</h2><p>Reading your notes and the transcript together. This usually takes a few seconds.</p>
+      <div style="margin-top:18px" class="typing"><i></i><i></i><i></i></div></div></div>`;
+  }
+  const mytasks=db.tasks.filter(t=>t.mid===m.id);
+  if(S.tab==='notes'){
+    body=`${tabs}<div style="flex:1;display:grid;grid-template-columns:1.32fr 1fr;gap:30px;overflow-y:auto">
+      <div>
+        <div class="sec"><h3>${ic('file',15)}Summary</h3><p>${esc(m.notes.summary)}</p></div>
+        ${m.notes.decisions.length?`<div class="sec"><h3>${ic('checkc',15)}Decisions</h3><ul class="bul">
+          ${m.notes.decisions.map(d=>`<li><span class="dot"></span><span>${esc(d[0])}</span>
+            <span class="jump" data-a="jump" data-p="${d[1]}">${d[1]} &rsaquo;</span></li>`).join('')}</ul></div>`:''}
+        ${m.notes.questions.length?`<div class="sec"><h3>${ic('alertc',15)}Open questions</h3><ul class="bul">
+          ${m.notes.questions.map(d=>`<li><span class="dot"></span><span>${esc(d[0])}</span>
+            <span class="jump" data-a="jump" data-p="${d[1]}">${d[1]} &rsaquo;</span></li>`).join('')}</ul></div>`:''}
+      </div>
+      <div><div class="sec"><h3>${ic('list',15)}Follow-ups
+        <span class="jump" data-a="go" data-p="tasks">View in Tasks &rsaquo;</span></h3>
+        ${mytasks.length?`<div class="card">${mytasks.map(t=>taskRow(t,true)).join('')}</div>`
+          :`<div class="card" style="padding:22px;text-align:center;font-size:13px;color:var(--sec)">
+            No follow-ups came out of this meeting.</div>`}</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--sec);
+        padding:14px 2px 12px;border-top:1px solid var(--line);flex-wrap:wrap">${ic('spark',14)}
+        Generated ${m.genAt||'2:49 pm'} from your notes and the transcript.
+        <span style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn s sm" data-a="copymd" data-p="${m.id}">${ic('copy',14)}Copy as Markdown</button>
+          <button class="btn s sm" data-a="dlmd" data-p="${m.id}">${ic('md',14)}Download .md</button>
+          <button class="btn s sm" data-a="regen" data-p="${m.id}">${ic('rec',14)}Regenerate</button>
+          <button class="btn s sm" data-a="confirmDelete" data-p="${m.id}"
+            style="color:var(--dangerInk);border-color:var(--dangerLine)">${ic('trash',14)}Delete</button>
+        </span></div>`;
+  } else if(S.tab==='mynotes'){
+    body=`${tabs}<div class="notebox" style="flex:1"><div class="ln" contenteditable="true">${
+      esc(m.mynotes).replace(/\n/g,'<br>')}</div></div>`;
+  } else {
+    const spk=['All speakers',...new Set(m.transcript.map(t=>t[1]))];
+    const q=S.tq.toLowerCase();
+    const rows=m.transcript.filter(t=>(S.speakers==='All speakers'||t[1]===S.speakers)&&
+      (!q||t[2].toLowerCase().includes(q)));
+    body=`${tabs}<div class="toolrow">
+      <span class="srch" style="margin:0;width:250px">${ic('search',15)}
+        <input placeholder="Search this transcript" data-a="tq" value="${esc(S.tq)}"></span>
+      ${spk.map(s=>`<span class="fchip ${S.speakers===s?'on':''}" data-a="spk" data-p="${esc(s)}">${esc(s)}</span>`).join('')}
+      <span class="r"><button class="btn s sm" data-a="demo" data-p="copy the transcript to your clipboard">${ic('copy',15)}Copy</button>
+        <button class="btn s sm" data-a="demo" data-p="export the transcript">${ic('down',15)}Export</button></span></div>
+      <div style="flex:1;overflow-y:auto">${rows.length?rows.map(t=>{
+        let tx=esc(t[2]);
+        if(q)tx=tx.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');
+        return `<div class="trs ${t[3]?'hl':''}"><span class="tm" data-a="jump" data-p="${t[0]}">${t[0]}</span>
+          <span><span class="spk">${esc(t[1])}</span><span class="tx">${tx}</span>
+          ${t[3]?`<span class="badge">${ic('list',12)}${t[3]}</span>`:''}</span></div>`}).join('')
+        :`<div class="hint" style="padding:24px 4px">Nothing in this transcript matches.</div>`}</div>
+      ${player(m)}`;
+  }
+  return `<div class="body">${titleBlock(m,`<span class="sp"></span><span>${m.dur}</span>`)}
+    ${mytasks.length&&S.tab==='notes'&&!m.ackd?`<div class="notice ok" style="margin-bottom:18px">${ic('check',17)}
+      <span><b>${mytasks.length} follow-up${mytasks.length>1?'s':''} added to Tasks</b> — owners and dates taken from what was said.</span>
+      <span class="act"><button class="btn t sm" data-a="ackNotes" data-p="${m.id}">Dismiss</button></span></div>`:''}
+    ${body}</div>`;
+}
+function player(m){
+  const bars=[];for(let i=0;i<80;i++)bars.push(6+Math.round(18*Math.abs(Math.sin(i*0.55))*Math.abs(Math.cos(i*0.23))));
+  return `<div class="player"><span class="pb" data-a="playpause">${ic(S.playing?'pause':'play',15,2)}</span>
+    <span class="tm">${fmtPos(m)}</span>
+    <span class="scrub" data-a="seek">${bars.map((h,i)=>
+      `<i class="${i<S.playPos?'p':''}" style="height:${h}px"></i>`).join('')}</span>
+    <span class="tm">${m.dur}</span>
+    <button class="btn s sm" data-a="demo" data-p="change playback speed">1&times;</button></div>`;
+}
+function fmtPos(m){
+  const total=parseInt(m.dur.split(':')[0])*60+parseInt(m.dur.split(':')[1]);
+  const s=Math.round(total*S.playPos/80);
+  return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}
+function taskRow(t,compact){
+  const m=meeting(t.mid);
+  return `<div class="trk ${t.done?'done':''} ${S.tid===t.id&&S.panel?'sel':''}" data-a="opentask" data-p="${t.id}">
+    <span class="cbx ${t.done?'on':''}" data-a="toggletask" data-p="${t.id}">${ic('check',12,2.6)}</span>
+    <span style="flex:1"><span class="t">${esc(t.title)}</span>
+      <span class="m">${t.pri?`<span class="pri ${t.pri}">${ic('flag',12)}${t.pri==='hi'?'High':'Medium'}</span>`:''}
+        ${ic('users',13)}${m?esc(m.title):'Added by you'}</span></span>
+    <span class="due ${t.late&&!t.done?'dg':''}">${t.done?'Done':t.due}</span>
+    ${compact?'':`<span class="kb2" data-a="menu" data-p="task:${t.id}">${ic('dots',16)}</span>`}</div>`;
+}
+
+/* ══════════════════════════════════ tasks ══════════════════════════════════ */
+function viewTasks(){
+  let list=db.tasks.slice();
+  if(S.view==='overdue')list=list.filter(t=>t.late&&!t.done);
+  else if(S.view==='upcoming')list=list.filter(t=>t.grp==='Upcoming'&&!t.done);
+  else if(S.view==='done')list=list.filter(t=>t.done);
+  else if(S.view.startsWith('m:'))list=list.filter(t=>t.mid===S.view.slice(2));
+  if(S.view!=='done'&&!S.showDone)list=list.filter(t=>!t.done);
+  if(S.taskFilter==='overdue')list=list.filter(t=>t.late);
+  if(S.taskFilter==='today')list=list.filter(t=>t.grp==='Today');
+  if(S.taskFilter==='upcoming')list=list.filter(t=>t.grp==='Upcoming');
+  if(S.q)list=list.filter(t=>t.title.toLowerCase().includes(S.q.toLowerCase()));
+  const o=openTasks().length,od=overdue().length;
+  const toolbar=db.tasks.length?`<div class="toolrow">
+    ${[['all','All',o],['overdue','Overdue',od],['today','Today',0],['upcoming','Upcoming',0]].map(([k,l,n])=>
+      `<span class="fchip ${S.taskFilter===k?'on':''}" data-a="tfilter" data-p="${k}">${l}${
+        n?`<span class="b">${n}</span>`:''}</span>`).join('')}
+    <span class="r"><span class="srch" style="margin:0;width:210px">${ic('search',15)}
+      <input placeholder="Search follow-ups" data-a="q" value="${esc(S.q)}"></span>
+      <span class="chk" data-a="showdone"><span class="cbx ${S.showDone?'on':''}">${ic('check',12,2.6)}</span>Show completed</span>
+      <button class="btn s sm" data-a="demo" data-p="switch to a calendar view">${ic('cal',15)}Calendar view</button>
+    </span></div>`:'';
+  const add=`<div class="addrow">${ic('plus',17)}
+    <input placeholder="Add a follow-up…" data-a="addtask"></div>`;
+  if(!list.length) return `<div class="body">${toolbar}${add}
+    <div class="empty" style="padding-bottom:60px"><span class="ico">${ic('checkc',27,1.5)}</span>
+    <h2>${db.tasks.length?'Nothing here':'No follow-ups yet'}</h2>
+    <p>${db.tasks.length?'No follow-ups match this view. Try another filter.':
+      'Follow-ups appear here automatically after each meeting is summarised. You can add one in the field above at any time.'}</p></div></div>`;
+  const order=['Overdue','Today','Upcoming','Done'];
+  const groups=order.map(g=>({g,items:list.filter(t=>(t.done?'Done':t.grp)===g)})).filter(x=>x.items.length);
+  return `<div class="body">${toolbar}${add}
+    ${groups.map(g=>`<div class="ghd ${g.g==='Overdue'?'dg':''}">${g.g==='Overdue'?ic('alertc',14):''}${g.g}</div>
+      <div class="card" style="margin-bottom:20px">${g.items.map(t=>taskRow(t)).join('')}</div>`).join('')}</div>`;
+}
+/* ══════════════════════════════════ speech to text ══════════════════════════════════ */
+function viewSpeech(){
+  const live=!!S.rec2;
+  let list=db.transcripts.filter(t=>S.view==='today'?t.when==='today':true);
+  if(S.q)list=list.filter(t=>t.tx.toLowerCase().includes(S.q.toLowerCase()));
+  const secs=live?S.rec2.secs:0;
+  const card=live?`<div class="card" style="padding:20px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+        <span class="holdbtn live">${ic('mic',19,2)}Listening…</span>
+        <span><span class="statusline"><span class="d" style="background:var(--danger)"></span>
+          Recording · MacBook Air Microphone · release <span class="kbd">${db.settings.hotkey}</span> to paste</span>
+          <span class="sub">On device · audio never leaves your Mac</span></span>
+        <span style="margin-left:auto;font-family:Poppins;font-size:15px;font-weight:600;color:var(--dangerInk)">
+          0:${String(secs).padStart(2,'0')}</span></div>
+      <div style="margin-top:18px">${meterBars(78,true,secs)}</div></div>`
+    :`<div class="card" style="padding:20px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+        <span class="holdbtn" data-a="holdstart">${ic('mic',19,2)}Hold <span class="kb">${db.settings.hotkey}</span> to talk</span>
+        <span><span class="statusline"><span class="d" style="background:var(--ok)"></span>
+          Ready · MacBook Air Microphone · text pastes at your cursor</span>
+          <span class="sub">On device · audio never leaves your Mac</span></span></div>
+      <div style="margin-top:18px">${meterBars(78,false)}</div>
+      <div style="font-size:12.5px;color:var(--sec);margin-top:6px">Input level — hold
+        <span class="kbd">${db.settings.hotkey}</span> and speak to check your microphone is being heard.
+        <span class="link" data-a="holdstart" style="margin-left:8px">Try it in the demo &rsaquo;</span></div></div>`;
+  const warn=db.settings.hotkey==='Fn'?`<div class="notice warn" style="margin-bottom:22px">${ic('alert',17)}
+    <span><b>macOS also uses Fn</b> for the emoji picker. Dictation still works, but you may see both.</span>
+    <span class="act"><button class="btn s sm" data-a="settings" data-p="hotkey">Change key</button></span></div>`:'';
+  const rows=list.length?`<div class="card">${list.map(t=>`<div class="trow">
+      ${ic('file',16)}<span style="flex:1"><span class="tx" contenteditable="true">${esc(t.tx)}</span>
+        <span class="tm">${t.time} · ${t.dest}</span></span>
+      <span class="acts">
+        <span data-a="demo" data-p="focus the line for editing" title="Edit">${ic('edit',14)}</span>
+        <span data-a="copytx" data-p="${t.id}" title="Copy">${ic('copy',14)}</span>
+        <span data-a="demo" data-p="replay the original audio" title="Play">${ic('play',14)}</span>
+        <span class="dg" data-a="deltx" data-p="${t.id}" title="Delete">${ic('trash',14)}</span></span></div>`).join('')}</div>`
+    :`<div class="card" style="padding:34px 20px;text-align:center">
+      <div style="font-size:13.5px;color:var(--sec);line-height:1.6">Nothing dictated yet ${S.view==='today'?'today':'in this range'}.<br>
+      Hold <span class="kbd">${db.settings.hotkey}</span> anywhere on your Mac and your words land where the cursor is.</div></div>`;
+  const metrics=db.transcripts.length?`<div class="metrics"><span><b>96%</b> kept after editing</span>
+    <span class="sp"></span><span><b>1.2s</b> average hold to paste</span><span class="sp"></span>
+    <span><b>${db.vocab.filter(v=>v.s==='ai').length}</b> terms learned from your corrections</span></div>`:'';
+  return `<div class="body">${card}${warn}
+    <div class="ghd">${S.view==='today'?'Today':S.view==='week'?'This week':'All transcripts'}
+      <span class="n">· ${list.length} transcript${list.length===1?'':'s'}</span></div>
+    ${rows}${metrics}</div>`;
+}
+
+/* ══════════════════════════════════ vocabulary ══════════════════════════════════ */
+function viewVocab(){
+  let list=db.vocab.slice();
+  if(S.view==='you')list=list.filter(v=>v.s==='you');
+  if(S.view==='ai')list=list.filter(v=>v.s==='ai');
+  if(S.vq)list=list.filter(v=>(v.t+' '+v.h).toLowerCase().includes(S.vq.toLowerCase()));
+  return `<div class="body">
+   <div style="font-size:13.5px;color:var(--sec);line-height:1.6;max-width:660px;margin-bottom:18px">
+     Words AIT&#8209;Scribe should get right — names, products and acronyms. These apply to both dictation
+     and meeting transcripts.</div>
+   <div class="toolrow"><button class="btn s sm" data-a="demo" data-p="import a term list from a file">${ic('down',15)}Import a list</button>
+     <button class="btn s sm" data-a="demo" data-p="export your vocabulary">${ic('copy',15)}Export</button>
+     <span class="r" style="font-size:12.5px;color:var(--sec)">Sorted by how often you corrected them</span></div>
+   <div class="addrow" style="margin-bottom:16px">${ic('plus',17)}
+     <input placeholder="Add a term AIT-Scribe keeps getting wrong…" data-a="addterm"></div>
+   <div class="card" style="overflow:hidden">
+    <table class="vtable"><thead><tr><th>Term</th><th>Often heard as</th><th>Corrected</th><th>Source</th><th></th></tr></thead>
+     <tbody>${list.length?list.map((v,i)=>`<tr>
+       <td class="tm">${esc(v.t)}</td><td>${esc(v.h)}</td><td>${v.n}&times;</td>
+       <td><span class="pillx ${v.s==='ai'?'ai':''}">${v.s==='ai'?'Learned':'Added by you'}</span></td>
+       <td style="text-align:right"><span class="kb2" style="opacity:1;display:inline-flex;cursor:pointer"
+         data-a="delterm" data-p="${esc(v.t)}">${ic('trash',15)}</span></td></tr>`).join('')
+       :`<tr><td colspan="5" style="text-align:center;padding:34px;color:var(--sec)">No terms match.</td></tr>`}
+     </tbody></table></div>
+   <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--sec);margin-top:16px">
+     ${ic('info',14)}Terms marked <span class="pillx ai">Learned</span> were added automatically when you
+     edited a transcript. You can remove any of them.</div></div>`;
+}
+
+/* ══════════════════════════════════ insights ══════════════════════════════════ */
+const RANGES={week:{days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],mins:[95,40,130,75,160,20,0],
+  words:[320,180,540,410,620,90,0],label:'This week · 4–10 Aug',t1:'8h 40m',t2:'2,160',t3:'96%',
+  d1:'1h 15m more than last week',d2:'About 43 minutes of typing saved',d3:'Up 3 points since you added 6 terms'},
+ month:{days:['W1','W2','W3','W4','W5','W6','W7'],mins:[420,510,380,620,540,300,160],
+  words:[1400,1900,1650,2400,2160,980,620],label:'This month · August',t1:'32h 10m',t2:'11,110',t3:'94%',
+  d1:'4h 05m more than July',d2:'About 3.7 hours of typing saved',d3:'Steady across the month'},
+ all:{days:['Mar','Apr','May','Jun','Jul','Aug','Sep'],mins:[1200,1450,1310,1620,1580,1930,0],
+  words:[4100,5200,4800,6100,5900,7300,0],label:'All time',t1:'151h 30m',t2:'33,400',t3:'93%',
+  d1:'Since March 2026',d2:'About 11 hours of typing saved',d3:'Improving ~1 point a month'}};
+function chart(vals,days,tipIdx,tipA,tipB){
+  const max=Math.max(...vals)||1,H=120;
+  const cols=vals.map((val,i)=>{
+    const h=val?Math.max(3,Math.round(val/max*H)):3;
+    const tip=i===tipIdx?`<span class="ttip" style="bottom:${Math.max(8,h-46)}px;left:50%;transform:translateX(-50%)">
+      <b>${tipA}</b>${tipB}</span>`:'';
+    return `<span class="col">${tip}<span class="bar ${val?'':'mute'}" style="height:${h}px"></span></span>`;}).join('');
+  const grid=[0.5,1].map(f=>`<span class="gridl" style="bottom:${Math.round(f*H)+9}px">
+    <span>${Math.round(max*f)}</span></span>`).join('');
+  return `<div style="padding-left:38px"><div class="chart">${grid}${cols}</div>
+    <div class="xax">${days.map(d=>`<span>${d}</span>`).join('')}</div></div>`;
+}
+function viewInsights(){
+  const R=RANGES[S.range];
+  const terms=db.vocab.slice(0,3);const mx=terms[0]?terms[0].n:1;
+  return `<div class="body">
+   <div style="display:flex;gap:16px;margin-bottom:24px">
+     <div class="stat"><div class="lb">Time in meetings</div><div class="big h">${R.t1}</div>
+       <div class="dl">${ic('chart',13)}${R.d1}</div></div>
+     <div class="stat"><div class="lb">Words dictated</div><div class="big h">${R.t2}</div>
+       <div class="dl">${ic('clock',13)}${R.d2}</div></div>
+     <div class="stat"><div class="lb">Kept after editing</div><div class="big h">${R.t3}</div>
+       <div class="dl">${ic('check',13)}${R.d3}</div></div></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
+     <div><div class="ghd" style="margin-bottom:14px">Time in meetings <span class="n">· minutes per ${S.range==='week'?'day':S.range==='month'?'week':'month'}</span></div>
+       ${chart(R.mins,R.days,4,S.range==='week'?'2h 40m':'9h 00m','Busiest in this range')}</div>
+     <div><div class="ghd" style="margin-bottom:14px">Words dictated <span class="n">· per ${S.range==='week'?'day':S.range==='month'?'week':'month'}</span></div>
+       ${chart(R.words,R.days,-1,'','')}</div></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:32px">
+     <div><div class="ghd" style="margin-bottom:6px">Most corrected terms</div>
+       ${terms.map(t=>`<div class="hbar"><span class="lb">${esc(t.t)}</span>
+         <span class="tr"><i style="width:${Math.round(t.n/mx*100)}%"></i></span>
+         <span class="vv">${t.n}&times;</span></div>`).join('')}</div>
+     <div style="display:flex;align-items:flex-end">
+       <div class="notice ok" style="width:100%">${ic('book',17)}
+         <span>Adding these to your vocabulary would have saved <b>${terms.reduce((a,b)=>a+b.n,0)} corrections</b> in this range.</span>
+         <span class="act"><button class="btn s sm" data-a="go" data-p="vocabulary">Open Vocabulary</button></span></div></div>
+   </div></div>`;
+}
+
+/* ══════════════════════════════════ assistant ══════════════════════════════════ */
+function viewAssistant(){
+  const c=db.convos.find(x=>x.id===S.cid);
+  const off=!db.settings.convo;
+  if(!c||!db.convos.length||S.cid==='new'){
+    return `<div class="body"><div class="empty">
+      <span class="ico">${ic('spark',27,1.5)}</span><h2>Ask about your meetings</h2>
+      <p>The assistant searches your transcripts, summarises calls and drafts follow-ups.
+        It only sees what you have recorded in AIT&#8209;Scribe.</p>
+      <div class="chips">
+        <span class="chip" data-a="ask" data-p="What can you do?">${ic('help',15)}What can you do?</span>
+        <span class="chip" data-a="ask" data-p="Summarize my last call">${ic('spark',15)}Summarize my last call</span>
+        <span class="chip" data-a="ask" data-p="What did I commit to this week?">${ic('list',15)}What did I commit to this week?</span>
+      </div>
+      <div class="scope">Every answer cites the meeting it came from.</div></div>
+      ${composer(off)}</div>`;
+  }
+  return `<div class="body">
+    <div style="flex:1;overflow-y:auto">${c.msgs.map(m=>`
+      <div class="msg ${m.r}"><span class="who">${m.r==='u'?db.user.initial:ic('spark',15,2)}</span>
+        <span class="tx">${m.tx}${m.src?`<br><span class="src" data-a="open" data-p="${m.src[0]}">${
+          ic('users',13)}${m.src[1]}</span>`:''}</span></div>`).join('')}
+      ${S.typing?`<div class="msg a"><span class="who">${ic('spark',15,2)}</span>
+        <span class="tx typing"><i></i><i></i><i></i></span></div>`:''}</div>
+    ${composer(off)}</div>`;
+}
+function composer(off){
+  return `<div class="comp">
+    ${off?`<div class="notice warn" style="margin-bottom:10px">${ic('alert',17)}
+      <span>Conversation mode is off, so the assistant cannot reply out loud yet. Text chat works.</span>
+      <span class="act"><button class="btn p sm" data-a="settings" data-p="conv">Turn on conversation mode</button></span></div>`:''}
+    <div class="compbox"><span class="ic" data-a="demo" data-p="attach a file">${ic('clip',17)}</span>
+      <span class="ic" data-a="demo" data-p="dictate your question">${ic('mic',17)}</span>
+      <input placeholder="Ask about your meetings…" data-a="ask" id="askbox">
+      <span class="sendb" data-a="asksend">${ic('send',15,2)}</span></div></div>`;
+}
+/* ══════════════════════════════════ settings ══════════════════════════════════ */
+const SNAV=[['MEETINGS',[['meet','Detection & capture','cal'],['ainotes','AI notes','spark']]],
+ ['SPEECH TO TEXT',[['hotkey','Hotkey','kbd'],['engine','Engine','chip'],['svocab','Vocabulary','book']]],
+ ['ASSISTANT',[['conv','Conversation','spark'],['agent','Actions & connectors','plug']]],
+ ['FOLLOW-UPS',[['tasks','Capture & reminders','checkc']]],
+ ['GENERAL',[['appearance','Appearance','sun'],['acct','Account & plan','users'],['priv','Privacy & data','shield']]]];
+const tog=(k,on,dis)=>`<span class="tog ${on?'on':''} ${dis?'dis':''}" data-a="${dis?'togdis':'tog'}" data-p="${k}"><i></i></span>`;
+const sgroup=(icon,t,s,rows)=>`<div class="sgroup"><div class="sghd"><span class="si">${ic(icon,16)}</span>
+  <span><b>${t}</b><span>${s}</span></span></div>${rows}</div>`;
+const srow=(t,s,a)=>`<div class="srow"><span><span class="t">${t}</span><span class="s">${s}</span></span>
+  <span class="a">${a}</span></div>`;
+const st=db=>db.settings;
+
+function settingsPane(){
+  const g=db.settings;
+  switch(S.spane){
+  case 'appearance':return ['Appearance','How AIT-Scribe looks on this Mac',
+    sgroup('sun','Theme','Applies immediately, on this Mac only',
+      `<div class="srow"><span><span class="t">Colour theme</span>
+        <span class="s">Dark mode uses its own colour steps rather than inverting the light ones, so contrast holds in both.</span></span>
+        <span class="a"><span class="fchip ${g.theme==='light'?'on':''}" data-a="theme" data-p="light">${ic('sun',14)}Light</span>
+          <span class="fchip ${g.theme==='dark'?'on':''}" data-a="theme" data-p="dark">${ic('moon',14)}Dark</span></span></div>`+
+      srow('Match my system','Follow macOS appearance and switch automatically.',tog('sysTheme',g.sysTheme)))+
+    sgroup('reset','Demo controls','Not part of the real product',
+      srow('Reset to first run','Clears all meetings, follow-ups and transcripts and replays the empty first-run state with setup incomplete.',
+        `<button class="btn s sm" data-a="resetDemo">${ic('reset',14)}Reset demo</button>`)+
+      srow('Reload sample data','Puts the 8 meetings, 9 follow-ups and 6 transcripts back.',
+        `<button class="btn s sm" data-a="reloadDemo">Reload data</button>`))];
+  case 'meet':return ['Detection & capture','How AIT-Scribe notices calls and what it listens to',
+    sgroup('rec','Detection','Spot calls automatically and offer to take notes',
+      srow('Detect meetings','Zoom, Google Meet, Teams, Webex and Slack huddles.',tog('detect',g.detect))+
+      srow('Screen Recording permission','macOS requires this to see call windows. AIT-Scribe never records the screen unless you ask it to.',
+        (g.screenRec?`<span class="pri ok">${ic('check',12)}Granted</span>`:`<span class="pri">Not granted</span>`)+
+        `<button class="btn s sm" data-a="demo" data-p="open macOS System Settings">Review in System Settings</button>`))+
+    sgroup('users','Capture','What is listened to during a meeting',
+      srow('Hear the other participants','Transcribes both sides via system audio. Without it, only your microphone is captured.',
+        tog('hearOthers',g.hearOthers,!g.detect)+(g.detect?'':`<span class="pri">Needs detection</span>`))+
+      srow('Record the meeting screen','Captures shared slides and docs for richer notes and a rewatchable video. Off by default. The recording stays on this Mac and is never uploaded.',
+        tog('recScreen',g.recScreen)))+
+    sgroup('cal','Calendar','Upcoming meetings and reminders',
+      srow('Google Calendar','See your schedule and get a nudge 10 minutes and 1 minute before each call.',
+        g.calendar?`<span class="pri ok">${ic('check',12)}Connected</span>`:`<button class="btn p sm" data-a="connectCal">Connect</button>`))];
+  case 'ainotes':return ['AI notes','What the summary contains and where meetings are filed',
+    sgroup('spark','Notes','Generated when a recording stops',
+      srow('Summary, decisions and open questions','The standard structure for every meeting.',tog('nSummary',true))+
+      srow('Extract follow-ups','Owners and dates taken from what was said.',tog('extract',g.extract))+
+      srow('Note length','Longer notes keep more detail from the transcript.',
+        `<span class="sel" data-a="demo" data-p="change note length">Balanced ${ic('chevd',12)}</span>`))+
+    sgroup('folder','Filing','Where finished meetings end up',
+      srow('File meetings into folders automatically','AIT-Scribe matches the call to a folder from the participants and what was said.',tog('autoFile',g.autoFile))+
+      srow('If it cannot tell','Unmatched calls go to a folder you choose.',
+        `<span class="sel" data-a="demo" data-p="pick a fallback folder">${ic('folder',14)}Unfiled ${ic('chevd',12)}</span>`))];
+  case 'hotkey':return ['Hotkey','The key you hold to dictate',
+    sgroup('kbd','Push to talk','Hold a key to record, release to transcribe',
+      srow('Dictation key','Hold anywhere on your Mac. Your words land where the cursor is.',
+        `<span class="keycap">${g.hotkey}</span><button class="btn s sm" data-a="cyclekey">Change key</button>`)+
+      srow('Mode','Hold to talk is safer — nothing is captured when the key is up.',
+        `<span class="sel" data-a="demo" data-p="switch to press-once-to-start mode">${g.mode} ${ic('chevd',12)}</span>`))+
+    (g.hotkey==='Fn'?`<div class="notice warn">${ic('alert',17)}
+      <span><b>macOS also uses Fn</b> for the emoji picker, so you may see both when you dictate. Dictation still works.</span>
+      <span class="act"><button class="btn s sm" data-a="cyclekey">Pick another key</button></span></div>`
+      :`<div class="notice ok">${ic('check',17)}<span><b>${g.hotkey} is free.</b> Nothing else on this Mac claims it.</span></div>`)+
+    sgroup('info','What works best','Checked against your other apps as you type a shortcut',
+      `<div class="tips">
+        <div><span style="color:var(--okInk)">${ic('check',14)}</span><span><b>Modifier combos</b> such as Control+Option are safest — nothing else claims them.</span></div>
+        <div><span style="color:var(--okInk)">${ic('check',14)}</span><span><b>Single modifiers</b> such as Right Control work well for hold-to-record.</span></div>
+        <div><span style="color:var(--warnInk)">${ic('alertc',14)}</span><span><b>Avoid letter keys on their own</b> — they type characters while held.</span></div>
+        <div><span style="color:var(--info)">${ic('info',14)}</span><span>Use at most three keys, for example Control+Option+M.</span></div>
+      </div>`)];
+  case 'engine':return ['Engine','Where your speech is turned into text',
+    `<div style="display:flex;gap:14px">
+      <div class="opt ${g.engine==='local'?'on':''}" data-a="engine" data-p="local"><span class="rdo ${g.engine==='local'?'on':''}"></span>
+        <span><span class="t">On this Mac</span><span class="s">Runs locally using the Parakeet model.</span>
+        <ul><li><span style="color:var(--okInk)">${ic('check',13)}</span>Audio never leaves your Mac</li>
+          <li><span style="color:var(--okInk)">${ic('check',13)}</span>Works with no internet</li>
+          <li><span style="color:var(--okInk)">${ic('check',13)}</span>About 1.2s from release to paste</li>
+          <li><span style="color:var(--warnInk)">${ic('alertc',13)}</span>Less accurate on strong accents and noisy rooms</li></ul></span></div>
+      <div class="opt ${g.engine==='cloud'?'on':''}" data-a="engine" data-p="cloud"><span class="rdo ${g.engine==='cloud'?'on':''}"></span>
+        <span><span class="t">In the cloud</span><span class="s">Sends audio to AIT-Scribe's servers for transcription.</span>
+        <ul><li><span style="color:var(--okInk)">${ic('check',13)}</span>Noticeably better on accents and background noise</li>
+          <li><span style="color:var(--okInk)">${ic('check',13)}</span>Handles 30+ languages</li>
+          <li><span style="color:var(--warnInk)">${ic('alertc',13)}</span>Needs internet; adds around 0.8s</li>
+          <li><span style="color:var(--warnInk)">${ic('alertc',13)}</span>Audio leaves your Mac and is deleted after transcription</li></ul></span></div></div>`+
+    sgroup('sliders','Language and accuracy','Applies to dictation and meeting transcripts',
+      srow('Spoken language','Set this rather than leaving it on auto — it measurably improves accuracy.',
+        `<span class="sel" data-a="cyclelang">${g.lang} ${ic('chevd',12)}</span>`)+
+      srow('Use my vocabulary',`Names, products and acronyms you have taught it. ${db.vocab.length} terms.`,
+        tog('useVocab',g.useVocab)+`<button class="btn s sm" data-a="govocab">Manage</button>`))];
+  case 'svocab':return ['Vocabulary','Words AIT-Scribe should get right',
+    sgroup('book','Your terms',`${db.vocab.length} terms across dictation and meetings`,
+      srow('Open the vocabulary manager','Add, edit and remove terms, and see how often each one was corrected.',
+        `<button class="btn p sm" data-a="govocab">${ic('book',14)}Open Vocabulary</button>`)+
+      srow('Learn from my corrections','When you edit a transcript, add the corrected word automatically.',tog('learnVocab',true)))];
+  case 'conv':return ['Conversation','Talk to the assistant out loud, using your own API keys',
+    (g.convo?`<div class="notice ok">${ic('check',17)}<span><b>Conversation mode is on.</b> Hold ${g.convoHotkey} anywhere to talk to the assistant.</span></div>`
+     :`<div class="notice warn">${ic('alert',17)}<span>Conversation mode is <b>off</b> until step 1 is done.
+       Text chat over your meetings already works without any keys.</span></div>`)+
+    `<div class="sgroup"><div class="sghd"><span class="si">${ic('key',16)}</span>
+      <span><b>What you need</b><span>Two of the three are optional — the assistant tells you which</span></span></div>
+      <div class="step"><span class="num ${g.anthropicKey?'done':''}">${g.anthropicKey?ic('check',13,2.6):'1'}</span>
+        <span style="flex:1"><span class="t">Anthropic API key <span class="pillx">Required</span></span>
+          <span class="s">Generates the assistant's replies. Charged to your Anthropic account, not ours.</span>
+          <div style="display:flex;gap:9px;margin-top:10px;align-items:center;flex-wrap:wrap">
+            <span class="inp" style="flex:1;max-width:400px"><input placeholder="sk-ant-…" value="${esc(g.anthropicKey)}" data-a="key">
+              ${ic('eye',15)}</span>
+            <button class="btn s sm" data-a="pastekey">Paste</button>
+            <span class="link" data-a="demo" data-p="open console.anthropic.com in your browser">Where do I get one? ↗</span></div></span></div>
+      <div class="step"><span class="num ${g.spoken?'done':'wait'}">${g.spoken?ic('check',13,2.6):'2'}</span>
+        <span style="flex:1"><span class="t">Spoken replies <span class="pillx">Optional</span></span>
+          <span class="s">Reads answers aloud with an ElevenLabs voice. Leave this off for a normal text-only chat — no second key needed.</span></span>
+        <span class="a">${tog('spoken',g.spoken)}</span></div>
+      <div class="step"><span class="num wait">3</span>
+        <span style="flex:1"><span class="t">Conversation hotkey <span class="pillx">Optional</span></span>
+          <span class="s">Hold to talk to the assistant from anywhere, like dictation.</span></span>
+        <span class="a"><span class="keycap">${g.convoHotkey}</span>
+          <button class="btn s sm" data-a="demo" data-p="record a new shortcut">Change</button></span></div></div>`+
+    sgroup('spark','Conversation mode','Available once step 1 is complete',
+      srow('Enable conversation mode',g.anthropicKey?'Ready to go. Hold your hotkey anywhere to talk.':
+        'Add an Anthropic key above to turn this on. Nothing is sent anywhere until you do.',
+        (g.anthropicKey?'':`<span class="pri">Needs a key</span>`)+tog('convo',g.convo,!g.anthropicKey)))];
+  case 'agent':return ['Actions & connectors','Let the assistant do things, not just answer questions',
+    sgroup('shield','Safety','How much the assistant may do on its own',
+      srow('Always ask before acting','Every action is shown to you with exactly what it will do, and waits for your confirmation. Turning this off is not recommended.',
+        tog('askFirst',g.askFirst)))+
+    `<div class="sgroup"><div class="sghd"><span class="si">${ic('plug',16)}</span>
+      <span><b>What it may do</b><span>Each action needs the connector beside it</span></span></div>
+      ${srow('Create and update follow-ups','In AIT-Scribe. No connector needed.',tog('actFollowups',g.actFollowups))}
+      ${srow('Draft emails','Writes a draft in Gmail. Never sends without you pressing send.',
+        g.gmail?`<span class="pri ok">${ic('check',12)}Connected</span>`:`<span class="pri">Not connected</span>
+        <button class="btn s sm" data-a="connect" data-p="gmail">Connect Gmail</button>`)}
+      ${srow('Add calendar events','Creates events on your Google Calendar.',
+        g.gcal?`<span class="pri ok">${ic('check',12)}Connected</span>`:`<span class="pri">Not connected</span>
+        <button class="btn s sm" data-a="connect" data-p="gcal">Connect Calendar</button>`)}
+      ${srow('Post a recap to Slack','Posts to a channel you pick, as you.',
+        g.slack?`<span class="pri ok">${ic('check',12)}Connected</span>`:`<span class="pri">Not connected</span>
+        <button class="btn s sm" data-a="connect" data-p="slack">Connect Slack</button>`)}</div>`+
+    sgroup('list','Activity','A record of everything the assistant did',
+      srow('Action log','Every action, when it ran, and whether you approved it. Kept for 90 days.',
+        `<button class="btn s sm" data-a="demo" data-p="open the action log">Open log</button>`))];
+  case 'tasks':return ['Capture & reminders','Where follow-ups come from and when you hear about them',
+    sgroup('checkc','Capture','How follow-ups are found',
+      srow('Extract follow-ups automatically','After each meeting is summarised, from your live notes and the transcript together.',tog('extract',g.extract))+
+      srow('Only when I am named','Off means you also get commitments where nobody was named — useful, but noisier.',tog('onlyNamed',g.onlyNamed)))+
+    sgroup('users','Who you are','So the assistant knows which commitments are yours',
+      srow('Names people call you','Beyond your account name — nicknames and shortenings used in meetings.',
+        g.names.map(n=>`<span class="pillx">${esc(n)}</span>`).join('')+
+        `<button class="btn s sm" data-a="addname">${ic('plus',13)}Add</button>`))+
+    sgroup('bell','Reminders','Quiet by design — a daily summary, not a ping per meeting',
+      srow('Daily summary','One notification with everything still open.',
+        tog('daily',g.daily)+`<span class="sel" data-a="cycletime" data-p="dailyAt">${g.dailyAt} ${ic('chevd',12)}</span>`)+
+      srow('Overdue nudge','A single morning notice for anything past its date.',
+        tog('overdue',g.overdue)+`<span class="sel" data-a="cycletime" data-p="overdueAt">${g.overdueAt} ${ic('chevd',12)}</span>`)+
+      srow('Never interrupt me during a call','Reminders wait until the meeting ends.',tog('noInterrupt',g.noInterrupt)))];
+  case 'acct':return ['Account & plan','Signed in as '+db.user.name,
+    sgroup('users','Account','This Mac',
+      srow(db.user.name,'michael.carter@example.com · signed in since March 2026',
+        `<button class="btn s sm" data-a="demo" data-p="sign you out">Sign out</button>`))+
+    sgroup('spark','Plan','What you get today',
+      srow('Free plan','Unlimited local dictation, 10 recorded meetings a month, 1 seat. You have used 8 of 10 this month.',
+        `<button class="btn p sm" data-a="demo" data-p="open the upgrade flow">See plans</button>`))];
+  case 'priv':return ['Privacy & data','What is stored, and where',
+    sgroup('shield','On this Mac','Nothing here is uploaded',
+      srow('Recordings and transcripts','Stored on this Mac only. 48 transcripts, 18 meetings, 2.1 GB.',
+        `<button class="btn s sm" data-a="demo" data-p="reveal the folder in Finder">Show in Finder</button>`)+
+      srow('Delete everything','Removes all meetings, transcripts and follow-ups from this Mac. Cannot be undone.',
+        `<button class="btn s sm" data-a="demo" data-p="ask you to confirm, then erase local data">Delete all data</button>`))+
+    sgroup('cloud','What leaves this Mac','Only what you turn on',
+      srow('Cloud transcription',g.engine==='cloud'?'On — audio is sent for transcription and deleted afterwards.':'Off — dictation runs entirely on this Mac.',
+        `<span class="pri ${g.engine==='cloud'?'md':'ok'}">${g.engine==='cloud'?'On':'Off'}</span>`)+
+      srow('Assistant replies',g.anthropicKey?'On — your questions and the relevant transcript go to Anthropic.':'Off — no API key is set.',
+        `<span class="pri ${g.anthropicKey?'md':'ok'}">${g.anthropicKey?'On':'Off'}</span>`))];
+  }
+  return ['','',''];
+}
+function settingsModal(){
+  const [t,s,c]=settingsPane();
+  const nav=SNAV.map(([grp,items])=>`<div class="gl">${grp}</div>`+
+    items.map(([k,l,i])=>`<a class="${S.spane===k?'on':''}" data-a="spane" data-p="${k}">${ic(i,15)}${l}</a>`).join('')).join('');
+  return `<div class="scrim" data-a="closeSettings"></div>
+    <div class="modal" style="left:160px;top:90px;width:1120px;height:720px">
+      <div class="mnav"><h3 class="h">Settings</h3>${nav}</div>
+      <div class="mbody"><div class="mtop"><span><h2 class="h">${t}</h2><p>${s}</p></span>
+        <span class="x" data-a="closeSettings">${ic('x',15)}</span></div>
+        <div class="mcont">${c}</div></div></div>`;
+}
+/* ══════════════════════════════════ overlays ══════════════════════════════════ */
+function shareModal(){
+  const m=meeting(S.share)||db.meetings[0];const sh=S.shareOpts;
+  return `<div class="scrim" data-a="closeShare"></div>
+  <div class="modal" style="left:452px;top:120px;width:536px;flex-direction:column">
+    <div class="mtop" style="padding:22px 24px 18px">
+      <span style="width:38px;height:38px;border-radius:11px;background:var(--tint);color:var(--brandInk);
+        display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('link',18)}</span>
+      <span><h2 class="h">Share this meeting</h2><p>${esc(m.title)} · ${m.day}</p></span>
+      <span class="x" data-a="closeShare">${ic('x',15)}</span></div>
+    <div class="mcont" style="gap:18px;padding:20px 24px 22px">
+      <div><div class="ghd" style="margin-bottom:9px">Who can open it</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div class="opt ${sh.who==='link'?'on':''}" style="flex:none" data-a="sharewho" data-p="link">
+            <span class="rdo ${sh.who==='link'?'on':''}"></span>
+            <span><span class="t">Anyone with the link</span><span class="s">No account needed. Read only.</span></span></div>
+          <div class="opt ${sh.who==='invite'?'on':''}" style="flex:none" data-a="sharewho" data-p="invite">
+            <span class="rdo ${sh.who==='invite'?'on':''}"></span>
+            <span><span class="t">Only people you invite</span>
+              <span class="s">Requires an AIT-Scribe account — available on Team plans.</span></span></div></div></div>
+      <div><div class="ghd" style="margin-bottom:9px">What the link includes</div>
+        <div style="border:1px solid var(--line);border-radius:12px">
+          <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="notes">
+            <span class="cbx ${sh.notes?'on':''}">${ic('check',12,2.6)}</span>
+            <span><span class="t">AI notes</span><span class="s">Summary, decisions and follow-ups.</span></span></div>
+          <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="fups">
+            <span class="cbx ${sh.fups?'on':''}">${ic('check',12,2.6)}</span>
+            <span><span class="t">Follow-ups</span><span class="s">With owners and dates.</span></span></div>
+          <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="tx">
+            <span class="cbx ${sh.tx?'on':''}">${ic('check',12,2.6)}</span>
+            <span><span class="t">Full transcript</span>
+            <span class="s" style="color:var(--warnInk)">${ic('alert',12)} Everything that was said, word for word — including anything off-topic.</span></span></div>
+        </div></div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span class="ghd" style="margin:0">Link expires</span>
+        <span style="display:flex;gap:7px;margin-left:auto">${['7 days','30 days','90 days','Never'].map(x=>
+          `<span class="fchip ${sh.exp===x?'on':''}" data-a="shareexp" data-p="${x}">${x}</span>`).join('')}</span></div>
+      ${sh.link?`<div class="notice ok">${ic('check',17)}
+          <span style="min-width:0"><b>Link created.</b> <span style="font-family:monospace;font-size:12px">${sh.link}</span></span>
+          <span class="act"><button class="btn s sm" data-a="copylink">${ic('copy',14)}Copy</button>
+            <button class="btn t sm" data-a="revoke">Revoke</button></span></div>`
+        :`<div style="display:flex;align-items:center;gap:12px;padding-top:4px;border-top:1px solid var(--line)">
+          <span style="font-size:12.5px;color:var(--sec);line-height:1.45">Nothing is shared until you create
+            the link. You can revoke it at any time.</span>
+          <button class="btn p" style="margin-left:auto" data-a="createlink">${ic('link',15)}Create link</button></div>`}
+    </div></div>`;
+}
+function addPersonModal(){
+  const m=meeting(S.addPerson);if(!m)return '';
+  return `<div class="scrim" data-a="closeperson"></div>
+  <div class="modal" style="left:490px;top:250px;width:460px;flex-direction:column">
+    <div class="mtop"><span style="width:38px;height:38px;border-radius:11px;background:var(--tint);
+      color:var(--brandInk);display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('userplus',18)}</span>
+      <span><h2 class="h">Add someone to this meeting</h2><p>${esc(m.title)}</p></span>
+      <span class="x" data-a="closeperson">${ic('x',15)}</span></div>
+    <div class="mcont" style="gap:14px">
+      <div><div class="ghd" style="margin-bottom:7px">Name</div>
+        <div class="inp"><input id="pname" placeholder="e.g. Rachel Levine" autofocus></div></div>
+      <div><div class="ghd" style="margin-bottom:7px">Email <span class="n" style="text-transform:none;
+        letter-spacing:0;font-weight:500">· optional</span></div>
+        <div class="inp"><input id="pmail" placeholder="rachel@example.com"></div>
+        <div class="hint" style="margin-top:7px">Only needed if you want to share the notes with them.
+          Speaker labels in the transcript update either way.</div></div>
+      <div style="display:flex;gap:9px;margin-top:4px">
+        <button class="btn s" data-a="closeperson" style="flex:1;justify-content:center">Cancel</button>
+        <button class="btn p" data-a="saveperson" data-p="${m.id}" style="flex:1;justify-content:center">Add person</button>
+      </div></div></div>`;
+}
+function menuEl(){
+  if(!S.menu)return '';
+  const [kind,id]=S.menu.split(':');
+  if(kind==='meeting')return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="right:24px;top:56px;width:264px">
+    <a data-a="rename" data-p="${id}">${ic('edit',15)}Rename meeting<span class="k">⌘R</span></a>
+    <a data-a="menu" data-p="folder:${id}">${ic('folder',15)}Move to folder…</a>
+    <a data-a="regen" data-p="${id}">${ic('spark',15)}Regenerate AI notes</a><hr>
+    <div class="mh">Export</div>
+    <a data-a="copymd" data-p="${id}">${ic('copy',15)}Copy notes as Markdown</a>
+    <a data-a="dlmd" data-p="${id}">${ic('md',15)}Download notes as .md</a>
+    <a data-a="demo" data-p="save notes and transcript as a PDF">${ic('down',15)}Notes and transcript as PDF</a>
+    <a data-a="demo" data-p="download the original audio">${ic('mic',15)}Download audio<span class="k">18.4 MB</span></a><hr>
+    <a class="dg" data-a="confirmDelete" data-p="${id}">${ic('trash',15)}Delete meeting</a>
+    <div class="fn">Goes to Recently deleted for 30 days. Audio is removed straight away.</div></div>`;
+  if(kind==='folder'){const m=meeting(id);const pos=S.menuXY||{x:560,y:210};
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="left:${Math.min(pos.x,1200)}px;top:${Math.min(pos.y,560)}px;width:220px">
+    <div class="mh">Move to folder</div>
+    ${db.folders.map(f=>`<a data-a="movefolder" data-p="${id}|${f.id}">${ic('folder',15)}${f.name}
+      ${m.folder===f.id?`<span class="k">${ic('check',13)}</span>`:''}</a>`).join('')}
+    <hr><a data-a="demo" data-p="create a new folder">${ic('folderplus',15)}New folder…</a></div>`;}
+  if(kind==='task'){const t=task(id);const pos=S.menuXY||{x:1000,y:300};
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="left:${Math.min(pos.x,1180)}px;top:${Math.min(pos.y,420)}px;width:238px">
+    <a data-a="toggletask" data-p="${id}">${ic('checkc',15)}${t.done?'Mark not done':'Mark done'}<span class="k">⌘⏎</span></a>
+    <a data-a="opentask" data-p="${id}">${ic('edit',15)}Edit follow-up</a>
+    <div class="mh">Priority</div>
+    ${[['hi','High'],['md','Medium'],['','None']].map(([k,l])=>
+      `<a data-a="setpri" data-p="${id}|${k}">${ic('flag',15)}${l}${t.pri===k?`<span class="k">${ic('check',13)}</span>`:''}</a>`).join('')}
+    <hr>
+    <a data-a="open" data-p="${t.mid}">${ic('users',15)}Open ${esc(meeting(t.mid)?meeting(t.mid).title:'meeting')}</a>
+    <a data-a="demo" data-p="play the moment this was said">${ic('play',15)}Play what was said</a>
+    <a data-a="demo" data-p="copy a link to this follow-up">${ic('link',15)}Copy link</a><hr>
+    <a class="dg" data-a="deltask" data-p="${id}">${ic('trash',15)}Delete</a></div>`;}
+  if(kind==='notifs')return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="right:78px;top:56px;width:300px"><div class="mh">Notifications</div>
+    ${overdue().length?overdue().map(t=>`<a data-a="opentask" data-p="${t.id}">
+      <span style="color:var(--dangerInk)">${ic('alertc',15)}</span>
+      <span style="white-space:normal;line-height:1.4">${esc(t.title)}<br>
+      <span style="font-size:11.5px;color:var(--sec)">${t.due}</span></span></a>`).join('')
+      :`<div class="fn">Nothing needs you right now.</div>`}
+    <hr><a data-a="settings" data-p="tasks">${ic('gear',15)}Reminder settings</a></div>`;
+  if(kind==='shortcuts')return `<div class="scrim" data-a="closemenu"></div>
+   <div class="modal" style="left:490px;top:210px;width:460px;flex-direction:column">
+    <div class="mtop"><span><h2 class="h">Keyboard shortcuts</h2><p>Demo reference</p></span>
+      <span class="x" data-a="closemenu">${ic('x',15)}</span></div>
+    <div class="mcont" style="gap:0">
+      ${[['Hold '+db.settings.hotkey,'Dictate anywhere'],['⌘K','Search meetings'],['⌘N','New recording'],
+         ['⌘⏎','Mark follow-up done'],['⌘,','Settings'],['⌘R','Rename meeting'],['Esc','Close this']]
+        .map(([k,l])=>`<div class="srow" style="padding:11px 2px"><span class="t">${l}</span>
+          <span class="a"><span class="keycap">${k}</span></span></div>`).join('')}
+    </div></div>`;
+  if(kind==='confirm'){const m=meeting(id);
+   return `<div class="scrim" data-a="closemenu"></div>
+   <div class="modal" style="left:520px;top:290px;width:400px;flex-direction:column">
+    <div class="mtop"><span style="width:38px;height:38px;border-radius:11px;background:var(--dangerTint);
+      color:var(--dangerInk);display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('trash',18)}</span>
+      <span><h2 class="h">Delete this meeting?</h2><p>${esc(m?m.title:'')}</p></span></div>
+    <div class="mcont"><div style="font-size:13.5px;line-height:1.6;color:var(--ink2)">
+      The notes, transcript and ${db.tasks.filter(t=>t.mid===id).length} follow-up(s) go to
+      <b>Recently deleted</b> for 30 days. The audio is removed straight away and cannot be recovered.</div>
+      <div style="display:flex;gap:9px;margin-top:6px">
+        <button class="btn s" data-a="closemenu" style="flex:1;justify-content:center">Keep it</button>
+        <button class="btn d" data-a="delmeeting" data-p="${id}" style="flex:1;justify-content:center">Delete meeting</button>
+      </div></div></div>`;}
+  return '';
+}
+function taskPanel(){
+  const t=task(S.tid);if(!t)return '';const m=meeting(t.mid);
+  return `<div class="panel"><div class="ph">${ic('list',17)}<b>Follow-up</b>
+    <span style="margin-left:auto;display:flex;gap:4px">
+      <span class="tbtn" data-a="menu" data-p="task:${t.id}">${ic('dots',17)}</span>
+      <span class="tbtn" data-a="closepanel">${ic('x',17)}</span></span></div>
+   <div class="pb2">
+    <div><div style="font-family:Poppins;font-size:16px;font-weight:600;line-height:1.4"
+        contenteditable="true">${esc(t.title)}</div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        ${t.pri?`<span class="pri ${t.pri}">${ic('flag',12)}${t.pri==='hi'?'High':'Medium'}</span>`:''}
+        ${t.done?`<span class="pri ok">${ic('check',12)}Done</span>`
+          :t.late?`<span class="pri hi">${t.due}</span>`:`<span class="pri">${t.due}</span>`}</div></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="frow"><span class="lb">Status</span>
+        <span class="sel" data-a="toggletask" data-p="${t.id}">${ic('list',14)}${t.done?'Done':'Open'} ${ic('chevd',12)}</span></div>
+      <div class="frow"><span class="lb">Due</span>
+        <span class="sel" data-a="demo" data-p="open a date picker">${ic('cal',14)}${t.due} ${ic('chevd',12)}</span></div>
+      <div class="frow"><span class="lb">Owner</span>
+        <span class="sel" data-a="demo" data-p="reassign this follow-up">
+          <span class="avat" style="width:20px;height:20px;font-size:10px">${db.user.initial}</span>You ${ic('chevd',12)}</span></div>
+      <div class="frow"><span class="lb">Priority</span>
+        <span class="sel" data-a="cyclepri" data-p="${t.id}">${ic('flag',14)}${
+          t.pri==='hi'?'High':t.pri==='md'?'Medium':'None'} ${ic('chevd',12)}</span></div></div>
+    ${t.quote?`<div style="border-top:1px solid var(--line);padding-top:16px">
+      <div class="ghd" style="margin-bottom:10px">Where this came from</div>
+      <div class="quote">“${esc(t.quote)}”</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn s sm" data-a="demo" data-p="play the audio from ${t.at}">${ic('play',14)}Play ${t.at}</button>
+        <button class="btn s sm" data-a="open" data-p="${t.mid}">${ic('users',14)}Open ${esc(m?m.title:'meeting')}</button>
+        <span style="font-size:12px;color:var(--sec);margin-left:auto">${esc(t.who||'')}</span></div></div>`:''}
+    <div style="border-top:1px solid var(--line);padding-top:16px">
+      <div class="ghd" style="margin-bottom:10px">Notes</div>
+      <div class="inp" style="min-height:70px;align-items:flex-start">
+        <input placeholder="Add a note for yourself…" data-a="noop"></div></div>
+   </div></div>`;
+}
+
+/* ══════════════════════════════════ render ══════════════════════════════════ */
+function render(){
+  document.documentElement.dataset.theme=db.settings.theme;
+  let lc='',main='',aside='';
+  if(S.route==='meetings'){lc=listMeetings();
+    main=mhead('Meetings',meetingsState(),`<button class="btn ${db.meetings.length?'p':'s'} sm" data-a="record">${
+      ic('rec',15)}Record meeting</button>`)+viewMeetings();}
+  else if(S.route==='meeting'){const m=meeting(S.mid);lc=listMeetings();
+    main=mhead('','',`<button class="btn s sm" data-a="share" data-p="${S.mid}">${ic('share',15)}Share</button>
+      <span class="tbtn" data-a="menu" data-p="meeting:${S.mid}">${ic('dots',18)}</span>`,
+      `<span class="bk" data-a="go" data-p="meetings">${ic('back',15)}All meetings</span> ${ic('chev',13)}
+       <b>${esc(m?m.title:'')}</b>`)+viewMeeting();}
+  else if(S.route==='speech'){lc=listSpeech();
+    main=mhead('Speech to Text',db.transcripts.filter(t=>t.when==='today').length+' today')+viewSpeech();}
+  else if(S.route==='vocabulary'){lc=listVocab();
+    main=mhead('Vocabulary',db.vocab.length+' terms',
+      `<button class="btn p sm" data-a="focusterm">${ic('plus',15)}Add term</button>`)+viewVocab();}
+  else if(S.route==='insights'){lc=listInsights();
+    main=mhead('Insights',RANGES[S.range].label,
+      `<button class="btn s sm" data-a="demo" data-p="pick a custom range">${ic('cal',15)}${
+        S.range==='week'?'This week':S.range==='month'?'This month':'All time'} ${ic('chevd',13)}</button>`)+viewInsights();}
+  else if(S.route==='tasks'){lc=listTasks();
+    main=mhead('Tasks',openTasks().length+' open · '+overdue().length+' overdue')+viewTasks();
+    if(S.panel)aside=taskPanel();}
+  else if(S.route==='assistant'){lc=listConvos();
+    const c=db.convos.find(x=>x.id===S.cid);
+    main=mhead(c?'':'AI Assistant','',c?`<button class="btn s sm" data-a="demo" data-p="share this conversation">${
+      ic('share',15)}Share</button>`:'',c?`<span class="bk" data-a="newchat">AI Assistant</span> ${ic('chev',13)}
+      <b>${esc(c.title)}</b>`:null)+viewAssistant();}
+  const cls=(S.railmin?'railmin ':'')+(S.listmin?'listmin':'');
+  $('#app').innerHTML=`<div class="app ${cls}">${rail()}${lc}<div class="main">${main}</div>${aside}
+    ${S.settings?settingsModal():''}${S.share?shareModal():''}${S.addPerson?addPersonModal():''}${menuEl()}</div>`;
+}
+function notesMd(m){
+  const L=[];
+  L.push('# '+m.title,'');
+  L.push(`_${m.day}, ${m.time} · ${m.dur} · ${folderName(m.folder)}_`,'');
+  L.push('**Participants:** '+m.people.map(p=>p.n).join(', '),'');
+  if(m.notes.summary){L.push('## Summary','',m.notes.summary,'')}
+  if(m.notes.decisions.length){L.push('## Decisions','');
+    m.notes.decisions.forEach(d=>L.push(`- ${d[0]} _(${d[1]})_`));L.push('')}
+  if(m.notes.questions.length){L.push('## Open questions','');
+    m.notes.questions.forEach(d=>L.push(`- ${d[0]} _(${d[1]})_`));L.push('')}
+  const ts=db.tasks.filter(t=>t.mid===m.id);
+  if(ts.length){L.push('## Follow-ups','');
+    ts.forEach(t=>L.push(`- [${t.done?'x':' '}] ${t.title} — ${t.due}`));L.push('')}
+  if(m.mynotes){L.push('## My notes','',m.mynotes,'')}
+  L.push('---','Generated by AIT-Scribe');
+  return L.join('\n');
+}
+function copyText(t,label){
+  const done=()=>toast(`<b>Copied.</b> ${label}`);
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(done).catch(()=>fallback());
+  } else fallback();
+  function fallback(){const a=document.createElement('textarea');a.value=t;
+    a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();
+    try{document.execCommand('copy');done()}catch(e){toast('Could not reach the clipboard.')}
+    a.remove();}
+}
+function download(name,text){
+  const b=new Blob([text],{type:'text/markdown;charset=utf-8'});
+  const u=URL.createObjectURL(b);const a=document.createElement('a');
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),1500);
+  toast(`<b>Downloaded.</b> ${esc(name)}`);
+}
+const slug=t=>t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function meetingsState(){
+  const n=db.meetings.length;if(!n)return 'No meetings yet';
+  const wk=db.meetings.filter(m=>['Today','Yesterday','Monday'].includes(m.group)).length;
+  return `${n} meeting${n>1?'s':''} · ${wk} this week`;
+}
+/* ══════════════════════════════════ actions ══════════════════════════════════ */
+const LINES=[['00:04','Jennifer Walsh','Thanks for making the time — let us start with where the pricing landed.'],
+ ['00:12','You','Sure. I have the revised sheet, I just need to confirm the seat count with you.'],
+ ['00:21','Tom Ellis','Before we go too far, I want to flag the data-processing addendum again.'],
+ ['00:29','Jennifer Walsh','Noted. Let us take pricing first and come back to Legal.'],
+ ['00:38','You','Understood — I will send the revised sheet through by Thursday.'],
+ ['00:47','Tom Ellis','And can we get the platform team into the deep-dive this time?'],
+ ['00:55','Jennifer Walsh','Yes. Procurement alone was not enough last round.']];
+
+function startRecording(){
+  const id='m'+(Date.now()%100000);
+  const m={id,title:'New recording',people:[F('Jennifer Walsh','J'),F('Tom Ellis','T'),F('you','M')],
+    group:'Today',day:'11 Aug 2026',time:'3:20 pm',
+    dur:'00:00',folder:'client',fups:0,mynotes:'',transcript:[],
+    notes:{summary:'',decisions:[],questions:[]}};
+  db.meetings.unshift(m);
+  S.rec={mid:id,secs:0,paused:false,lines:[],next:0};
+  S.route='meeting';S.mid=id;S.tab='mynotes';
+  clearTimers();
+  timers.push(setInterval(()=>{
+    if(!S.rec)return;
+    if(!S.rec.paused){
+      S.rec.secs++;
+      if(S.rec.next<LINES.length&&S.rec.secs>=(S.rec.next+1)*3){
+        S.rec.lines.push(LINES[S.rec.next]);S.rec.next++;}
+    }
+    if(S.route==='meeting'&&S.mid===S.rec.mid)render();
+  },1000));
+  render();
+  toast(`<b>Recording started.</b> This is a simulation — the timer, meter and transcript are generated.`);
+}
+function stopRecording(){
+  const r=S.rec;if(!r)return;const m=meeting(r.mid);
+  clearTimers();S.rec=null;S.busy=true;
+  const mm=String(Math.floor(r.secs/60)).padStart(2,'0'),ss=String(r.secs%60).padStart(2,'0');
+  m.dur=`${mm}:${ss}`;m.title='Acme follow-up call';
+  m.transcript=r.lines.map(l=>[l[0],l[1],l[2],'']);
+  render();
+  setTimeout(()=>{
+    m.notes={summary:'A short follow-up with Acme. Pricing is close to final and will be sent on Thursday; Tom re-raised the data-processing addendum as the outstanding blocker, and both sides agreed the platform team joins the technical deep-dive rather than procurement alone.',
+      decisions:[['Revised pricing sheet goes out on Thursday.','00:38'],
+                 ["Acme's platform team attends the deep-dive.",'00:55']],
+      questions:[['Who signs off the DPA on Acme\'s side?','00:21']]};
+    m.genAt='3:26 pm';
+    if(m.transcript[4])m.transcript[4][3]='Source of follow-up 1';
+    const nt=[{id:'n'+Date.now(),title:'Send the revised pricing sheet on Thursday',mid:m.id,due:'Thu 14 Aug',
+      late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I will send the revised sheet through by Thursday.',who:'You',at:'00:38'},
+     {id:'n'+(Date.now()+1),title:'Get Legal to review the data-processing addendum',mid:m.id,due:'Fri 15 Aug',
+      late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I want to flag the data-processing addendum again.',who:'Tom Ellis',at:'00:21'},
+     {id:'n'+(Date.now()+2),title:"Invite Acme's platform team to the deep-dive",mid:m.id,due:'Mon 18 Aug',
+      late:false,pri:'',done:false,grp:'Upcoming',quote:'Can we get the platform team into the deep-dive this time?',who:'Tom Ellis',at:'00:47'}];
+    db.tasks.push(...nt);m.fups=3;
+    S.busy=false;S.tab='notes';render();
+    toast(`<b>Notes ready.</b> 3 follow-ups were added to Tasks.`,3600);
+  },2600);
+}
+function holdStart(){
+  if(S.rec2)return;
+  S.rec2={secs:0};clearTimers();
+  timers.push(setInterval(()=>{S.rec2.secs++;render();
+    if(S.rec2.secs>=4)holdStop();},1000));
+  render();
+}
+function holdStop(){
+  clearTimers();const s=S.rec2;S.rec2=null;
+  const samples=['Send Karen the revised statement of work before Thursday',
+    'Remember to confirm the seat count with Jennifer',
+    'Draft the scorecard for the backend candidate this afternoon',
+    'Ask Legal how long the addendum review usually takes'];
+  const tx=samples[Math.floor(Date.now()/1000)%samples.length];
+  db.transcripts.unshift({id:'s'+Date.now(),tx,
+    time:'just now',
+    dest:'pasted at your cursor',when:'today'});
+  render();toast(`<b>Pasted.</b> “${esc(tx.slice(0,42))}…” went to your cursor.`);
+}
+const ANSWERS={
+ 'what can you do?':["I can search everything you have recorded and answer from it. Try asking me what you committed to on a call, who raised an objection, or to draft a recap email. I only see what is in AIT-Scribe — I cannot reach your inbox or files.",null],
+ 'summarize my last call':["Your last call was <b>Acme kickoff</b> (11 Aug, 34:02) with Jennifer Walsh and Tom Ellis. Jennifer confirmed 400 seats with a March go-live, contingent on revised pricing landing before Friday. Tom flagged the data-processing addendum as the blocker for signature. Both sides agreed a technical deep-dive is needed before scoping the migration.",['m1','Acme kickoff · 11 Aug · 34:02']],
+ 'what did i commit to this week?':["Five things, three of them from the Acme kickoff:<br>&nbsp;&nbsp;1.&nbsp; Send the revised pricing sheet to Jennifer — <b>2 days late</b>.<br>&nbsp;&nbsp;2.&nbsp; Loop in Legal on the DPA — <b>overdue</b>.<br>&nbsp;&nbsp;3.&nbsp; Book the technical deep-dive for the week of the 25th.<br>&nbsp;&nbsp;4.&nbsp; Confirm the renewal figure with Robert.<br>&nbsp;&nbsp;5.&nbsp; Send Q3 headcount numbers to Ashley.",['m1','Acme kickoff · 11 Aug']]
+};
+function askAssistant(q){
+  q=q.trim();if(!q)return;
+  let c=db.convos.find(x=>x.id===S.cid);
+  if(!c||S.cid==='new'){c={id:'c'+Date.now(),title:q.length>40?q.slice(0,40)+'…':q,when:'Just now',msgs:[]};
+    db.convos.unshift(c);S.cid=c.id;}
+  c.msgs.push({r:'u',tx:esc(q)});
+  S.typing=true;render();
+  setTimeout(()=>{
+    const key=q.toLowerCase().replace(/\s+/g,' ').trim();
+    const hit=ANSWERS[key];
+    const ans=hit?hit[0]:`I looked across your ${db.meetings.length} recorded meetings for that. Here is what stands out: the Acme rollout is the live thread — pricing is due Friday and the DPA is blocking signature. Northwind is agreed at a 4% uplift on a two-year term pending written confirmation.`;
+    const src=hit?hit[1]:['m1','Acme kickoff · 11 Aug'];
+    c.msgs.push({r:'a',tx:ans,src});
+    S.typing=false;render();
+  },1200);
+}
+function resetDemo(hard){
+  clearTimers();const theme=db.settings.theme;
+  db=seed();db.settings.theme=theme;
+  if(hard){db.meetings=[];db.tasks=[];db.transcripts=[];db.convos=[];db.setupDone=0;
+    db.settings.detect=false;db.settings.calendar=false;S.firstRun=true;}
+  Object.assign(S,{route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:hard?'new':'c1',
+    settings:false,share:false,menu:null,panel:false,q:'',tq:'',vq:'',taskFilter:'all',
+    showDone:false,speakers:'All speakers',rec:null,rec2:null,busy:false,typing:false,addPerson:false});
+  render();
+  toast(hard?`<b>Reset.</b> You are now looking at a brand-new install.`:`<b>Sample data restored.</b>`);
+}
+
+/* ══════════════════════════════════ events ══════════════════════════════════ */
+const KEYS=['Fn','Right ⌘','⌃⌥','F13'];
+const LANGS=['English (US)','English (UK)','Spanish','French','German'];
+const TIMES=['6:00 AM','7:00 AM','8:00 AM','9:00 AM','12:00 PM','5:00 PM','6:00 PM','8:00 PM'];
+
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  const a=el.dataset.a,p=el.dataset.p||'';
+  const stop=()=>{e.preventDefault();e.stopPropagation()};
+  switch(a){
+  case 'noop':return;
+  case 'demo':stop();demo(p);return;
+  case 'go':stop();S.route=p;S.q='';S.panel=false;S.menu=null;
+    S.view=p==='tasks'?'all':p==='speech'?'today':p==='vocabulary'?'all':'all';render();return;
+  case 'view':stop();S.view=p;S.q='';render();return;
+  case 'range':stop();S.range=p;render();return;
+  case 'railmin':stop();S.railmin=!S.railmin;render();return;
+  case 'listmin':stop();S.listmin=!S.listmin;render();return;
+  case 'open':stop();S.route='meeting';S.mid=p;S.tab=(S.rec&&S.rec.mid===p)?'mynotes':'notes';
+    S.menu=null;S.tq='';S.speakers='All speakers';render();return;
+  case 'tab':stop();S.tab=p;render();return;
+  case 'record':stop();startRecording();return;
+  case 'pauseRec':stop();S.rec.paused=!S.rec.paused;render();
+    toast(S.rec.paused?'Paused — nothing is being captured.':'Recording resumed.');return;
+  case 'stopRec':stop();stopRecording();return;
+  case 'jump':stop();S.tab='transcript';S.tq='';render();toast(`Jumped to <b>${p}</b> in the transcript.`);return;
+  case 'playpause':stop();S.playing=!S.playing;
+    if(S.playing){timers.push(setInterval(()=>{S.playPos=(S.playPos+1)%80;render()},700))}else clearTimers();
+    render();return;
+  case 'seek':{stop();const r=el.getBoundingClientRect();
+    S.playPos=Math.round((e.clientX-r.left)/r.width*80);render();return;}
+  case 'rename':{stop();const m=meeting(p);const n=prompt('Rename meeting',m.title);
+    if(n&&n.trim()){m.title=n.trim();toast('Renamed.')}S.menu=null;render();return;}
+  case 'movefolder':{stop();const [id,f]=p.split('|');meeting(id).folder=f;S.menu=null;render();
+    toast(`Moved to <b>${folderName(f)}</b>.`);return;}
+  case 'regen':{stop();S.menu=null;S.busy=true;render();
+    setTimeout(()=>{S.busy=false;const m=meeting(p);
+      m.genAt='just now';
+      render();toast('<b>Notes regenerated</b> from your notes and the transcript.')},2000);return;}
+  case 'confirmDelete':stop();S.menu='confirm:'+p;render();return;
+  case 'delmeeting':{stop();db.meetings=db.meetings.filter(m=>m.id!==p);
+    db.tasks=db.tasks.filter(t=>t.mid!==p);S.menu=null;S.route='meetings';render();
+    toast('Meeting moved to <b>Recently deleted</b>. 30 days to restore.');return;}
+  case 'ackNotes':stop();meeting(p).ackd=true;render();return;
+  case 'menu':{stop();const r=el.getBoundingClientRect();const fr=$('#frame').getBoundingClientRect();
+    S.menuXY={x:(r.left-fr.left)/SCALE-140,y:(r.bottom-fr.top)/SCALE+6};
+    S.menu=p;render();return;}
+  case 'closemenu':stop();S.menu=null;render();return;
+  case 'notifs':stop();S.menu='notifs:';render();return;
+  case 'shortcuts':stop();S.menu='shortcuts:';render();return;
+  case 'share':stop();S.share=p;S.shareOpts={who:'link',notes:true,fups:true,tx:false,exp:'30 days',link:''};
+    S.menu=null;render();return;
+  case 'closeShare':stop();S.share=false;render();return;
+  case 'sharewho':stop();if(p==='invite'){demo('require a Team plan for private sharing');return}
+    S.shareOpts.who=p;render();return;
+  case 'shareinc':stop();S.shareOpts[p]=!S.shareOpts[p];render();
+    if(p==='tx'&&S.shareOpts.tx)toast('Full transcript will be included — everything said, word for word.');return;
+  case 'shareexp':stop();S.shareOpts.exp=p;render();return;
+  case 'createlink':stop();S.shareOpts.link='ait.sc/m/'+Math.random().toString(36).slice(2,9);render();
+    toast('<b>Link created.</b> Revoke it any time from here.');return;
+  case 'copylink':stop();toast('Link copied to your clipboard.');return;
+  case 'revoke':stop();S.shareOpts.link='';render();toast('Link revoked. It no longer opens.');return;
+  case 'settings':stop();S.settings=true;S.spane=p||'appearance';S.menu=null;render();return;
+  case 'closeSettings':stop();S.settings=false;render();return;
+  case 'spane':stop();S.spane=p;render();return;
+  case 'theme':stop();db.settings.theme=p;db.settings.sysTheme=false;render();toast(`${p==='dark'?'Dark':'Light'} mode on.`);return;
+  case 'tog':{stop();const g=db.settings;g[p]=!g[p];
+    if(p==='sysTheme'&&g.sysTheme){g.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+    if(p==='detect'){db.setupDone=g.detect?(g.calendar?3:2):(g.calendar?2:1);
+      if(!g.detect)g.hearOthers=false;}
+    if(p==='convo'&&g.convo)toast('Conversation mode is on. Hold '+g.convoHotkey+' to talk.');
+    render();return;}
+  case 'togdis':stop();toast('Turn on <b>Detect meetings</b> first — there is nothing to capture without it.');return;
+  case 'toggleDetect':stop();db.settings.detect=true;db.settings.hearOthers=true;
+    db.setupDone=db.settings.calendar?3:2;render();toast('<b>Call detection is on.</b> Your next call will be offered notes.');return;
+  case 'connectCal':stop();db.settings.calendar=true;
+    db.setupDone=db.settings.detect?3:2;render();toast('<b>Calendar connected.</b> You will get a nudge before each call.');return;
+  case 'dismissSetup':stop();db.setupDone=3;render();toast('Setup card hidden. Reopen it from Settings.');return;
+  case 'dismissOk':stop();db.dismissedOk=true;render();return;
+  case 'engine':stop();db.settings.engine=p;render();
+    toast(p==='cloud'?'Cloud engine on — audio now leaves this Mac for transcription.':'On-device engine on — audio stays here.');return;
+  case 'cyclekey':{stop();const g=db.settings;g.hotkey=KEYS[(KEYS.indexOf(g.hotkey)+1)%KEYS.length];render();
+    toast(g.hotkey==='Fn'?'Fn is claimed by macOS for the emoji picker.':`Hotkey set to ${g.hotkey} — nothing else claims it.`);return;}
+  case 'cyclelang':{stop();const g=db.settings;g.lang=LANGS[(LANGS.indexOf(g.lang)+1)%LANGS.length];render();return;}
+  case 'cycletime':{stop();const g=db.settings;g[p]=TIMES[(TIMES.indexOf(g[p])+1)%TIMES.length];render();return;}
+  case 'pastekey':stop();db.settings.anthropicKey='sk-ant-api03-demo-key-not-real';render();
+    toast('Key pasted. Conversation mode can now be turned on.');return;
+  case 'connect':stop();db.settings[p]=true;render();
+    toast(`<b>${p==='gmail'?'Gmail':p==='gcal'?'Google Calendar':'Slack'} connected.</b> The assistant can now use it — and will still ask first.`);return;
+  case 'addname':{stop();const n=prompt('Another name people call you');
+    if(n&&n.trim()){db.settings.names.push(n.trim());render()}return;}
+  case 'govocab':stop();S.settings=false;S.route='vocabulary';S.view='all';render();return;
+  case 'resetDemo':stop();S.settings=false;resetDemo(true);return;
+  case 'reloadDemo':stop();S.settings=false;resetDemo(false);return;
+  case 'tfilter':stop();S.taskFilter=p;render();return;
+  case 'showdone':stop();S.showDone=!S.showDone;render();return;
+  case 'toggletask':{stop();const t=task(p);t.done=!t.done;render();
+    toast(t.done?`<b>Done.</b> ${esc(t.title)}`:'Marked not done.');return;}
+  case 'opentask':stop();S.tid=p;S.panel=true;S.menu=null;S.route='tasks';render();return;
+  case 'closepanel':stop();S.panel=false;render();return;
+  case 'setpri':{stop();const [id,k]=p.split('|');task(id).pri=k;S.menu=null;render();
+    toast('Priority updated.');return;}
+  case 'cyclepri':{stop();const t=task(p);const o=['','md','hi'];
+    t.pri=o[(o.indexOf(t.pri)+1)%3];render();return;}
+  case 'deltask':stop();db.tasks=db.tasks.filter(t=>t.id!==p);S.menu=null;S.panel=false;render();
+    toast('Follow-up deleted.');return;
+  case 'holdstart':stop();holdStart();return;
+  case 'copytx':stop();toast('Transcript copied to your clipboard.');return;
+  case 'deltx':stop();db.transcripts=db.transcripts.filter(t=>t.id!==p);render();toast('Transcript deleted.');return;
+  case 'delterm':stop();db.vocab=db.vocab.filter(v=>v.t!==p);render();toast(`“${esc(p)}” removed from your vocabulary.`);return;
+  case 'focusterm':stop();{const i=document.querySelector('[data-a="addterm"]');if(i)i.focus();}return;
+  case 'convo':stop();S.cid=p;render();return;
+  case 'newchat':stop();S.cid='new';render();return;
+  case 'ask':{stop();if(el.classList.contains('chip')){askAssistant(p);return}
+    const i=document.querySelector('#askbox');if(i)i.focus();return;}
+  case 'asksend':{stop();const i=document.querySelector('#askbox');
+    if(i&&i.value.trim()){const q=i.value;i.value='';askAssistant(q)}return;}
+  case 'askSend':stop();toast('The assistant answers from this meeting once you send.');return;
+  case 'clearq':stop();S.q='';render();return;
+  case 'win':{stop();
+    if(p==='close')demo('close the window');
+    else if(p==='min')demo('minimize AIT-Scribe to the Dock');
+    else{S.zoom=!S.zoom;const f=$('#frame');
+      f.style.borderRadius=S.zoom?'0':'14px';
+      f.classList.toggle('zoom',S.zoom);fit();
+      toast(S.zoom?'Zoomed to fill the screen.':'Restored.');}
+    return;}
+  case 'addperson':stop();S.addPerson=p;render();
+    setTimeout(()=>{const i=document.querySelector('#pname');if(i)i.focus()},60);return;
+  case 'closeperson':stop();S.addPerson=false;render();return;
+  case 'saveperson':{stop();const n=(document.querySelector('#pname')||{}).value||'';
+    const em=(document.querySelector('#pmail')||{}).value||'';
+    if(!n.trim()){toast('A name is needed — the email is optional.');return}
+    const m=meeting(p);const init=n.trim()[0].toUpperCase();
+    const pal=['#B34C2D','#175CD3','#0A7548','#7C3AED','#B54708','#0E7490','#BE185D','#4D7C0F'];
+    m.people.push({n:n.trim(),i:init,c:pal[m.people.length%pal.length],e:em.trim()});
+    S.addPerson=false;render();
+    toast(`<b>${esc(n.trim())} added.</b> ${em.trim()?'They can be sent the notes.':'No email — they will not receive the notes.'}`);
+    return;}
+  case 'copymd':{stop();S.menu=null;const m=meeting(p);
+    copyText(notesMd(m),'Markdown notes are on your clipboard.');render();return;}
+  case 'dlmd':{stop();S.menu=null;const m=meeting(p);
+    download(slug(m.title)+'.md',notesMd(m));render();return;}
+  case 'spk':stop();S.speakers=p;render();return;
+  }
+});
+document.addEventListener('input',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
+  if(a==='q'){S.q=el.value;const pos=el.selectionStart;render();
+    const n=document.querySelector('[data-a="q"]');if(n){n.focus();n.setSelectionRange(pos,pos)}}
+  if(a==='tq'){S.tq=el.value;const pos=el.selectionStart;render();
+    const n=document.querySelector('[data-a="tq"]');if(n){n.focus();n.setSelectionRange(pos,pos)}}
+  if(a==='vq'){S.vq=el.value;const pos=el.selectionStart;render();
+    const n=document.querySelector('[data-a="vq"]');if(n){n.focus();n.setSelectionRange(pos,pos)}}
+  if(a==='key'){db.settings.anthropicKey=el.value;}
+});
+document.addEventListener('keydown',e=>{
+  const el=e.target.closest('[data-a]');
+  if(e.key==='Enter'&&el){
+    const a=el.dataset.a;
+    if(a==='addtask'&&el.value.trim()){
+      db.tasks.unshift({id:'u'+Date.now(),title:el.value.trim(),mid:null,due:'No date',late:false,
+        pri:'',done:false,grp:'Today',quote:'',who:'',at:''});
+      el.value='';render();toast('Follow-up added.');return;}
+    if(a==='addterm'&&el.value.trim()){
+      db.vocab.unshift({t:el.value.trim(),h:'—',n:0,s:'you'});el.value='';render();
+      toast('Term added. It applies to dictation and meetings.');return;}
+    if(a==='ask'&&el.value.trim()){const q=el.value;el.value='';askAssistant(q);return;}
+    if(a==='key'){db.settings.anthropicKey=el.value;render();return;}
+  }
+  if(e.key==='Enter'&&S.addPerson&&(e.target.id==='pname'||e.target.id==='pmail')){
+    const b=document.querySelector('[data-a="saveperson"]');if(b)b.click();}
+  if(e.key==='Escape'){
+    if(S.addPerson){S.addPerson=false;render();return}
+    if(S.menu){S.menu=null;render();return}
+    if(S.share){S.share=false;render();return}
+    if(S.settings){S.settings=false;render();return}
+    if(S.panel){S.panel=false;render();return}
+  }
+  if(e.key===','&&(e.metaKey||e.ctrlKey)){e.preventDefault();S.settings=true;S.spane='appearance';render()}
+});
+
+/* ══════════════════════════════════ boot ══════════════════════════════════ */
+let SCALE=1;
+function fit(){
+  const f=$('#frame');const pad=S.zoom?0:40;
+  SCALE=Math.min(1,(window.innerWidth-pad)/1440,(window.innerHeight-pad)/900);
+  f.style.transform=`scale(${SCALE})`;
+}
+window.addEventListener('resize',fit);
+fit();render();
+setTimeout(()=>toast('<b>AIT-Scribe prototype.</b> Everything is clickable — try <b>Record meeting</b>, or switch to dark mode in Settings.',5200),700);
+</script>
+</body>
+</html>
