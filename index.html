@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-th="ocean" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,55 +9,162 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════ tokens ══════════════════════════════ */
-/* Brand ramp — one hue (≈22°), nine steps. Semantic tokens below map onto it so
-   every orange in the app comes from the same ladder.
-     o500 #FF5D00  the brand. Fills only (buttons, toggles, meters, bars).
-     o700 #C24600  brand text/icons on light surfaces — 5.0:1 on white (AA).
-     o100/o50      tinted surfaces for active rows, badges, icon wells.
-   Rule of thumb: orange as a FILL uses o500, orange as INK uses o700.
-   Danger sits on a cooler red and warn on a yellower amber so neither is
-   mistaken for the brand now that the brand itself is orange. */
+/* Two axes. `data-th` on <html> picks the THEME (its own nine-step brand ramp and
+   its own neutrals); `data-theme` picks LIGHT or DARK within that theme. So each
+   theme ships a hand-tuned dark set rather than an inversion of its light one.
+
+   Every theme block defines the same list:
+     o50…o800   the brand ramp, light→dark in light mode, dark→light in dark mode
+     rail/surf/sunk/backdrop   surfaces, lightest content surface is `surf`
+     line/line2 ink/ink2/sec/ter
+     brand*     brand as FILL (brandFill + brandOn) vs brand as INK (brandInk)
+     tint/tint2 tinted surfaces for active rows and icon wells
+     onChip     chip background sitting on top of a brand fill
+     meterOff/ring/scrim
+
+   Rule of thumb: orange-as-fill uses o500-ish, orange-as-ink uses o700-ish.
+   Citrus breaks that on purpose — its brand IS a pale lime, so the fill is light
+   and `brandOn` is dark ink in both modes.
+
+   Status colours (danger / warn / ok / info) and the shadows are shared across
+   themes so a red always reads as a red, and live in the two blocks below. */
 :root{
+  --danger:#D92D20; --dangerOn:#FFFFFF; --dangerInk:#B42318; --dangerTint:#FEF3F1; --dangerLine:#FADBD5;
+  --warn:#DD9000; --warnInk:#8A5300; --warnTint:#FFF8E8; --warnLine:#F6E2BC;
+  --ok:#0A7548; --okInk:#07603B; --okTint:#ECFAF3; --okLine:#C8E9D7;
+  --info:#1570EF; --infoTint:#EFF5FF; --infoInk:#0B4FB0; --infoLine:#CFE0FB;
+  --shadow:0 24px 70px rgba(26,24,32,.20),0 2px 8px rgba(26,24,32,.09);
+  --shadow2:0 16px 40px rgba(26,24,32,.15);
+}
+[data-theme="dark"]{
+  --danger:#F0483A; --dangerOn:#26100C; --dangerInk:#FFA79B; --dangerTint:#3A1713; --dangerLine:#55231C;
+  --warn:#E9A23B; --warnInk:#F7CD82; --warnTint:#33240D; --warnLine:#4B3616;
+  --ok:#17A46A; --okInk:#6FDCA6; --okTint:#0F2A1D; --okLine:#1F4632;
+  --info:#5B95F0; --infoTint:#15233A; --infoInk:#A8C8F8; --infoLine:#274068;
+  --shadow:0 24px 70px rgba(0,0,0,.58),0 2px 8px rgba(0,0,0,.42);
+  --shadow2:0 16px 40px rgba(0,0,0,.46);
+}
+
+/* ─────────── Ocean — cool blue, the default ─────────── */
+:root,[data-th="ocean"]{
+  --o50:#F3F8FF; --o100:#E4EFFE; --o200:#C7DDFC; --o300:#8FB8F8;
+  --o400:#4B8BF0; --o500:#1A5FE0; --o600:#0548CF; --o700:#0A3AA0; --o800:#0A2C74;
+  --rail:#F9FBFE; --surf:#FFFFFF; --sunk:#F4F8FE; --scrim:rgba(12,25,43,.42);
+  --line:#E5EDF8; --line2:#D3E0F1;
+  --ink:#0F1B2C; --ink2:#2C3D53; --sec:#5D7189; --ter:#8497AC;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o700); --brandInk:var(--o700);
+  --brandFill:var(--o600); --brandFillHov:var(--o700);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.24);
+  --backdrop:#E3EAF3; --meterOff:#CFDDEF; --ring:rgba(26,95,224,.22);
+}
+[data-th="ocean"][data-theme="dark"]{
+  --o50:#0F1E33; --o100:#132842; --o200:#1C3A5E; --o300:#27528A;
+  --o400:#215EE0; --o500:#4C8DF5; --o600:#71A6F8; --o700:#9BC1FB; --o800:#C4DBFD;
+  --rail:#101C2E; --surf:#0D192B; --sunk:#152438; --scrim:rgba(0,0,0,.62);
+  --line:#1D2E46; --line2:#2A3E59;
+  --ink:#EFF5FD; --ink2:#D3E0EE; --sec:#94A9C0; --ter:#7488A0;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o600);
+  --brandFill:var(--o400); --brandFillHov:var(--o500);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.28);
+  --backdrop:#060C16; --meterOff:#2C4260; --ring:rgba(76,141,245,.30);
+}
+
+/* ─────────── Citrus — warm neutrals, pale lime brand ───────────
+   The only theme whose brand fill is lighter than its text, so brandOn is dark
+   ink in both modes and onChip goes white rather than black. */
+[data-th="citrus"]{
+  --o50:#FAFDEC; --o100:#F0F8C2; --o200:#E1FA79; --o300:#C8E552;
+  --o400:#A6C531; --o500:#86A31C; --o600:#6B8415; --o700:#4F6310; --o800:#38470B;
+  --rail:#F9F9F4; --surf:#FFFFFF; --sunk:#F6F7EE; --scrim:rgba(28,32,18,.42);
+  --line:#EBEDDF; --line2:#DCDFCB;
+  --ink:#191C10; --ink2:#353A26; --sec:#6B7059; --ter:#8F9478;
+  --brand:var(--o400); --brandOn:#243005; --brandHov:var(--o300); --brandInk:var(--o700);
+  --brandFill:var(--o200); --brandFillHov:var(--o300);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(255,255,255,.62);
+  --backdrop:#E8E9DC; --meterOff:#D7DBC3; --ring:rgba(166,197,49,.32);
+}
+[data-th="citrus"][data-theme="dark"]{
+  --o50:#1A2413; --o100:#26331A; --o200:#3E4D2A; --o300:#5C7238;
+  --o400:#8CB03F; --o500:#BDE55E; --o600:#E1FA79; --o700:#EBFCA3; --o800:#F4FDC9;
+  --rail:#141C11; --surf:#18261D; --sunk:#1F2E22; --scrim:rgba(0,0,0,.64);
+  --line:#26362A; --line2:#35483A;
+  --ink:#F1F7E9; --ink2:#DCE6D2; --sec:#9CAC91; --ter:#7E8E74;
+  --brand:var(--o500); --brandOn:#1B2607; --brandHov:var(--o700); --brandInk:var(--o600);
+  --brandFill:var(--o600); --brandFillHov:var(--o700);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(255,255,255,.42);
+  --backdrop:#0B1109; --meterOff:#33452F; --ring:rgba(225,250,121,.28);
+}
+
+/* ─────────── Harbor — muted steel blue, low glare ─────────── */
+[data-th="harbor"]{
+  --o50:#F4F7FB; --o100:#E3EAF3; --o200:#CFD9E9; --o300:#A3B6D0;
+  --o400:#6E8CB4; --o500:#4A6E9C; --o600:#365B90; --o700:#2A4772; --o800:#1E3455;
+  --rail:#F2F3F6; --surf:#FFFFFF; --sunk:#F5F7FA; --scrim:rgba(20,30,42,.44);
+  --line:#E6E9EF; --line2:#D5DAE3;
+  --ink:#141C26; --ink2:#333E4C; --sec:#606C7C; --ter:#8792A1;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o700); --brandInk:var(--o700);
+  --brandFill:var(--o600); --brandFillHov:var(--o700);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.24);
+  --backdrop:#E4E7ED; --meterOff:#CBD3DF; --ring:rgba(54,91,144,.26);
+}
+[data-th="harbor"][data-theme="dark"]{
+  --o50:#141E2B; --o100:#1B2938; --o200:#26384C; --o300:#345078;
+  --o400:#3F6394; --o500:#5A85BE; --o600:#83A8D6; --o700:#A9C4E5; --o800:#CBDCF0;
+  --rail:#182332; --surf:#141E2A; --sunk:#1B2836; --scrim:rgba(0,0,0,.64);
+  --line:#23303F; --line2:#324152;
+  --ink:#EAEFF5; --ink2:#CFD9E4; --sec:#8E9DAF; --ter:#75849A;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o600);
+  --brandFill:#32558A; --brandFillHov:var(--o400);
+  --tint:var(--o300); --tint2:var(--o200); --onChip:rgba(0,0,0,.30);
+  --backdrop:#0A1017; --meterOff:#2E3E52; --ring:rgba(90,133,190,.30);
+}
+
+/* ─────────── Violet — deep indigo, violet accent ─────────── */
+[data-th="violet"]{
+  --o50:#F6F4FE; --o100:#EAE6FD; --o200:#DCD7FD; --o300:#B7A8FA;
+  --o400:#8B72F2; --o500:#6B45EC; --o600:#5323E3; --o700:#4318BE; --o800:#331293;
+  --rail:#F2EFFE; --surf:#FFFFFF; --sunk:#F7F5FE; --scrim:rgba(22,16,48,.44);
+  --line:#EAE7F7; --line2:#DAD5EE;
+  --ink:#16112B; --ink2:#332C4E; --sec:#6A6386; --ter:#8D86A6;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o700); --brandInk:var(--o700);
+  --brandFill:var(--o600); --brandFillHov:var(--o700);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.26);
+  --backdrop:#E6E2F3; --meterOff:#D6CFF0; --ring:rgba(107,69,236,.26);
+}
+[data-th="violet"][data-theme="dark"]{
+  --o50:#161A38; --o100:#1E2148; --o200:#282A5E; --o300:#32217D;
+  --o400:#5A2AEB; --o500:#7C5CF5; --o600:#9C84F9; --o700:#BCACFC; --o800:#DAD0FE;
+  --rail:#191A3F; --surf:#10142E; --sunk:#181B3B; --scrim:rgba(0,0,0,.66);
+  --line:#232748; --line2:#32365C;
+  --ink:#F2EFFE; --ink2:#DAD4EE; --sec:#9B95BC; --ter:#7F79A0;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o600);
+  --brandFill:var(--o400); --brandFillHov:var(--o500);
+  --tint:var(--o300); --tint2:var(--o200); --onChip:rgba(0,0,0,.30);
+  --backdrop:#080A1C; --meterOff:#2F3160; --ring:rgba(124,92,245,.32);
+}
+
+/* ─────────── Ember — the original orange ─────────── */
+[data-th="ember"]{
   --o50:#FFF6F1; --o100:#FFEADF; --o200:#FFD2BC; --o300:#FF9F6D;
   --o400:#FF7A33; --o500:#FF5D00; --o600:#E85200; --o700:#B84300; --o800:#8E3300;
-
   --rail:#FFF7F2; --surf:#FFFFFF; --sunk:#FDF4EE; --scrim:rgba(36,22,14,.38);
   --line:#F3E4DA; --line2:#E7D4C7;
   --ink:#231710; --ink2:#463730; --sec:#77645A; --ter:#9A8477;
   --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o700);
-  /* text-bearing fills sit one step darker than the accent so white labels stay legible */
   --brandFill:var(--o600); --brandFillHov:var(--o700);
-  --tint:var(--o100); --tint2:var(--o50);
-  --danger:#D92D20; --dangerOn:#FFFFFF; --dangerInk:#B42318; --dangerTint:#FEF3F1; --dangerLine:#FADBD5;
-  --warn:#DD9000; --warnInk:#8A5300; --warnTint:#FFF8E8; --warnLine:#F6E2BC;
-  --ok:#0A7548; --okInk:#07603B; --okTint:#ECFAF3; --okLine:#C8E9D7;
-  --info:#1570EF; --infoTint:#EFF5FF;
-  --shadow:0 24px 70px rgba(48,24,10,.20),0 2px 8px rgba(48,24,10,.09);
-  --shadow2:0 16px 40px rgba(48,24,10,.15);
-  --backdrop:#EBE2DA;
-  --meterOff:#EBD8CB;
-  --ring:rgba(255,93,0,.22);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.24);
+  --backdrop:#EBE2DA; --meterOff:#EBD8CB; --ring:rgba(255,93,0,.22);
 }
-[data-theme="dark"]{
+[data-th="ember"][data-theme="dark"]{
   --o50:#2A1408; --o100:#3B1C0B; --o200:#59290F; --o300:#8C3D12;
   --o400:#D14E00; --o500:#FF6A1A; --o600:#FF8340; --o700:#FF9E6B; --o800:#FFC2A1;
-
   --rail:#17110C; --surf:#1E1712; --sunk:#292018; --scrim:rgba(0,0,0,.62);
   --line:#33271F; --line2:#443429;
   --ink:#FAF3ED; --ink2:#E7DAD1; --sec:#B8A497; --ter:#9C8778;
   --brand:var(--o500); --brandOn:#1A1005; --brandHov:var(--o600); --brandInk:var(--o700);
-  /* dark mode pairs the accent with dark ink, so the accent itself can carry text */
   --brandFill:var(--o500); --brandFillHov:var(--o600);
-  --tint:var(--o100); --tint2:var(--o50);
-  --danger:#F0483A; --dangerOn:#26100C; --dangerInk:#FFA79B; --dangerTint:#3A1713; --dangerLine:#55231C;
-  --warn:#E9A23B; --warnInk:#F7CD82; --warnTint:#33240D; --warnLine:#4B3616;
-  --ok:#17A46A; --okInk:#6FDCA6; --okTint:#0F2A1D; --okLine:#1F4632;
-  --info:#5B95F0; --infoTint:#15233A;
-  --shadow:0 24px 70px rgba(0,0,0,.58),0 2px 8px rgba(0,0,0,.42);
-  --shadow2:0 16px 40px rgba(0,0,0,.46);
-  --backdrop:#0A0705;
-  --meterOff:#4A382B;
-  --ring:rgba(255,106,26,.30);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.24);
+  --backdrop:#0A0705; --meterOff:#4A382B; --ring:rgba(255,106,26,.30);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -73,7 +180,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 ::-webkit-scrollbar-track{background:transparent}
 
 /* ══════════════════════════════ window frame ══════════════════════════════ */
-#frame{width:1440px;height:900px;background:var(--surf);border-radius:14px;overflow:hidden;
+#frame{position:relative;width:1440px;height:900px;background:var(--surf);border-radius:14px;overflow:hidden;
   box-shadow:0 40px 100px rgba(40,20,8,.26),0 0 0 1px rgba(40,20,8,.07);
   transform-origin:center center;transition:background .25s}
 /* the mock window gives up its frame and fills the viewport once the browser
@@ -312,7 +419,9 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   justify-content:center;color:var(--sec);background:var(--surf);border:1px solid var(--line2)}
 .mrow .macts span:hover{border-color:var(--brand);color:var(--brandInk)}
 .mrow .macts span.dg:hover{border-color:var(--danger);color:var(--dangerInk)}
-.mrow .live{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+/* `live` doubles as a modifier on .meter and .holdbtn, so this stays scoped to
+   the hosts that use it as a pill rather than becoming a bare .live rule */
+.mrow .live,.dchips .live{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
   color:var(--dangerOn);background:var(--danger);border-radius:20px;padding:2px 9px;font-family:Poppins,sans-serif}
 .setuphd{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
 .setuphd b{font-family:Poppins,sans-serif;font-size:14px}
@@ -395,7 +504,8 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .trs .spk{font-family:Poppins,sans-serif;font-size:13px;font-weight:600;display:block;margin-bottom:3px}
 .trs .tx{font-size:13.5px;line-height:1.6;color:var(--ink2)}
 .trs .tx mark{background:var(--tint);color:var(--brandInk);border-radius:3px}
-.trs .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+/* self-contained, but listed per host to match how .live is handled above */
+.trs .badge,.dchips .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
   color:var(--brandInk);background:var(--tint);border-radius:14px;padding:2px 9px;margin-top:7px;
   font-family:Poppins,sans-serif}
 .player{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;
@@ -413,7 +523,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   font-weight:600;flex:0 0 auto;cursor:pointer;user-select:none}
 .holdbtn:hover{filter:brightness(1.08)}
 .holdbtn.live{background:var(--danger);color:var(--dangerOn);filter:none}
-.holdbtn .kb{font-size:12px;font-weight:700;background:rgba(0,0,0,.24);border-radius:6px;
+.holdbtn .kb{font-size:12px;font-weight:700;background:var(--onChip);border-radius:6px;
   padding:2px 7px;color:var(--brandOn)}
 .statusline{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink2);flex-wrap:wrap}
 .statusline .d{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
@@ -659,11 +769,152 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 #frame.w1 .recbar{flex-wrap:wrap}
 #frame.w1 .recbar .a{margin-left:0;width:100%}
 #frame.w1 .modal{border-radius:14px}
+
+/* ══════════════════════════════ folder tree ══════════════════════════════ */
+/* One level of nesting only: a top folder may hold sub-folders, a sub-folder
+   may not. The twisty is its own hit target inside the row so clicking it
+   expands without also navigating. */
+.views a .tw{width:16px;height:16px;margin-right:-4px;display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;border-radius:4px;cursor:pointer}
+.views a .tw svg{transition:transform .14s}
+.views a .tw.o svg{transform:rotate(90deg)}
+.views a .tw:hover{background:var(--line);color:var(--ink2)}
+.views a .tw.sp{pointer-events:none}
+.views a.sub{padding-left:32px;font-size:13px}
+.views a.sub:before{content:'';position:absolute;left:19px;top:0;bottom:0;width:1px;background:var(--line2)}
+.views a.sub{position:relative}
+.views a .fm{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;opacity:0;pointer-events:none;margin-left:auto}
+.views a:hover .fm{opacity:1;pointer-events:auto}
+.views a .fm:hover{background:var(--line);color:var(--ink2)}
+.views a .fm+.n{margin-left:6px}
+.app.listmin .views a .tw,.app.listmin .views a .fm{display:none}
+.app.listmin .views a.sub{padding-left:0}
+.app.listmin .views a.sub:before{display:none}
+
+/* ══════════════════════════════ theme picker ══════════════════════════════ */
+/* Swatches are literal hex, not tokens — each card has to show its own palette
+   while a different theme is the one actually applied. */
+.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(214px,1fr));gap:12px;padding:16px}
+.thcard{border:1.5px solid var(--line2);border-radius:13px;padding:12px;cursor:pointer;
+  background:var(--surf);display:flex;flex-direction:column;gap:10px;position:relative;
+  transition:border-color .14s,box-shadow .14s}
+.thcard:hover{border-color:var(--o300)}
+.thcard.on{border-color:var(--brand);box-shadow:0 0 0 3px var(--ring)}
+.thcard .prev{height:52px;border-radius:9px;overflow:hidden;display:flex;flex:0 0 auto;
+  box-shadow:inset 0 0 0 1px rgba(128,128,128,.22)}
+.thcard .prev i{flex:1}
+.thcard .prev i.a{flex:0 0 22%}
+.thcard .prev i.b{flex:0 0 14%}
+.thcard .nm{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;display:flex;
+  align-items:center;gap:7px}
+.thcard .nm .tick{margin-left:auto;width:18px;height:18px;border-radius:50%;background:var(--brand);
+  color:var(--brandOn);display:none;align-items:center;justify-content:center;flex:0 0 auto}
+.thcard.on .nm .tick{display:flex}
+.thcard .ds{font-size:11.5px;color:var(--sec);line-height:1.4}
+.thcard .dots{display:flex;gap:5px}
+.thcard .dots i{width:15px;height:15px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(128,128,128,.38)}
+.thcard .modes{display:flex;gap:5px;margin-left:auto;font-size:10.5px;color:var(--ter);
+  font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.04em}
+
+/* ══════════════════════════════ toast variants ══════════════════════════════ */
+.toast{display:flex;align-items:center;justify-content:center;gap:9px}
+.toast.ok,.toast.warn,.toast.dg,.toast.info{text-align:left;justify-content:flex-start}
+.toast .ic{flex:0 0 auto}
+.toast.ok{background:var(--okInk);color:#FFF}
+.toast.warn{background:var(--warnInk);color:#FFF}
+.toast.dg{background:var(--dangerInk);color:#FFF}
+.toast.info{background:var(--info);color:#FFF}
+[data-theme="dark"] .toast.ok,[data-theme="dark"] .toast.warn,
+[data-theme="dark"] .toast.dg,[data-theme="dark"] .toast.info{color:#0B0B0B}
+.notice.info{background:var(--infoTint);border:1px solid var(--infoLine);color:var(--ink2)}
+.notice.info .ic{color:var(--info)}
+
+/* ══════════════════════════════ system notifications ══════════════════════════════ */
+/* The macOS-style banner AIT-Scribe posts outside the app window. Stacked top
+   right of the frame so the demo page can show them without leaving Settings. */
+#osnotifs{position:absolute;right:18px;top:78px;z-index:41;display:flex;flex-direction:column;
+  gap:10px;align-items:flex-end;width:344px}
+.osn{width:100%;background:var(--surf);border:1px solid var(--line2);border-radius:15px;
+  box-shadow:var(--shadow);padding:13px 14px;display:flex;gap:11px;animation:osin .26s cubic-bezier(.2,.9,.3,1)}
+.osn .ai{width:34px;height:34px;border-radius:9px;background:var(--brandFill);color:var(--brandOn);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.osn.dg .ai{background:var(--danger);color:var(--dangerOn)}
+.osn.ok .ai{background:var(--ok);color:#FFF}
+.osn .bd{flex:1;min-width:0}
+.osn .ap{font-size:10.5px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter);display:flex;align-items:center;gap:6px}
+.osn .ap .w{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;font-size:11px}
+.osn .ti{display:block;font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;margin-top:4px;line-height:1.35}
+.osn .bo{display:block;font-size:12.5px;color:var(--sec);line-height:1.45;margin-top:3px}
+.osn .ac{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.osn .x{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+  color:var(--ter);flex:0 0 auto;cursor:pointer}
+.osn .x:hover{background:var(--sunk);color:var(--ink2)}
+@keyframes osin{from{opacity:0;transform:translateX(22px)}}
+
+/* ══════════════════════════════ floating bubble ══════════════════════════════ */
+/* Lives in the frame, not in #app, so a re-render never interrupts a drag or a
+   hover. z-index sits below .scrim (20) on purpose: an open modal covers it.
+
+   #bubble is exactly the size of its core. The hover tray and the label are
+   absolutely positioned off it so they cost no layout — otherwise the hidden
+   tray would push the core out through the bottom of the window. The tray's
+   10px offset is its own padding rather than a gap, so travelling from the core
+   to a tray button never leaves #bubble and never drops the :hover. */
+#bubble{position:absolute;z-index:18;width:60px;height:60px;user-select:none}
+#bubble.off{display:none}
+#bubble.drag .bcore{cursor:grabbing;transform:scale(1.05)}
+.btray{position:absolute;left:0;bottom:100%;width:60px;padding-bottom:10px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;transform:translateY(10px) scale(.9);transform-origin:50% 100%;pointer-events:none;
+  transition:opacity .16s,transform .18s cubic-bezier(.2,.9,.3,1)}
+/* near the top of the window the tray drops below the core instead */
+#bubble.flip .btray{bottom:auto;top:100%;padding-bottom:0;padding-top:10px;
+  flex-direction:column-reverse;transform-origin:50% 0;transform:translateY(-10px) scale(.9)}
+#bubble:hover .btray,#bubble.open .btray{opacity:1;transform:none;pointer-events:auto}
+.btray span{width:40px;height:40px;border-radius:50%;background:var(--surf);
+  border:1px solid var(--line2);box-shadow:var(--shadow2);display:flex;align-items:center;
+  justify-content:center;color:var(--ink2);cursor:pointer;position:relative;flex:0 0 auto;
+  transition:transform .12s,border-color .12s,color .12s}
+.btray span:hover{border-color:var(--brand);color:var(--brandInk);transform:translateY(-1px)}
+.btray span .tip{position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);
+  background:var(--ink);color:var(--surf);font-size:11.5px;padding:4px 9px;border-radius:7px;
+  white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .13s;
+  font-family:Poppins,sans-serif;font-weight:500}
+.btray span:hover .tip{opacity:1}
+.bcore{width:60px;height:60px;border-radius:50%;background:var(--brandFill);color:var(--brandOn);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  box-shadow:0 10px 26px rgba(0,0,0,.26),0 0 0 1px rgba(0,0,0,.06);cursor:grab;
+  transition:background .16s,transform .12s}
+.bcore:hover{background:var(--brandFillHov)}
+#bubble.rec .bcore{background:var(--danger);color:var(--dangerOn);
+  animation:bpulse 1.6s ease-in-out infinite}
+#bubble.rec .bcore:hover{background:var(--danger)}
+.bcore .tm{font-size:10px;font-weight:700;font-family:Poppins,sans-serif;letter-spacing:.02em}
+.bmeter{display:flex;align-items:flex-end;justify-content:center;gap:2px;height:9px;margin-top:1px}
+.bmeter i{width:2px;border-radius:1px;background:currentColor;opacity:.8}
+.blabel{position:absolute;left:50%;top:calc(100% + 7px);transform:translateX(-50%);
+  font-size:11px;font-family:Poppins,sans-serif;font-weight:600;color:var(--surf);
+  background:var(--ink);padding:3px 9px;border-radius:7px;white-space:nowrap;
+  opacity:0;transition:opacity .15s;pointer-events:none}
+#bubble.flip .blabel{top:auto;bottom:calc(100% + 7px)}
+#bubble:hover .blabel,#bubble.rec .blabel{opacity:1}
+@keyframes bpulse{0%,100%{box-shadow:0 10px 26px rgba(0,0,0,.26),0 0 0 0 var(--ring)}
+  50%{box-shadow:0 10px 26px rgba(0,0,0,.26),0 0 0 9px var(--ring)}}
+
+/* ══════════════════════════════ demo page ══════════════════════════════ */
+.dwrap{padding:14px 16px;display:flex;flex-direction:column;gap:11px}
+.dbtns{display:flex;gap:8px;flex-wrap:wrap}
+.dnote{font-size:11.5px;color:var(--ter);line-height:1.45}
+.dgrid{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* rows of sample chips; opts the row into the host-scoped .live / .badge rules */
+.dchips{}
 .hidden{display:none!important}
 </style>
 </head>
 <body>
-<div id="frame"><div id="app"></div><div id="toasts"></div></div>
+<div id="frame"><div id="app"></div><div id="osnotifs"></div><div id="bubble" class="off"></div><div id="toasts"></div></div>
 <script>
 /* ══════════════════════════════════ icons ══════════════════════════════════ */
 const P={
@@ -732,17 +983,48 @@ userplus:'<circle cx="6.4" cy="5.6" r="2.7"/><path d="M1.9 13.6a4.5 4.5 0 0 1 9 
 const ic=(n,s=16,w=1.7)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${P[n]||''}</svg>`;
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+/* ══════════════════════════════════ themes ══════════════════════════════════ */
+/* Each entry mirrors one [data-th=…] pair in the stylesheet. `sw` is the palette
+   shown on the card: [brand fill, accent, tinted surface, dark surface]. `pv`
+   is the four-band strip above it: [rail, surface, brand, tint] for light and
+   for dark, so a card previews both modes at a glance. */
+const THEMES=[
+ {id:'ocean',name:'Ocean',ds:'Cool blue on white. High contrast, the default.',
+  sw:['#0548CF','#4B8BF0','#E4EFFE','#0D192B'],
+  pv:{light:['#F9FBFE','#FFFFFF','#0548CF','#E4EFFE'],dark:['#101C2E','#0D192B','#4C8DF5','#1C3A5E']}},
+ {id:'citrus',name:'Citrus',ds:'Warm neutrals with a pale lime accent.',
+  sw:['#E1FA79','#86A31C','#F0F8C2','#18261D'],
+  pv:{light:['#F9F9F4','#FFFFFF','#E1FA79','#F0F8C2'],dark:['#141C11','#18261D','#E1FA79','#3E4D2A']}},
+ {id:'harbor',name:'Harbor',ds:'Muted steel blue. The lowest glare of the five.',
+  sw:['#365B90','#6E8CB4','#CFD9E9','#141E2A'],
+  pv:{light:['#F2F3F6','#FFFFFF','#365B90','#CFD9E9'],dark:['#182332','#141E2A','#5A85BE','#345078']}},
+ {id:'violet',name:'Violet',ds:'Deep indigo with a vivid violet accent.',
+  sw:['#5323E3','#8B72F2','#DCD7FD','#10142E'],
+  pv:{light:['#F2EFFE','#FFFFFF','#5323E3','#DCD7FD'],dark:['#191A3F','#10142E','#7C5CF5','#32217D']}},
+ {id:'ember',name:'Ember',ds:'The original orange. Warm greys throughout.',
+  sw:['#FF5D00','#FF7A33','#FFEADF','#1E1712'],
+  pv:{light:['#FFF7F2','#FFFFFF','#FF5D00','#FFEADF'],dark:['#17110C','#1E1712','#FF6A1A','#3B1C0B']}},
+];
+const theme=id=>THEMES.find(t=>t.id===id)||THEMES[0];
+
 /* ══════════════════════════════════ data ══════════════════════════════════ */
 const AV={J:'#C24600',T:'#1570EF',M:'#0A7548',E:'#7C3AED',D:'#8A5300',R:'#0E7490',A:'#BE185D',K:'#4D7C0F'};
 const F=(n,i)=>({n,i,c:AV[i]||'#C24600'});
 
 function seed(){return{
 user:{name:'Michael Carter',initial:'M',plan:'Free'},
-folders:[{id:'client',name:'Client Calls'},{id:'interviews',name:'Interviews'},
-         {id:'projects',name:'Projects'},{id:'internal',name:'Internal'}],
+folders:[{id:'client',name:'Client Calls'},
+           {id:'f-acme',name:'Acme',parent:'client'},
+           {id:'f-northwind',name:'Northwind',parent:'client'},
+         {id:'interviews',name:'Interviews'},
+           {id:'f-backend',name:'Backend',parent:'interviews'},
+           {id:'f-frontend',name:'Frontend',parent:'interviews'},
+         {id:'projects',name:'Projects'},
+           {id:'f-q3',name:'Q3 planning',parent:'projects'},
+         {id:'internal',name:'Internal'}],
 meetings:[
  {id:'m1',title:'Acme kickoff',people:[F('Jennifer Walsh','J'),F('Tom Ellis','T'),F('you','M')],
-  group:'Today',day:'11 Aug 2026',time:'2:14 pm',dur:'34:02',folder:'client',fups:3,
+  group:'Today',day:'11 Aug 2026',time:'2:14 pm',dur:'34:02',folder:'f-acme',fups:3,
   notes:{summary:'Kickoff for the Acme rollout. Jennifer confirmed a 400-seat starting licence with a March go-live, contingent on revised pricing landing before her internal review on Friday. Tom raised the data-processing addendum as a blocker for signature, and both sides agreed a technical deep-dive is needed before scoping the migration.',
    decisions:[['400 seats at the starting tier, revisited at 90 days.','12:04'],
               ['Go-live targeted for the first week of March.','18:40'],
@@ -750,14 +1032,14 @@ meetings:[
    questions:[["Who owns SSO configuration on Acme's side? Not answered on the call.",'21:55']]},
   mynotes:'Jennifer wants the revised pricing before Friday — she is presenting internally.\nLegal need to see the DPA; Tom will not sign without it.\nTechnical deep-dive: week of the 25th, 90 minutes, with their platform team.',
   transcript:[
-   ['11:48','Jennifer Walsh','Before anything else — I need the revised pricing in front of me before Friday. I am presenting it internally and I cannot go in with the old numbers.','Source of follow-up 1'],
+   ['11:48','Jennifer Walsh','Before anything else — I need the revised pricing in front of me before Friday. I am presenting it internally and I cannot go in with the old numbers.','Source of task 1'],
    ['12:04','You','Understood. I will send the revised sheet through by Thursday so you have a day to look at it.',''],
-   ['12:19','Tom Ellis','And on our side the data-processing addendum has to be reviewed before I can sign anything. That is the blocker, not the commercials.','Source of follow-up 2'],
+   ['12:19','Tom Ellis','And on our side the data-processing addendum has to be reviewed before I can sign anything. That is the blocker, not the commercials.','Source of task 2'],
    ['12:41','You','I will get Legal on the DPA this week.',''],
    ['18:40','Jennifer Walsh','On timing — we are aiming for the first week of March. That is firm on our side; the training window sits behind it.',''],
    ['21:55','You','And who owns SSO configuration on your side?',''],
    ['22:03','Tom Ellis','Good question. I will have to come back to you on that one.',''],
-   ['27:12','Jennifer Walsh','For the deep-dive, I want our platform team in the room, not just procurement.','Source of follow-up 3']]},
+   ['27:12','Jennifer Walsh','For the deep-dive, I want our platform team in the room, not just procurement.','Source of task 3']]},
  {id:'m2',title:'Design review — onboarding',people:[F('Emily Foster','E'),F('you','M')],
   group:'Today',day:'11 Aug 2026',time:'11:00 am',dur:'22:41',folder:'internal',fups:1,
   notes:{summary:'Walkthrough of the reworked onboarding flow. Emily approved the three-step setup but pushed back on the empty-state copy, which she felt over-explains the mechanics rather than the next action.',
@@ -765,31 +1047,31 @@ meetings:[
    questions:[['Does the checklist survive a reinstall, or reset?','19:05']]},
   mynotes:'Emily happy with the 3-step checklist.\nEmpty state copy needs a rewrite — too much plumbing.',
   transcript:[['04:10','Emily Foster','The three steps work. I would ship that as it is.',''],
-   ['15:22','Emily Foster','The empty state is explaining how it is built rather than what I should do next. Rewrite that before handoff.','Source of follow-up 1'],
+   ['15:22','Emily Foster','The empty state is explaining how it is built rather than what I should do next. Rewrite that before handoff.','Source of task 1'],
    ['19:05','You','Does the checklist reset if someone reinstalls?','']]},
  {id:'m3',title:'Candidate screen — Backend',people:[F('David Kim','D'),F('you','M')],
-  group:'Yesterday',day:'10 Aug 2026',time:'4:30 pm',dur:'41:18',folder:'interviews',fups:2,
+  group:'Yesterday',day:'10 Aug 2026',time:'4:30 pm',dur:'41:18',folder:'f-backend',fups:2,
   notes:{summary:'Screen for the senior backend role. Strong on distributed systems and incident response; lighter on the data modelling side than the role calls for. Recommends progressing to the technical round with a scoped take-home.',
    decisions:[['Progress to technical round.','36:40'],['Take-home scoped to data modelling.','38:02']],questions:[]},
   mynotes:'Strong on distributed systems. Data modelling is the gap.',
   transcript:[['36:40','You','I think we take this to the technical round.',''],
-   ['38:02','David Kim','I would scope the take-home around data modelling, since that is where the gap is.','Source of follow-up 1']]},
+   ['38:02','David Kim','I would scope the take-home around data modelling, since that is where the gap is.','Source of task 1']]},
  {id:'m4',title:'Northwind renewal',people:[F('Robert Hayes','R'),F('you','M')],
-  group:'Yesterday',day:'10 Aug 2026',time:'1:05 pm',dur:'27:55',folder:'client',fups:4,
+  group:'Yesterday',day:'10 Aug 2026',time:'1:05 pm',dur:'27:55',folder:'f-northwind',fups:4,
   notes:{summary:'Renewal conversation for Northwind. Robert wants the uplift held at 4% and is prepared to sign a two-year term to get it. He needs the final figure confirmed in writing before he takes it to finance.',
    decisions:[['Uplift held at 4% for a two-year term.','09:30'],['Final figure to be confirmed in writing.','21:14']],
    questions:[['Does the two-year term change the support tier?','24:02']]},
   mynotes:'4% uplift, 2-year term. Confirm figure in writing before finance.',
   transcript:[['09:30','Robert Hayes','Hold the uplift at four percent and I will sign for two years.',''],
-   ['21:14','Robert Hayes','Send me the final figure in writing before I take it to finance.','Source of follow-up 1']]},
+   ['21:14','Robert Hayes','Send me the final figure in writing before I take it to finance.','Source of task 1']]},
  {id:'m5',title:'Q3 planning',people:[F('Ashley Nguyen','A'),F('Daniel Brooks','D'),F('you','M')],
-  group:'Monday',day:'8 Aug 2026',time:'10:00 am',dur:'52:10',folder:'projects',fups:2,
+  group:'Monday',day:'8 Aug 2026',time:'10:00 am',dur:'52:10',folder:'f-q3',fups:2,
   notes:{summary:'Quarter planning across the three workstreams. Headcount is the constraint, not scope; Ashley needs final numbers before the budget lock on Friday.',
    decisions:[['Migration work moves ahead of the reporting rebuild.','22:15']],
    questions:[['Where does the contractor budget sit after the freeze?','44:30']]},
   mynotes:'Headcount is the constraint. Numbers to Ashley before Friday.',
   transcript:[['22:15','Daniel Brooks','Migration has to go first. Reporting can wait a quarter.',''],
-   ['31:08','Ashley Nguyen','I need the headcount numbers before the budget locks on Friday.','Source of follow-up 1']]},
+   ['31:08','Ashley Nguyen','I need the headcount numbers before the budget locks on Friday.','Source of task 1']]},
  {id:'m6',title:'Weekly sync',people:[F('Ashley Nguyen','A'),F('Emily Foster','E'),F('you','M')],
   group:'Monday',day:'8 Aug 2026',time:'9:00 am',dur:'18:22',folder:'internal',fups:0,
   notes:{summary:'Standing team sync. No blockers raised; two items carried over from last week.',decisions:[],questions:[]},
@@ -799,13 +1081,13 @@ meetings:[
   notes:{summary:'Scoping call with Lawson Group. Karen will send a draft statement of work covering the two integration phases.',
    decisions:[['Two-phase integration, SOW to follow.','14:40']],questions:[]},
   mynotes:'SOW covers 2 phases. Karen sends draft.',
-  transcript:[['14:40','Karen Doyle','I will get you a draft SOW covering both phases by the end of next week.','Source of follow-up 1']]},
+  transcript:[['14:40','Karen Doyle','I will get you a draft SOW covering both phases by the end of next week.','Source of task 1']]},
  {id:'m8',title:'Candidate screen — Frontend',people:[F('Tom Ellis','T'),F('you','M')],
-  group:'Friday',day:'5 Aug 2026',time:'11:15 am',dur:'38:44',folder:'interviews',fups:1,
+  group:'Friday',day:'5 Aug 2026',time:'11:15 am',dur:'38:44',folder:'f-frontend',fups:1,
   notes:{summary:'Frontend screen. Good product instincts and accessibility awareness; wants clarity on the take-home time budget before committing.',
    decisions:[['Send the take-home with an explicit four-hour cap.','33:20']],questions:[]},
   mynotes:'Good a11y awareness. Wants a time cap on the take-home.',
-  transcript:[['33:20','Tom Ellis','Send it over with a hard four-hour cap and I will do it this weekend.','Source of follow-up 1']]}],
+  transcript:[['33:20','Tom Ellis','Send it over with a hard four-hour cap and I will do it this weekend.','Source of task 1']]}],
 tasks:[
  {id:'t1',title:'Send the revised pricing sheet to Jennifer',mid:'m1',due:'2 days late',late:true,pri:'hi',done:false,grp:'Overdue',quote:'I need the revised pricing in front of me before Friday. I am presenting it internally and I cannot go in with the old numbers.',who:'Jennifer Walsh',at:'11:48'},
  {id:'t2',title:'Loop in Legal on the data-processing addendum',mid:'m1',due:'Yesterday',late:true,pri:'hi',done:false,grp:'Overdue',quote:'The data-processing addendum has to be reviewed before I can sign anything.',who:'Tom Ellis',at:'12:19'},
@@ -824,9 +1106,9 @@ transcripts:[
  {id:'s5',tx:'Reminder to review the Q3 headcount spreadsheet before the planning call',time:'Yesterday, 9:40 am',dest:'pasted into Notes',when:'week'},
  {id:'s6',tx:'The migration window should sit after the training block, not before it',time:'Mon, 4:02 pm',dest:'copied',when:'week'}],
 convos:[
- {id:'c1',title:'Acme kickoff follow-ups',when:'Today, 2:14 pm',msgs:[
+ {id:'c1',title:'Acme kickoff tasks',when:'Today, 2:14 pm',msgs:[
   {r:'u',tx:'What did I commit to on the Acme kickoff?'},
-  {r:'a',tx:"You made three commitments on that call:<br>&nbsp;&nbsp;1.&nbsp; Send the revised pricing sheet to Jennifer by <b>Friday</b>.<br>&nbsp;&nbsp;2.&nbsp; Loop in Legal on the data-processing addendum.<br>&nbsp;&nbsp;3.&nbsp; Book a technical deep-dive for the week of the 25th.<br>All three are already on your follow-ups list.",src:['m1','Acme kickoff · 11 Aug · from 12:04']}]},
+  {r:'a',tx:"You made three commitments on that call:<br>&nbsp;&nbsp;1.&nbsp; Send the revised pricing sheet to Jennifer by <b>Friday</b>.<br>&nbsp;&nbsp;2.&nbsp; Loop in Legal on the data-processing addendum.<br>&nbsp;&nbsp;3.&nbsp; Book a technical deep-dive for the week of the 25th.<br>All three are already on your task list.",src:['m1','Acme kickoff · 11 Aug · from 12:04']}]},
  {id:'c2',title:'Summarise the Q3 planning call',when:'Monday',msgs:[
   {r:'u',tx:'Summarise the Q3 planning call in three lines.'},
   {r:'a',tx:'Headcount is the constraint this quarter, not scope. Migration work moves ahead of the reporting rebuild. Ashley needs final headcount numbers before the budget locks on Friday.',src:['m5','Q3 planning · 8 Aug']}]},
@@ -846,7 +1128,7 @@ settings:{detect:true,screenRec:true,hearOthers:true,recScreen:false,autoFile:tr
   convo:false,anthropicKey:'',spoken:false,convoHotkey:'⌃⌥Space',askFirst:true,
   gmail:false,gcal:false,slack:false,actFollowups:true,
   extract:true,onlyNamed:false,names:['Michael','Mike','MC'],daily:true,dailyAt:'6:00 PM',
-  overdue:true,overdueAt:'9:00 AM',noInterrupt:true,theme:'light'},
+  overdue:true,overdueAt:'9:00 AM',noInterrupt:true,theme:'light',th:'ocean',bubble:true},
 setupDone:3
 };}
 
@@ -854,6 +1136,8 @@ setupDone:3
 let db=seed();
 const S={route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:'c1',
   settings:false,spane:'appearance',share:false,menu:null,panel:false,
+  openF:{client:true,interviews:true},
+  bub:{x:null,y:null,rec:false,secs:0},
   railmin:false,listmin:false,q:'',tq:'',vq:'',taskFilter:'all',showDone:false,
   speakers:'All speakers',range:'week',
   rec:null,playing:false,playPos:44,busy:false,typing:false,firstRun:false,
@@ -861,16 +1145,78 @@ const S={route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:'c1',
 let timers=[];
 const clearTimers=()=>{timers.forEach(t=>clearInterval(t));timers=[]};
 const $=s=>document.querySelector(s);
-function toast(msg,ms=2600){const w=$('#toasts');const d=document.createElement('div');
-  d.className='toast';d.innerHTML=msg;w.appendChild(d);
+/* kind is '' (neutral), 'ok', 'warn', 'dg' or 'info' */
+function toast(msg,ms=2600,kind=''){const w=$('#toasts');const d=document.createElement('div');
+  d.className='toast'+(kind?' '+kind:'');d.innerHTML=msg;w.appendChild(d);
   setTimeout(()=>{d.style.transition='opacity .3s';d.style.opacity='0';setTimeout(()=>d.remove(),320)},ms);}
+
+/* ── system notifications ─────────────────────────────────────────────────
+   The banners AIT-Scribe posts outside its own window. They live in #osnotifs,
+   a sibling of #app, so render() never clears one mid-life. Buttons inside them
+   use ordinary data-a actions and are picked up by the document click handler. */
+const OSN={
+ detect:{k:'',ic:'rec',ti:'Zoom call started',
+   bo:'Acme kickoff · Jennifer Walsh and Tom Ellis. Take notes for this one?',
+   ac:[['Take notes','p','record',''],['Not this time','s','osnclose','']]},
+ ready:{k:'ok',ic:'spark',ti:'Notes are ready',
+   bo:'Acme kickoff · a summary, 3 decisions and 3 tasks came out of it.',
+   ac:[['Open notes','p','open','m1'],['Later','s','osnclose','']]},
+ daily:{k:'',ic:'bell',ti:'5 tasks still open',
+   bo:'Two of them are overdue. This is your 6:00 PM summary — one notice, not one per meeting.',
+   ac:[['Open Tasks','p','go','tasks'],['Snooze','s','osnclose','']]},
+ overdue:{k:'dg',ic:'alertc',ti:'2 tasks are past their date',
+   bo:'Send the revised pricing sheet to Jennifer · Loop in Legal on the addendum.',
+   ac:[['Review them','p','go','tasks'],['Dismiss','s','osnclose','']]},
+ pasted:{k:'ok',ic:'mic',ti:'Pasted at your cursor',
+   bo:'“Send Karen the revised statement of work before Thursday”',
+   ac:[['Undo','s','demo','undo the paste'],['Copy again','s','copytx','']]},
+ hotkey:{k:'',ic:'kbd',ti:'Fn is also the emoji picker',
+   bo:'macOS claims this key too. Dictation still works, but you may see both.',
+   ac:[['Pick another key','p','settings','hotkey'],['Keep Fn','s','osnclose','']]},
+};
+function osNotif(kind){
+  const n=OSN[kind];if(!n)return;
+  const w=$('#osnotifs');const d=document.createElement('div');
+  d.className='osn '+(n.k||'');
+  d.innerHTML=`<span class="ai">${ic(n.ic,17)}</span>
+    <span class="bd"><span class="ap">AIT-Scribe<span class="w">now</span></span>
+      <span class="ti">${n.ti}</span><span class="bo">${n.bo}</span>
+      <span class="ac">${n.ac.map(([l,st,a,pp])=>
+        `<button class="btn ${st} sm" data-a="${a}" data-p="${esc(pp)}">${l}</button>`).join('')}</span></span>
+    <span class="x" data-a="osnclose">${ic('x',14)}</span>`;
+  /* any button in the banner also closes it, whatever else it does */
+  d.addEventListener('click',()=>setTimeout(()=>d.remove(),40));
+  w.appendChild(d);
+  /* keep the pile to four so a burst cannot run off the bottom of the window */
+  while(w.children.length>4)w.firstChild.remove();
+  setTimeout(()=>{if(!d.parentNode)return;d.style.transition='opacity .3s';d.style.opacity='0';
+    setTimeout(()=>d.remove(),320)},7000);
+}
+const osnClear=()=>{const w=$('#osnotifs');if(w)w.innerHTML='';};
 const demo=w=>toast(`<b>Demo</b> — this would ${w}.`);
 const meeting=id=>db.meetings.find(m=>m.id===id);
 const task=id=>db.tasks.find(t=>t.id===id);
-const folderName=id=>(db.folders.find(f=>f.id===id)||{name:'Unfiled'}).name;
-const folderColor=id=>({client:'var(--brandInk)',internal:'var(--okInk)',interviews:'var(--info)',projects:'var(--warnInk)'}[id]||'var(--sec)');
+/* ── folders ──────────────────────────────────────────────────────────────
+   One level of nesting. `parent` is a top-level folder id, or absent. A folder
+   view shows its own meetings plus everything in its sub-folders, so selecting
+   "Client Calls" still shows the Acme and Northwind calls. */
+const folder=id=>db.folders.find(f=>f.id===id);
+const folderName=id=>(folder(id)||{name:'Unfiled'}).name;
+const subFolders=id=>db.folders.filter(f=>f.parent===id);
+const topFolders=()=>db.folders.filter(f=>!f.parent);
+const rootOf=id=>{const f=folder(id);return f&&f.parent?f.parent:id;};
+/* "Client Calls / Acme" for a sub-folder, plain name for a top-level one */
+const folderPath=id=>{const f=folder(id);if(!f)return 'Unfiled';
+  return f.parent?folderName(f.parent)+' / '+f.name:f.name;};
+const inFolder=(m,id)=>m.folder===id||subFolders(id).some(sf=>sf.id===m.folder);
+const folderCount=id=>db.meetings.filter(m=>inFolder(m,id)).length;
+/* colour is inherited from the top-level folder so a sub-folder reads as part
+   of its parent rather than as a new category */
+const folderColor=id=>({client:'var(--brandInk)',internal:'var(--okInk)',
+  interviews:'var(--info)',projects:'var(--warnInk)'}[rootOf(id)]||'var(--sec)');
+const newFolderId=()=>'f'+Math.random().toString(36).slice(2,8);
 const openTasks=()=>db.tasks.filter(t=>!t.done);
-const fupCount=id=>db.tasks.filter(t=>t.mid===id).length;
+const taskCount=id=>db.tasks.filter(t=>t.mid===id).length;
 const overdue=()=>db.tasks.filter(t=>!t.done&&t.late);
 /* ══════════════════════════════════ chrome ══════════════════════════════════ */
 const NAV=[['meetings','Meetings','people'],['speech','Speech to Text','wave2'],
@@ -929,6 +1275,31 @@ const cnt=n=>`<span class="n">${n}</span>`;
 const pill=n=>`<span class="pill">${n}</span>`;
 
 /* ══════════════════════════════════ list columns ══════════════════════════════════ */
+/* A folder row and, when expanded, its sub-folder rows beneath it. The twisty
+   and the ⋯ button are nested hit targets: the click handler walks up from the
+   event target with closest('[data-a]'), so the innermost one wins and the row
+   itself only navigates when neither was hit. */
+function folderRow(f,sub){
+  const kids=sub?[]:subFolders(f.id);
+  const open=!!S.openF[f.id];
+  const tw=kids.length
+    ? `<span class="tw ${open?'o':''}" data-a="foldtoggle" data-p="${f.id}"
+        title="${open?'Collapse':'Expand'}">${ic('chev',11,2.4)}</span>`
+    : (sub?'':`<span class="tw sp"></span>`);
+  return `<a class="${S.view==='f:'+f.id?'on':''}${sub?' sub':''}" data-a="view" data-p="f:${f.id}"
+     title="${esc(sub?folderPath(f.id):f.name)}">${tw}${ic('folder',sub?15:16)}
+    <span class="lbl">${esc(f.name)}</span>
+    <span class="fm" data-a="menu" data-p="fmenu:${f.id}" title="Folder options">${ic('dots',14)}</span>
+    ${cnt(folderCount(f.id))}</a>`;
+}
+function folderRows(f){
+  const kids=subFolders(f.id);
+  if(!kids.length||!S.openF[f.id])return folderRow(f,false);
+  return folderRow(f,false)+kids.map(k=>folderRow(k,true)).join('')+
+    `<a class="sub" data-a="newfolder" data-p="${f.id}" style="color:var(--ter)"
+       title="New sub-folder in ${esc(f.name)}">${ic('folderplus',15)}
+      <span class="lbl">New sub-folder</span></a>`;
+}
 function listMeetings(){
   const all=db.meetings.length,rec=db.meetings.filter(m=>['Today','Yesterday'].includes(m.group)).length;
   return `<div class="listcol">
@@ -940,9 +1311,8 @@ function listMeetings(){
     </div>
     ${db.meetings.length?`<div class="slabel">Folders</div>
     <div class="views">
-     ${db.folders.map(f=>v(S.view==='f:'+f.id,'folder',f.name,
-        cnt(db.meetings.filter(m=>m.folder===f.id).length),'view','f:'+f.id)).join('')}
-     <a data-a="demo" data-p="create a folder" style="color:var(--sec)" title="New folder">${
+     ${topFolders().map(f=>folderRows(f)).join('')}
+     <a data-a="newfolder" data-p="" style="color:var(--sec)" title="New folder">${
         ic('folderplus',16)}<span class="lbl">New folder</span></a>
     </div>`:`<div class="note">Folders appear here once AIT&#8209;Scribe files your first call.</div>`}
     </div></div>`;
@@ -981,7 +1351,7 @@ function listTasks(){
   const byM=db.meetings.filter(m=>db.tasks.some(t=>t.mid===m.id&&!t.done)).slice(0,4);
   return `<div class="listcol"><div class="lbody" style="padding-top:20px">
    <div class="views">
-    ${v(S.view==='all','list','All follow-ups',cnt(o),'view','all')}
+    ${v(S.view==='all','list','All tasks',cnt(o),'view','all')}
     ${v(S.view==='overdue','alertc','Overdue',od?pill(od):cnt(0),'view','overdue')}
     ${v(S.view==='upcoming','clock','Upcoming',cnt(up),'view','upcoming')}
     ${v(S.view==='done','checkc','Completed',cnt(dn),'view','done')}
@@ -1014,7 +1384,7 @@ function meterBars(n,live,seedv=0){
 /* ══════════════════════════════════ meetings ══════════════════════════════════ */
 function viewMeetings(){
   let list=db.meetings.slice();
-  if(S.view.startsWith('f:'))list=list.filter(m=>m.folder===S.view.slice(2));
+  if(S.view.startsWith('f:'))list=list.filter(m=>inFolder(m,S.view.slice(2)));
   if(S.view==='recent')list=list.filter(m=>['Today','Yesterday'].includes(m.group));
   if(S.q)list=list.filter(m=>(m.title+' '+m.people.map(p=>p.n).join(' ')+' '+
     m.transcript.map(t=>t[2]).join(' ')).toLowerCase().includes(S.q.toLowerCase()));
@@ -1056,8 +1426,8 @@ function viewMeetings(){
         <span data-a="share" data-p="${m.id}" title="Share">${ic('share',14)}</span>
         <span class="dg" data-a="confirmDelete" data-p="${m.id}" title="Delete">${ic('trash',14)}</span></span>`}
       <span class="rt">${live?`<span class="live">${ic('rec',12)}Recording</span>`:
-        `<span class="tg" style="color:${folderColor(m.folder)}">${folderName(m.folder)}</span>
-         <span class="mt">${m.time} · ${fupCount(m.id)} follow-up${fupCount(m.id)===1?'':'s'}</span>`}</span></div>`}).join('')}
+        `<span class="tg" style="color:${folderColor(m.folder)}">${esc(folderPath(m.folder))}</span>
+         <span class="mt">${m.time} · ${taskCount(m.id)} task${taskCount(m.id)===1?'':'s'}</span>`}</span></div>`}).join('')}
     </div>`).join('')}</div>`;
 }
 /* ══════════════════════════════════ meeting detail ══════════════════════════════════ */
@@ -1069,7 +1439,7 @@ function titleBlock(m,extra){
     <div class="metarow">${faces(m)}<span>${m.people.map(p=>p.n).join(', ')}</span>
       <span class="addp" data-a="addperson" data-p="${m.id}">${ic('userplus',13)}Add person</span><span class="sp"></span>
       <span>${m.day}, ${m.time}</span>${extra}<span class="sp"></span>
-      <span class="fchipx" data-a="menu" data-p="folder:${m.id}">${ic('folder',14)}${folderName(m.folder)} ${ic('chevd',12)}</span>
+      <span class="fchipx" data-a="menu" data-p="folder:${m.id}">${ic('folder',14)}${esc(folderPath(m.folder))} ${ic('chevd',12)}</span>
     </div></div>`;
 }
 function viewMeeting(){
@@ -1100,7 +1470,7 @@ function viewMeeting(){
       body+=`<div class="notebox"><div class="ln" contenteditable="true" data-a="noop">${
         esc(m.mynotes).replace(/\n/g,'<br>')}</div>
         <div class="hint" style="margin-top:10px">Jot key points as they come up — AI notes expand them into
-        a summary, decisions and follow-ups when you stop.</div></div>`;
+        a summary, decisions and tasks when you stop.</div></div>`;
     }
     body+=`<div class="comp"><div class="compbox">${ic('spark',17)}
       <input placeholder="Ask anything about this meeting so far…" data-a="askMeeting">
@@ -1125,11 +1495,11 @@ function viewMeeting(){
           ${m.notes.questions.map(d=>`<li><span class="dot"></span><span>${esc(d[0])}</span>
             <span class="jump" data-a="jump" data-p="${d[1]}">${d[1]} &rsaquo;</span></li>`).join('')}</ul></div>`:''}
       </div>
-      <div><div class="sec"><h3>${ic('list',15)}Follow-ups
+      <div><div class="sec"><h3>${ic('list',15)}Tasks / Action Items
         <span class="jump" data-a="go" data-p="tasks">View in Tasks &rsaquo;</span></h3>
         ${mytasks.length?`<div class="card">${mytasks.map(t=>taskRow(t,true)).join('')}</div>`
           :`<div class="card" style="padding:22px;text-align:center;font-size:13px;color:var(--sec)">
-            No follow-ups came out of this meeting.</div>`}</div></div></div>
+            No tasks came out of this meeting.</div>`}</div></div></div>
       <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--sec);
         padding:14px 2px 12px;border-top:1px solid var(--line);flex-wrap:wrap">${ic('spark',14)}
         Generated ${m.genAt||'2:49 pm'} from your notes and the transcript.
@@ -1165,7 +1535,7 @@ function viewMeeting(){
   }
   return `<div class="body">${titleBlock(m,`<span class="sp"></span><span>${m.dur}</span>`)}
     ${mytasks.length&&S.tab==='notes'&&!m.ackd?`<div class="notice ok" style="margin-bottom:18px">${ic('check',17)}
-      <span><b>${mytasks.length} follow-up${mytasks.length>1?'s':''} added to Tasks</b> — owners and dates taken from what was said.</span>
+      <span><b>${mytasks.length} task${mytasks.length>1?'s':''} added to Tasks</b> — owners and dates taken from what was said.</span>
       <span class="act"><button class="btn t sm" data-a="ackNotes" data-p="${m.id}">Dismiss</button></span></div>`:''}
     ${body}</div>`;
 }
@@ -1212,17 +1582,17 @@ function viewTasks(){
       `<span class="fchip ${S.taskFilter===k?'on':''}" data-a="tfilter" data-p="${k}">${l}${
         n?`<span class="b">${n}</span>`:''}</span>`).join('')}
     <span class="r"><span class="srch" style="margin:0;width:210px">${ic('search',15)}
-      <input placeholder="Search follow-ups" data-a="q" value="${esc(S.q)}"></span>
+      <input placeholder="Search tasks" data-a="q" value="${esc(S.q)}"></span>
       <span class="chk" data-a="showdone"><span class="cbx ${S.showDone?'on':''}">${ic('check',12,2.6)}</span>Show completed</span>
       <button class="btn s sm" data-a="demo" data-p="switch to a calendar view">${ic('cal',15)}Calendar view</button>
     </span></div>`:'';
   const add=`<div class="addrow">${ic('plus',17)}
-    <input placeholder="Add a follow-up…" data-a="addtask"></div>`;
+    <input placeholder="Add a task…" data-a="addtask"></div>`;
   if(!list.length) return `<div class="body">${toolbar}${add}
     <div class="empty" style="padding-bottom:60px"><span class="ico">${ic('checkc',27,1.5)}</span>
-    <h2>${db.tasks.length?'Nothing here':'No follow-ups yet'}</h2>
-    <p>${db.tasks.length?'No follow-ups match this view. Try another filter.':
-      'Follow-ups appear here automatically after each meeting is summarised. You can add one in the field above at any time.'}</p></div></div>`;
+    <h2>${db.tasks.length?'Nothing here':'No tasks yet'}</h2>
+    <p>${db.tasks.length?'No tasks match this view. Try another filter.':
+      'Tasks appear here automatically after each meeting is summarised. You can add one in the field above at any time.'}</p></div></div>`;
   const order=['Overdue','Today','Upcoming','Done'];
   const groups=order.map(g=>({g,items:list.filter(t=>(t.done?'Done':t.grp)===g)})).filter(x=>x.items.length);
   return `<div class="body">${toolbar}${add}
@@ -1363,7 +1733,7 @@ function viewAssistant(){
   if(!c||!db.convos.length||S.cid==='new'){
     return `<div class="body"><div class="empty">
       <span class="ico">${ic('spark',27,1.5)}</span><h2>Ask about your meetings</h2>
-      <p>The assistant searches your transcripts, summarises calls and drafts follow-ups.
+      <p>The assistant searches your transcripts, summarises calls and drafts your tasks.
         It only sees what you have recorded in AIT&#8209;Scribe.</p>
       <div class="chips">
         <span class="chip" data-a="ask" data-p="What can you do?">${ic('help',15)}What can you do?</span>
@@ -1396,8 +1766,9 @@ function composer(off){
 const SNAV=[['MEETINGS',[['meet','Detection & capture','cal'],['ainotes','AI notes','spark']]],
  ['SPEECH TO TEXT',[['hotkey','Hotkey','kbd'],['engine','Engine','chip'],['svocab','Vocabulary','book']]],
  ['ASSISTANT',[['conv','Conversation','spark'],['agent','Actions & connectors','plug']]],
- ['FOLLOW-UPS',[['tasks','Capture & reminders','checkc']]],
- ['GENERAL',[['appearance','Appearance','sun'],['acct','Account & plan','users'],['priv','Privacy & data','shield']]]];
+ ['TASKS',[['tasks','Capture & reminders','checkc']]],
+ ['GENERAL',[['appearance','Appearance','sun'],['acct','Account & plan','users'],['priv','Privacy & data','shield']]],
+ ['DEMO',[['components','Notifications & dialogs','chip']]]];
 const tog=(k,on,dis)=>`<span class="tog ${on?'on':''} ${dis?'dis':''}" data-a="${dis?'togdis':'tog'}" data-p="${k}"><i></i></span>`;
 const sgroup=(icon,t,s,rows)=>`<div class="sgroup"><div class="sghd"><span class="si">${ic(icon,16)}</span>
   <span><b>${t}</b><span>${s}</span></span></div>${rows}</div>`;
@@ -1409,16 +1780,30 @@ function settingsPane(){
   const g=db.settings;
   switch(S.spane){
   case 'appearance':return ['Appearance','How AIT-Scribe looks on this Mac',
-    sgroup('sun','Theme','Applies immediately, on this Mac only',
-      `<div class="srow"><span><span class="t">Colour theme</span>
-        <span class="s">Dark mode uses its own colour steps rather than inverting the light ones, so contrast holds in both.</span></span>
-        <span class="a"><span class="fchip ${g.theme==='light'?'on':''}" data-a="theme" data-p="light">${ic('sun',14)}Light</span>
-          <span class="fchip ${g.theme==='dark'?'on':''}" data-a="theme" data-p="dark">${ic('moon',14)}Dark</span></span></div>`+
+    sgroup('sun','Light or dark','Applies immediately, on this Mac only',
+      `<div class="srow"><span><span class="t">Mode</span>
+        <span class="s">Every theme ships a hand-tuned dark set rather than an inversion of its
+        light one, so contrast holds in both.</span></span>
+        <span class="a"><span class="fchip ${g.theme==='light'&&!g.sysTheme?'on':''}" data-a="theme" data-p="light">${ic('sun',14)}Light</span>
+          <span class="fchip ${g.theme==='dark'&&!g.sysTheme?'on':''}" data-a="theme" data-p="dark">${ic('moon',14)}Dark</span></span></div>`+
       srow('Match my system','Follow macOS appearance and switch automatically.',tog('sysTheme',g.sysTheme)))+
+    sgroup('sliders','Theme',`${THEMES.length} themes · currently ${theme(g.th).name}, ${g.theme} mode`,
+      `<div class="thgrid">${THEMES.map(t=>{
+        const on=g.th===t.id, pv=t.pv[g.theme==='dark'?'dark':'light'];
+        return `<div class="thcard ${on?'on':''}" data-a="setth" data-p="${t.id}" title="Use the ${t.name} theme">
+          <div class="prev">
+            <i class="a" style="background:${pv[0]}"></i>
+            <i style="background:${pv[1]}"></i>
+            <i class="b" style="background:${pv[3]}"></i>
+            <i class="b" style="background:${pv[2]}"></i></div>
+          <div class="nm">${esc(t.name)}<span class="tick">${ic('check',11,3)}</span></div>
+          <div class="ds">${esc(t.ds)}</div>
+          <div class="dots">${t.sw.map(c=>`<i style="background:${c}"></i>`).join('')}
+            <span class="modes">LIGHT · DARK</span></div></div>`}).join('')}</div>`)+
     sgroup('reset','Demo controls','Not part of the real product',
-      srow('Reset to first run','Clears all meetings, follow-ups and transcripts and replays the empty first-run state with setup incomplete.',
+      srow('Reset to first run','Clears all meetings, tasks and transcripts and replays the empty first-run state with setup incomplete.',
         `<button class="btn s sm" data-a="resetDemo">${ic('reset',14)}Reset demo</button>`)+
-      srow('Reload sample data','Puts the 8 meetings, 9 follow-ups and 6 transcripts back.',
+      srow('Reload sample data','Puts the 8 meetings, 9 tasks and 6 transcripts back.',
         `<button class="btn s sm" data-a="reloadDemo">Reload data</button>`))];
   case 'meet':return ['Detection & capture','How AIT-Scribe notices calls and what it listens to',
     sgroup('rec','Detection','Spot calls automatically and offer to take notes',
@@ -1437,7 +1822,7 @@ function settingsPane(){
   case 'ainotes':return ['AI notes','What the summary contains and where meetings are filed',
     sgroup('spark','Notes','Generated when a recording stops',
       srow('Summary, decisions and open questions','The standard structure for every meeting.',tog('nSummary',true))+
-      srow('Extract follow-ups','Owners and dates taken from what was said.',tog('extract',g.extract))+
+      srow('Extract tasks','Owners and dates taken from what was said.',tog('extract',g.extract))+
       srow('Note length','Longer notes keep more detail from the transcript.',
         `<span class="sel" data-a="demo" data-p="change note length">Balanced ${ic('chevd',12)}</span>`))+
     sgroup('folder','Filing','Where finished meetings end up',
@@ -1454,6 +1839,11 @@ function settingsPane(){
       <span><b>macOS also uses Fn</b> for the emoji picker, so you may see both when you dictate. Dictation still works.</span>
       <span class="act"><button class="btn s sm" data-a="cyclekey">Pick another key</button></span></div>`
       :`<div class="notice ok">${ic('check',17)}<span><b>${g.hotkey} is free.</b> Nothing else on this Mac claims it.</span></div>`)+
+    sgroup('mic','Floating bubble','A draggable control that sits over your other windows',
+      srow('Show the floating bubble','Click it to dictate. Hover for record, ask and more. Drag it anywhere.',
+        tog('bubble',g.bubble))+
+      srow('Position','Drag the bubble to move it, or put it back where it started.',
+        `<button class="btn s sm" data-a="bubreset">${ic('reset',14)}Reset position</button>`))+
     sgroup('info','What works best','Checked against your other apps as you type a shortcut',
       `<div class="tips">
         <div><span style="color:var(--okInk)">${ic('check',14)}</span><span><b>Modifier combos</b> such as Control+Option are safest — nothing else claims them.</span></div>
@@ -1518,7 +1908,7 @@ function settingsPane(){
         tog('askFirst',g.askFirst)))+
     `<div class="sgroup"><div class="sghd"><span class="si">${ic('plug',16)}</span>
       <span><b>What it may do</b><span>Each action needs the connector beside it</span></span></div>
-      ${srow('Create and update follow-ups','In AIT-Scribe. No connector needed.',tog('actFollowups',g.actFollowups))}
+      ${srow('Create and update tasks','In AIT-Scribe. No connector needed.',tog('actFollowups',g.actFollowups))}
       ${srow('Draft emails','Writes a draft in Gmail. Never sends without you pressing send.',
         g.gmail?`<span class="pri ok">${ic('check',12)}Connected</span>`:`<span class="pri">Not connected</span>
         <button class="btn s sm" data-a="connect" data-p="gmail">Connect Gmail</button>`)}
@@ -1531,9 +1921,9 @@ function settingsPane(){
     sgroup('list','Activity','A record of everything the assistant did',
       srow('Action log','Every action, when it ran, and whether you approved it. Kept for 90 days.',
         `<button class="btn s sm" data-a="demo" data-p="open the action log">Open log</button>`))];
-  case 'tasks':return ['Capture & reminders','Where follow-ups come from and when you hear about them',
-    sgroup('checkc','Capture','How follow-ups are found',
-      srow('Extract follow-ups automatically','After each meeting is summarised, from your live notes and the transcript together.',tog('extract',g.extract))+
+  case 'tasks':return ['Capture & reminders','Where tasks come from and when you hear about them',
+    sgroup('checkc','Capture','How tasks are found',
+      srow('Extract tasks automatically','After each meeting is summarised, from your live notes and the transcript together.',tog('extract',g.extract))+
       srow('Only when I am named','Off means you also get commitments where nobody was named — useful, but noisier.',tog('onlyNamed',g.onlyNamed)))+
     sgroup('users','Who you are','So the assistant knows which commitments are yours',
       srow('Names people call you','Beyond your account name — nicknames and shortenings used in meetings.',
@@ -1552,11 +1942,100 @@ function settingsPane(){
     sgroup('spark','Plan','What you get today',
       srow('Free plan','Unlimited local dictation, 10 recorded meetings a month, 1 seat. You have used 8 of 10 this month.',
         `<button class="btn p sm" data-a="demo" data-p="open the upgrade flow">See plans</button>`))];
+  /* ── Temporary demo page. Not part of the product: it exists so every
+        transient piece of UI can be triggered on demand instead of having to
+        reproduce the situation that normally causes it. Delete this case and
+        its SNAV entry to remove it. ───────────────────────────────────── */
+  case 'components':return ['Notifications & dialogs','Fire each transient component on demand',
+    `<div class="notice info">${ic('info',17)}
+      <span><b>This page is a harness, not a feature.</b> Nothing here changes any setting —
+      each button just shows the component so it can be checked in the current theme.</span></div>`+
+    sgroup('bell','Toasts','Bottom centre. Auto-dismiss, no action needed',
+      `<div class="dwrap"><div class="dbtns">
+        ${[['','Neutral'],['ok','Success'],['warn','Warning'],['dg','Error'],['info','Info']].map(([k,l])=>
+          `<button class="btn s sm" data-a="dtoast" data-p="${k}">${l}</button>`).join('')}
+        <button class="btn s sm" data-a="dtoast" data-p="long">Long, with markup</button>
+        <button class="btn s sm" data-a="dtoast" data-p="stack">Three at once</button></div>
+      <div class="dnote">Neutral is the everyday one. The four coloured variants are for outcomes
+        the user did not ask for — a sync failing, a key being claimed.</div></div>`)+
+    sgroup('rec','System notifications','Top right. What macOS shows when the app is in the background',
+      `<div class="dwrap"><div class="dbtns">
+        ${[['detect','Call detected'],['ready','Notes ready'],['daily','Daily summary'],
+           ['overdue','Overdue nudge'],['pasted','Dictation pasted'],['hotkey','Hotkey conflict']].map(([k,l])=>
+          `<button class="btn s sm" data-a="dosn" data-p="${k}">${l}</button>`).join('')}
+        <button class="btn s sm" data-a="dosn" data-p="all">Post all six</button>
+        <button class="btn t sm" data-a="dosn" data-p="clear">Clear</button></div>
+      <div class="dnote">These are the only six the product sends. Each carries its own actions and
+        clears itself after seven seconds, or when a button is pressed.</div></div>`)+
+    sgroup('alert','Inline notices','Rendered in place, above the content they concern',
+      `<div class="dwrap">
+        <div class="notice ok">${ic('check',17)}<span><b>Setup complete.</b> Call detection is on.</span>
+          <span class="act"><button class="btn t sm" data-a="noop">Dismiss</button></span></div>
+        <div class="notice warn">${ic('alert',17)}<span><b>macOS also uses Fn</b> for the emoji picker.</span>
+          <span class="act"><button class="btn s sm" data-a="noop">Change key</button></span></div>
+        <div class="notice dg">${ic('alertc',17)}<span><b>Cloud transcription failed.</b> The last three
+          clips are still on this Mac.</span>
+          <span class="act"><button class="btn s sm" data-a="noop">Retry</button></span></div>
+        <div class="notice info">${ic('info',17)}<span>Transcripts stay on this Mac until you delete them.</span></div>
+      </div>`)+
+    sgroup('chip','Dialogs','Centred, with a scrim. Everything behind them is inert',
+      `<div class="dwrap"><div class="dbtns">
+        <button class="btn s sm" data-a="confirmDelete" data-p="${(db.meetings[0]||{}).id||''}">Destructive confirm</button>
+        <button class="btn s sm" data-a="menu" data-p="infodlg:">Informational</button>
+        <button class="btn s sm" data-a="menu" data-p="dangerdlg:">Danger, typed confirm</button>
+        <button class="btn s sm" data-a="menu" data-p="progressdlg:">In progress</button>
+        <button class="btn s sm" data-a="share" data-p="${(db.meetings[0]||{}).id||''}">Share sheet</button>
+        <button class="btn s sm" data-a="addperson" data-p="${(db.meetings[0]||{}).id||''}">Add person</button>
+        <button class="btn s sm" data-a="shortcuts">Keyboard shortcuts</button></div>
+      <div class="dnote">Opening one closes this Settings window, which is the real behaviour —
+        two scrims never stack. Press <span class="kbd">Esc</span> to come back.</div></div>`)+
+    sgroup('list','Menus and popovers','Anchored to whatever was clicked',
+      `<div class="dwrap"><div class="dbtns">
+        <button class="btn s sm" data-a="notifs">Notification tray</button>
+        <button class="btn s sm" data-a="menu" data-p="meeting:${(db.meetings[0]||{}).id||''}">Meeting actions</button>
+        <button class="btn s sm" data-a="menu" data-p="task:${(db.tasks[0]||{}).id||''}">Task actions</button>
+        <button class="btn s sm" data-a="menu" data-p="folder:${(db.meetings[0]||{}).id||''}">Move to folder</button>
+        <button class="btn s sm" data-a="menu" data-p="fmenu:${(topFolders()[0]||{}).id||''}">Folder options</button>
+        <button class="btn s sm" data-a="menu" data-p="bubmore:">Bubble menu</button></div>
+      <div class="dnote">Menus position themselves from the button that opened them and are clamped
+        to the window, so one opened near an edge flips rather than clipping.</div></div>`)+
+    sgroup('sliders','Native prompts','Browser prompts stand in for the real macOS sheets',
+      `<div class="dwrap"><div class="dbtns">
+        <button class="btn s sm" data-a="rename" data-p="${(db.meetings[0]||{}).id||''}">Rename a meeting</button>
+        <button class="btn s sm" data-a="newfolder" data-p="">New folder</button>
+        <button class="btn s sm" data-a="addname">Add a name</button></div></div>`)+
+    sgroup('spark','Inline states','Not transient — the vocabulary the components above are built from',
+      `<div class="dwrap">
+        <div class="dgrid dchips"><span class="pri hi">${ic('flag',12)}High</span>
+          <span class="pri md">${ic('flag',12)}Medium</span>
+          <span class="pri ok">${ic('check',12)}Granted</span>
+          <span class="pri">Not granted</span>
+          <span class="pillx">Optional</span>
+          <span class="live">${ic('rec',12)}Recording</span></div>
+        <div class="dgrid dchips"><span class="kbd">Fn</span><span class="keycap">⌃⌥Space</span>
+          ${tog('demoTogA',g.demoTogA!==false)}${tog('demoTogB',!!g.demoTogB)}${tog('demoTogC',false,true)}
+          <span class="cbx on">${ic('check',12,2.6)}</span><span class="cbx"></span>
+          <span class="rdo on"></span><span class="rdo"></span></div>
+        <div class="dgrid dchips"><span class="fchip on">Selected</span><span class="fchip">Unselected</span>
+          <span class="fchip">Overdue<span class="b">2</span></span>
+          <span class="sel">${ic('cal',14)}A picker ${ic('chevd',12)}</span>
+          <span class="badge">${ic('list',12)}Source of task 1</span></div>
+        <div class="dgrid" style="gap:26px;align-items:flex-end">
+          <span style="display:block">${meterBars(30,false)}<span class="dnote">meter · idle</span></span>
+          <span style="display:block">${meterBars(30,true,3)}<span class="dnote">meter · live</span></span>
+          <span style="display:block"><span class="typing"><i></i><i></i><i></i></span>
+            <span class="dnote">thinking</span></span></div>
+      </div>`)+
+    sgroup('mic','Floating bubble','The always-on control that sits over other apps',
+      srow('Show the floating bubble','Click it to dictate; hover for record, ask and more.',
+        tog('bubble',g.bubble))+
+      srow('Reset its position','Puts it back at the bottom right of the window.',
+        `<button class="btn s sm" data-a="bubreset">${ic('reset',14)}Reset position</button>`))];
   case 'priv':return ['Privacy & data','What is stored, and where',
     sgroup('shield','On this Mac','Nothing here is uploaded',
       srow('Recordings and transcripts','Stored on this Mac only. 48 transcripts, 18 meetings, 2.1 GB.',
         `<button class="btn s sm" data-a="demo" data-p="reveal the folder in Finder">Show in Finder</button>`)+
-      srow('Delete everything','Removes all meetings, transcripts and follow-ups from this Mac. Cannot be undone.',
+      srow('Delete everything','Removes all meetings, transcripts and tasks from this Mac. Cannot be undone.',
         `<button class="btn s sm" data-a="demo" data-p="ask you to confirm, then erase local data">Delete all data</button>`))+
     sgroup('cloud','What leaves this Mac','Only what you turn on',
       srow('Cloud transcription',g.engine==='cloud'?'On — audio is sent for transcription and deleted afterwards.':'Off — dictation runs entirely on this Mac.',
@@ -1602,10 +2081,10 @@ function shareModal(){
         <div style="border:1px solid var(--line);border-radius:12px">
           <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="notes">
             <span class="cbx ${sh.notes?'on':''}">${ic('check',12,2.6)}</span>
-            <span><span class="t">AI notes</span><span class="s">Summary, decisions and follow-ups.</span></span></div>
+            <span><span class="t">AI notes</span><span class="s">Summary, decisions and tasks.</span></span></div>
           <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="fups">
             <span class="cbx ${sh.fups?'on':''}">${ic('check',12,2.6)}</span>
-            <span><span class="t">Follow-ups</span><span class="s">With owners and dates.</span></span></div>
+            <span><span class="t">Tasks</span><span class="s">With owners and dates.</span></span></div>
           <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="tx">
             <span class="cbx ${sh.tx?'on':''}">${ic('check',12,2.6)}</span>
             <span><span class="t">Full transcript</span>
@@ -1665,21 +2144,35 @@ function menuEl(){
    return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
    <div class="menu" style="left:${clampX(pos.x,220)}px;top:${clampY(pos.y,300)}px;width:220px">
     <div class="mh">Move to folder</div>
-    ${db.folders.map(f=>`<a data-a="movefolder" data-p="${id}|${f.id}">${ic('folder',15)}${f.name}
-      ${m.folder===f.id?`<span class="k">${ic('check',13)}</span>`:''}</a>`).join('')}
-    <hr><a data-a="demo" data-p="create a new folder">${ic('folderplus',15)}New folder…</a></div>`;}
+    ${topFolders().map(f=>[f,...subFolders(f.id)].map((x,i)=>
+      `<a data-a="movefolder" data-p="${id}|${x.id}" ${i?'style="padding-left:26px"':''}>${
+        ic('folder',15)}${esc(x.name)}
+      ${m.folder===x.id?`<span class="k">${ic('check',13)}</span>`:''}</a>`).join('')).join('')}
+    <hr><a data-a="newfolder" data-p="|${id}">${ic('folderplus',15)}New folder…</a></div>`;}
+  if(kind==='fmenu'){const f=folder(id);if(!f)return '';const pos=S.menuXY||{x:300,y:240};
+   const kids=subFolders(id);
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="left:${clampX(pos.x,246)}px;top:${clampY(pos.y,260)}px;width:246px">
+    <div class="mh">${esc(folderPath(id))}</div>
+    <a data-a="view" data-p="f:${id}">${ic('folder',15)}Open folder<span class="k">${folderCount(id)}</span></a>
+    ${f.parent?'':`<a data-a="newfolder" data-p="${id}">${ic('folderplus',15)}New sub-folder…</a>`}
+    <a data-a="renamefolder" data-p="${id}">${ic('edit',15)}Rename…</a><hr>
+    <a class="dg" data-a="delfolder" data-p="${id}">${ic('trash',15)}Delete folder</a>
+    <div class="fn">${kids.length?`Its ${kids.length} sub-folder${kids.length>1?'s':''} go too. `:''}${
+      folderCount(id)?`${folderCount(id)} meeting${folderCount(id)>1?'s':''} move to Unfiled — nothing is deleted.`
+      :'Empty, so nothing moves.'}</div></div>`;}
   if(kind==='task'){const t=task(id);const pos=S.menuXY||{x:1000,y:300};
    return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
    <div class="menu" style="left:${clampX(pos.x,238)}px;top:${clampY(pos.y,430)}px;width:238px">
     <a data-a="toggletask" data-p="${id}">${ic('checkc',15)}${t.done?'Mark not done':'Mark done'}<span class="k">⌘⏎</span></a>
-    <a data-a="opentask" data-p="${id}">${ic('edit',15)}Edit follow-up</a>
+    <a data-a="opentask" data-p="${id}">${ic('edit',15)}Edit task</a>
     <div class="mh">Priority</div>
     ${[['hi','High'],['md','Medium'],['','None']].map(([k,l])=>
       `<a data-a="setpri" data-p="${id}|${k}">${ic('flag',15)}${l}${t.pri===k?`<span class="k">${ic('check',13)}</span>`:''}</a>`).join('')}
     <hr>
     <a data-a="open" data-p="${t.mid}">${ic('users',15)}Open ${esc(meeting(t.mid)?meeting(t.mid).title:'meeting')}</a>
     <a data-a="demo" data-p="play the moment this was said">${ic('play',15)}Play what was said</a>
-    <a data-a="demo" data-p="copy a link to this follow-up">${ic('link',15)}Copy link</a><hr>
+    <a data-a="demo" data-p="copy a link to this task">${ic('link',15)}Copy link</a><hr>
     <a class="dg" data-a="deltask" data-p="${id}">${ic('trash',15)}Delete</a></div>`;}
   if(kind==='notifs')return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
    <div class="menu" style="right:70px;top:70px;width:300px"><div class="mh">Notifications</div>
@@ -1695,10 +2188,61 @@ function menuEl(){
       <span class="x" data-a="closemenu">${ic('x',15)}</span></div>
     <div class="mcont" style="gap:0">
       ${[['Hold '+db.settings.hotkey,'Dictate anywhere'],['⌘K','Search meetings'],['⌘N','New recording'],
-         ['⌘⏎','Mark follow-up done'],['⌘,','Settings'],['⌘R','Rename meeting'],['Esc','Close this']]
+         ['⌘⏎','Mark task done'],['⌘,','Settings'],['⌘R','Rename meeting'],['Esc','Close this']]
         .map(([k,l])=>`<div class="srow" style="padding:11px 2px"><span class="t">${l}</span>
           <span class="a"><span class="keycap">${k}</span></span></div>`).join('')}
     </div></div>`;
+  if(kind==='bubmore'){const pos=S.menuXY||{x:FW()-280,y:FH()-320};const g=db.settings;
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="left:${clampX(pos.x,252)}px;top:${clampY(pos.y,300)}px;width:252px">
+    <div class="mh">Engine</div>
+    <a data-a="engine" data-p="local">${ic('chip',15)}On this Mac
+      ${g.engine==='local'?`<span class="k">${ic('check',13)}</span>`:''}</a>
+    <a data-a="engine" data-p="cloud">${ic('cloud',15)}In the cloud
+      ${g.engine==='cloud'?`<span class="k">${ic('check',13)}</span>`:''}</a><hr>
+    <a data-a="bubreset">${ic('reset',15)}Reset bubble position</a>
+    <a data-a="settings" data-p="hotkey">${ic('sliders',15)}Bubble &amp; hotkey settings<span class="k">⌘,</span></a><hr>
+    <a data-a="bubhide">${ic('x',15)}Hide the bubble</a>
+    <div class="fn">Bring it back from Settings &rsaquo; Hotkey, or the demo page.</div></div>`;}
+  if(kind==='infodlg')return `<div class="scrim" data-a="closemenu"></div>
+   <div class="modal" style="width:412px;flex-direction:column">
+    <div class="mtop"><span style="width:38px;height:38px;border-radius:11px;background:var(--infoTint);
+      color:var(--info);display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('info',18)}</span>
+      <span><h2 class="h">Screen Recording is needed</h2><p>macOS permission</p></span></div>
+    <div class="mcont"><div style="font-size:13.5px;line-height:1.6;color:var(--ink2)">
+      AIT-Scribe uses this permission to <b>see call windows</b> — to notice that a Zoom or Meet call
+      has started. It does not record your screen unless you turn that on separately.</div>
+      <div style="display:flex;gap:9px;margin-top:6px">
+        <button class="btn s" data-a="closemenu" style="flex:1;justify-content:center">Not now</button>
+        <button class="btn p" data-a="demo" data-p="open macOS System Settings" style="flex:1;justify-content:center">
+          Open System Settings</button></div></div></div>`;
+  if(kind==='dangerdlg')return `<div class="scrim" data-a="closemenu"></div>
+   <div class="modal" style="width:436px;flex-direction:column">
+    <div class="mtop"><span style="width:38px;height:38px;border-radius:11px;background:var(--dangerTint);
+      color:var(--dangerInk);display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('alertc',18)}</span>
+      <span><h2 class="h">Delete all local data?</h2><p>18 meetings · 48 transcripts · 2.1 GB</p></span></div>
+    <div class="mcont"><div style="font-size:13.5px;line-height:1.6;color:var(--ink2)">
+      Every recording, transcript, note and task is removed from this Mac. There is no copy anywhere
+      else, so this <b>cannot be undone</b>.</div>
+      <div><div class="ghd" style="margin-bottom:8px">Type DELETE to confirm</div>
+        <span class="inp"><input placeholder="DELETE" data-a="noop"></span></div>
+      <div style="display:flex;gap:9px;margin-top:2px">
+        <button class="btn s" data-a="closemenu" style="flex:1;justify-content:center">Cancel</button>
+        <button class="btn d dis" data-a="demo" data-p="erase everything once DELETE is typed"
+          style="flex:1;justify-content:center">Delete everything</button></div></div></div>`;
+  if(kind==='progressdlg')return `<div class="scrim" data-a="closemenu"></div>
+   <div class="modal" style="width:400px;flex-direction:column">
+    <div class="mtop"><span style="width:38px;height:38px;border-radius:11px;background:var(--tint);
+      color:var(--brandInk);display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('spark',18)}</span>
+      <span><h2 class="h">Generating notes…</h2><p>Acme kickoff · 34:02</p></span></div>
+    <div class="mcont"><div style="font-size:13.5px;line-height:1.6;color:var(--sec)">
+      Reading your notes and the transcript together. You can close this — it carries on in the
+      background and notifies you when it is done.</div>
+      <div>${meterBars(60,true,7)}</div>
+      <div style="display:flex;gap:9px">
+        <button class="btn s" data-a="closemenu" style="flex:1;justify-content:center">Close</button>
+        <button class="btn s" data-a="closemenu" style="flex:1;justify-content:center;
+          color:var(--dangerInk);border-color:var(--dangerLine)">Cancel</button></div></div></div>`;
   if(kind==='confirm'){const m=meeting(id);
    return `<div class="scrim" data-a="closemenu"></div>
    <div class="modal" style="width:400px;flex-direction:column">
@@ -1706,7 +2250,7 @@ function menuEl(){
       color:var(--dangerInk);display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('trash',18)}</span>
       <span><h2 class="h">Delete this meeting?</h2><p>${esc(m?m.title:'')}</p></span></div>
     <div class="mcont"><div style="font-size:13.5px;line-height:1.6;color:var(--ink2)">
-      The notes, transcript and ${db.tasks.filter(t=>t.mid===id).length} follow-up(s) go to
+      The notes, transcript and ${db.tasks.filter(t=>t.mid===id).length} task(s) go to
       <b>Recently deleted</b> for 30 days. The audio is removed straight away and cannot be recovered.</div>
       <div style="display:flex;gap:9px;margin-top:6px">
         <button class="btn s" data-a="closemenu" style="flex:1;justify-content:center">Keep it</button>
@@ -1716,7 +2260,7 @@ function menuEl(){
 }
 function taskPanel(){
   const t=task(S.tid);if(!t)return '';const m=meeting(t.mid);
-  return `<div class="panel"><div class="ph">${ic('list',17)}<b>Follow-up</b>
+  return `<div class="panel"><div class="ph">${ic('list',17)}<b>Task</b>
     <span style="margin-left:auto;display:flex;gap:4px">
       <span class="tbtn" data-a="menu" data-p="task:${t.id}">${ic('dots',17)}</span>
       <span class="tbtn" data-a="closepanel">${ic('x',17)}</span></span></div>
@@ -1733,7 +2277,7 @@ function taskPanel(){
       <div class="frow"><span class="lb">Due</span>
         <span class="sel" data-a="demo" data-p="open a date picker">${ic('cal',14)}${t.due} ${ic('chevd',12)}</span></div>
       <div class="frow"><span class="lb">Owner</span>
-        <span class="sel" data-a="demo" data-p="reassign this follow-up">
+        <span class="sel" data-a="demo" data-p="reassign this task">
           <span class="avat" style="width:20px;height:20px;font-size:10px">${db.user.initial}</span>You ${ic('chevd',12)}</span></div>
       <div class="frow"><span class="lb">Priority</span>
         <span class="sel" data-a="cyclepri" data-p="${t.id}">${ic('flag',14)}${
@@ -1755,6 +2299,7 @@ function taskPanel(){
 /* ══════════════════════════════════ render ══════════════════════════════════ */
 function render(){
   document.documentElement.dataset.theme=db.settings.theme;
+  document.documentElement.dataset.th=db.settings.th||'ocean';
   let lc='',main='',aside='';
   if(S.route==='meetings'){lc=listMeetings();
     main=mhead('Meetings',meetingsState(),`<button class="btn ${db.meetings.length?'p':'s'} sm" data-a="record">${
@@ -1786,7 +2331,75 @@ function render(){
   $('#app').innerHTML=`<div class="shell">${topbar()}
     <div class="app ${cls}">${rail()}${lc}<div class="main">${main}</div>${aside}</div>
     ${S.settings?settingsModal():''}${S.share?shareModal():''}${S.addPerson?addPersonModal():''}${menuEl()}</div>`;
+  renderBubble();
 }
+/* ── floating bubble ──────────────────────────────────────────────────────
+   An always-on control that in the real app floats over other windows. It lives
+   in #bubble, a sibling of #app, so a re-render never interrupts a drag or drops
+   the CSS :hover that reveals the tray.
+
+   Click the core to start dictating, click again to stop. Hover reveals Dictate,
+   Record, Ask and More. Drag it anywhere in the window; More ▸ Reset position
+   puts it back. */
+const BUBACTS=[['record','rec','Record a meeting'],['ask','spark','Ask the assistant'],
+               ['more','dots','More']];
+/* bottom right, but clear of the action row that sits along the foot of a
+   meeting's notes — the bubble is draggable if the user wants it elsewhere */
+function bubHome(){return {x:FW()-88,y:FH()-152};}
+function renderBubble(){
+  const el=$('#bubble');if(!el)return;
+  const b=S.bub;
+  if(!db.settings.bubble){el.className='off';el.innerHTML='';return}
+  if(b.x===null){const h=bubHome();b.x=h.x;b.y=h.y;}
+  /* keep it inside the frame after a resize or a switch to fill mode; the
+     bottom margin leaves room for the label that sits under the core */
+  b.x=Math.max(8,Math.min(b.x,FW()-68));
+  b.y=Math.max(72,Math.min(b.y,FH()-96));
+  /* the tray needs ~150px of headroom, so drop it below the core near the top */
+  el.className=(b.rec?'rec ':'')+(b.y<226?'flip':'');
+  el.style.left=b.x+'px';el.style.top=b.y+'px';
+  const mm=Math.floor(b.secs/60),ss=String(b.secs%60).padStart(2,'0');
+  el.innerHTML=`<div class="btray">${BUBACTS.map(([k,i,l])=>
+      `<span data-a="bubact" data-p="${k}" title="${l}">${ic(i,17)}<span class="tip">${l}</span></span>`).join('')}</div>
+    <div class="bcore" data-a="bubtalk" title="${b.rec?'Stop and paste':'Click to dictate'}">
+      ${b.rec?`${ic('stop',14,2.6)}<span class="tm">${mm}:${ss}</span>
+        <span class="bmeter">${Array.from({length:9},(_,i)=>
+          `<i style="height:${Math.max(3,Math.round(3+6*Math.abs(Math.sin(i*0.9+b.secs))))}px"></i>`).join('')}</span>`
+             :ic('mic',22,2)}</div>
+    <div class="blabel">${b.rec?'Listening — click to paste':'Click to dictate'}</div>`;
+}
+/* Click-to-start, click-to-stop. Distinct from holdStart(), which models the
+   press-and-hold hotkey and releases itself after a few seconds. */
+function bubStart(){
+  if(S.bub.rec)return;
+  if(S.rec2)holdStop();
+  S.bub.rec=true;S.bub.secs=0;
+  clearTimers();
+  timers.push(setInterval(()=>{
+    if(!S.bub.rec)return;
+    S.bub.secs++;renderBubble();
+    /* the Speech to Text page mirrors the live session while it runs */
+    if(S.route==='speech'){S.rec2={secs:S.bub.secs,bub:true};render()}
+  },1000));
+  if(S.route==='speech'){S.rec2={secs:0,bub:true};render()}
+  renderBubble();
+  toast(`${ic('mic',15)}<span><b>Listening.</b> Click the bubble again to paste at your cursor.</span>`,2800,'info');
+}
+function bubStop(){
+  if(!S.bub.rec)return;
+  const secs=S.bub.secs;
+  S.bub.rec=false;S.bub.secs=0;S.rec2=null;clearTimers();
+  const samples=['Ask Legal how long the addendum review usually takes',
+    'Confirm the seat count with Jennifer before the pricing goes out',
+    'Move the migration window to after the training block',
+    'Draft the scorecard for the backend candidate this afternoon'];
+  const tx=samples[Math.floor(Date.now()/1000)%samples.length];
+  db.transcripts.unshift({id:'s'+Date.now(),tx,time:'just now',
+    dest:'pasted at your cursor · from the bubble',when:'today'});
+  render();
+  toast(`${ic('check',15)}<span><b>Pasted.</b> “${esc(tx.slice(0,40))}…” after ${secs}s.</span>`,3000,'ok');
+}
+
 /* drops the collapse control in just before the list column closes */
 function withFoot(lc){const i=lc.lastIndexOf('</div>');return lc.slice(0,i)+lfoot()+lc.slice(i);}
 function notesMd(m){
@@ -1800,7 +2413,7 @@ function notesMd(m){
   if(m.notes.questions.length){L.push('## Open questions','');
     m.notes.questions.forEach(d=>L.push(`- ${d[0]} _(${d[1]})_`));L.push('')}
   const ts=db.tasks.filter(t=>t.mid===m.id);
-  if(ts.length){L.push('## Follow-ups','');
+  if(ts.length){L.push('## Tasks','');
     ts.forEach(t=>L.push(`- [${t.done?'x':' '}] ${t.title} — ${t.due}`));L.push('')}
   if(m.mynotes){L.push('## My notes','',m.mynotes,'')}
   L.push('---','Generated by AIT-Scribe');
@@ -1839,6 +2452,7 @@ const LINES=[['00:04','Jennifer Walsh','Thanks for making the time — let us st
  ['00:55','Jennifer Walsh','Yes. Procurement alone was not enough last round.']];
 
 function startRecording(){
+  if(S.bub&&S.bub.rec){S.bub.rec=false;S.bub.secs=0;S.rec2=null;}
   const id='m'+(Date.now()%100000);
   const m={id,title:'New recording',people:[F('Jennifer Walsh','J'),F('Tom Ellis','T'),F('you','M')],
     group:'Today',day:'11 Aug 2026',time:'3:20 pm',
@@ -1873,7 +2487,7 @@ function stopRecording(){
                  ["Acme's platform team attends the deep-dive.",'00:55']],
       questions:[['Who signs off the DPA on Acme\'s side?','00:21']]};
     m.genAt='3:26 pm';
-    if(m.transcript[4])m.transcript[4][3]='Source of follow-up 1';
+    if(m.transcript[4])m.transcript[4][3]='Source of task 1';
     const nt=[{id:'n'+Date.now(),title:'Send the revised pricing sheet on Thursday',mid:m.id,due:'Thu 14 Aug',
       late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I will send the revised sheet through by Thursday.',who:'You',at:'00:38'},
      {id:'n'+(Date.now()+1),title:'Get Legal to review the data-processing addendum',mid:m.id,due:'Fri 15 Aug',
@@ -1882,11 +2496,12 @@ function stopRecording(){
       late:false,pri:'',done:false,grp:'Upcoming',quote:'Can we get the platform team into the deep-dive this time?',who:'Tom Ellis',at:'00:47'}];
     db.tasks.push(...nt);m.fups=3;
     S.busy=false;S.tab='notes';render();
-    toast(`<b>Notes ready.</b> 3 follow-ups were added to Tasks.`,3600);
+    toast(`<b>Notes ready.</b> 3 tasks were added to Tasks.`,3600);
   },2600);
 }
 function holdStart(){
   if(S.rec2)return;
+  if(S.bub&&S.bub.rec)bubStop();
   S.rec2={secs:0};clearTimers();
   timers.push(setInterval(()=>{S.rec2.secs++;render();
     if(S.rec2.secs>=4)holdStop();},1000));
@@ -1926,8 +2541,8 @@ function askAssistant(q){
   },1200);
 }
 function resetDemo(hard){
-  clearTimers();const theme=db.settings.theme;
-  db=seed();db.settings.theme=theme;
+  clearTimers();const mode=db.settings.theme,th=db.settings.th,bub=db.settings.bubble;
+  db=seed();db.settings.theme=mode;db.settings.th=th;db.settings.bubble=bub;
   if(hard){db.meetings=[];db.tasks=[];db.transcripts=[];db.convos=[];db.setupDone=0;
     db.settings.detect=false;db.settings.calendar=false;S.firstRun=true;}
   Object.assign(S,{route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:hard?'new':'c1',
@@ -1951,7 +2566,51 @@ document.addEventListener('click',e=>{
   case 'demo':stop();demo(p);return;
   case 'go':stop();S.route=p;S.q='';S.panel=false;S.menu=null;
     S.view=p==='tasks'?'all':p==='speech'?'today':p==='vocabulary'?'all':'all';render();return;
-  case 'view':stop();S.view=p;S.q='';render();return;
+  case 'view':{stop();S.view=p;S.q='';S.menu=null;
+    /* a view belongs to a list, so clicking one from a detail page navigates
+       back out to that list rather than just re-highlighting the sidebar */
+    if(S.route==='meeting'){S.route='meetings';S.mid=null;}
+    if(S.route==='tasks')S.panel=false;
+    /* selecting a sub-folder opens its parent so the selection stays visible */
+    if(p.startsWith('f:')){const f=folder(p.slice(2));if(f&&f.parent)S.openF[f.parent]=true;}
+    render();return;}
+  case 'foldtoggle':stop();S.openF[p]=!S.openF[p];render();return;
+  case 'newfolder':{stop();
+    /* p is either a parent folder id, '' for a new top-level folder, or
+       '|<meetingId>' when it came from a move-to-folder menu */
+    let parent=p,moveMid='';
+    if(p.indexOf('|')>=0){[parent,moveMid]=p.split('|');}
+    const n=prompt(parent?`New sub-folder in ${folderName(parent)}`:'New folder','');
+    if(!n||!n.trim()){S.menu=null;render();return}
+    const name=n.trim();
+    if(db.folders.some(f=>f.name.toLowerCase()===name.toLowerCase()&&(f.parent||'')===(parent||''))){
+      S.menu=null;render();toast(`A folder called <b>${esc(name)}</b> is already there.`,3000,'warn');return}
+    const id=newFolderId();
+    const f={id,name};if(parent)f.parent=parent;
+    /* keep sub-folders grouped directly under their parent in the list */
+    if(parent){const last=db.folders.map(x=>x.id).lastIndexOf(
+        (subFolders(parent).slice(-1)[0]||{id:parent}).id);
+      db.folders.splice(last+1,0,f);S.openF[parent]=true;}
+    else db.folders.push(f);
+    if(moveMid){meeting(moveMid).folder=id;}
+    S.menu=null;S.view='f:'+id;
+    if(S.route==='meeting'&&!moveMid){S.route='meetings';S.mid=null;}
+    render();
+    toast(moveMid?`<b>${esc(name)}</b> created — the meeting moved into it.`
+      :`<b>${esc(name)}</b> created.`,2800,'ok');return;}
+  case 'renamefolder':{stop();const f=folder(p);if(!f)return;
+    const n=prompt('Rename folder',f.name);
+    if(n&&n.trim())f.name=n.trim();
+    S.menu=null;render();if(n&&n.trim())toast('Folder renamed.');return;}
+  case 'delfolder':{stop();const f=folder(p);if(!f)return;
+    const gone=[p,...subFolders(p).map(x=>x.id)];
+    const n=db.meetings.filter(m=>gone.includes(m.folder)).length;
+    db.meetings.forEach(m=>{if(gone.includes(m.folder))m.folder='';});
+    db.folders=db.folders.filter(x=>!gone.includes(x.id));
+    if(gone.some(g=>S.view==='f:'+g))S.view='all';
+    S.menu=null;render();
+    toast(`<b>${esc(f.name)}</b> deleted. ${n?`${n} meeting${n>1?'s':''} now Unfiled`
+      :'It was empty'} — no notes were removed.`,3400,'warn');return;}
   case 'range':stop();S.range=p;render();return;
   case 'railmin':stop();S.railmin=!S.railmin;render();return;
   case 'listmin':stop();S.listmin=!S.listmin;render();return;
@@ -1978,18 +2637,18 @@ document.addEventListener('click',e=>{
     setTimeout(()=>{S.busy=false;const m=meeting(p);
       m.genAt='just now';
       render();toast('<b>Notes regenerated</b> from your notes and the transcript.')},2000);return;}
-  case 'confirmDelete':stop();S.menu='confirm:'+p;render();return;
+  case 'confirmDelete':stop();S.settings=false;S.menu='confirm:'+p;render();return;
   case 'delmeeting':{stop();db.meetings=db.meetings.filter(m=>m.id!==p);
     db.tasks=db.tasks.filter(t=>t.mid!==p);S.menu=null;S.route='meetings';render();
     toast('Meeting moved to <b>Recently deleted</b>. 30 days to restore.');return;}
   case 'ackNotes':stop();meeting(p).ackd=true;render();return;
-  case 'menu':{stop();const r=el.getBoundingClientRect();const fr=$('#frame').getBoundingClientRect();
+  case 'menu':{stop();S.settings=false;const r=el.getBoundingClientRect();const fr=$('#frame').getBoundingClientRect();
     S.menuXY={x:(r.left-fr.left)/SCALE-140,y:(r.bottom-fr.top)/SCALE+6};
     S.menu=p;render();return;}
   case 'closemenu':stop();S.menu=null;render();return;
-  case 'notifs':stop();S.menu='notifs:';render();return;
-  case 'shortcuts':stop();S.menu='shortcuts:';render();return;
-  case 'share':stop();S.share=p;S.shareOpts={who:'link',notes:true,fups:true,tx:false,exp:'30 days',link:''};
+  case 'notifs':stop();S.settings=false;S.menu='notifs:';render();return;
+  case 'shortcuts':stop();S.settings=false;S.menu='shortcuts:';render();return;
+  case 'share':stop();S.settings=false;S.share=p;S.shareOpts={who:'link',notes:true,fups:true,tx:false,exp:'30 days',link:''};
     S.menu=null;render();return;
   case 'closeShare':stop();S.share=false;render();return;
   case 'sharewho':stop();if(p==='invite'){demo('require a Team plan for private sharing');return}
@@ -2004,7 +2663,11 @@ document.addEventListener('click',e=>{
   case 'settings':stop();S.settings=true;S.spane=p||'appearance';S.menu=null;render();return;
   case 'closeSettings':stop();S.settings=false;render();return;
   case 'spane':stop();S.spane=p;render();return;
-  case 'theme':stop();db.settings.theme=p;db.settings.sysTheme=false;render();toast(`${p==='dark'?'Dark':'Light'} mode on.`);return;
+  case 'theme':stop();db.settings.theme=p;db.settings.sysTheme=false;render();
+    toast(`${theme(db.settings.th).name} — ${p==='dark'?'dark':'light'} mode.`);return;
+  case 'setth':{stop();if(db.settings.th===p){render();return}
+    db.settings.th=p;render();
+    toast(`${ic('check',15)}<span><b>${esc(theme(p).name)}</b> — ${esc(theme(p).ds)}</span>`,3000,'ok');return;}
   case 'tog':{stop();const g=db.settings;g[p]=!g[p];
     if(p==='sysTheme'&&g.sysTheme){g.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
     if(p==='detect'){db.setupDone=g.detect?(g.calendar?3:2):(g.calendar?2:1);
@@ -2018,7 +2681,7 @@ document.addEventListener('click',e=>{
     db.setupDone=db.settings.detect?3:2;render();toast('<b>Calendar connected.</b> You will get a nudge before each call.');return;
   case 'dismissSetup':stop();db.setupDone=3;render();toast('Setup card hidden. Reopen it from Settings.');return;
   case 'dismissOk':stop();db.dismissedOk=true;render();return;
-  case 'engine':stop();db.settings.engine=p;render();
+  case 'engine':stop();db.settings.engine=p;S.menu=null;render();
     toast(p==='cloud'?'Cloud engine on — audio now leaves this Mac for transcription.':'On-device engine on — audio stays here.');return;
   case 'cyclekey':{stop();const g=db.settings;g.hotkey=KEYS[(KEYS.indexOf(g.hotkey)+1)%KEYS.length];render();
     toast(g.hotkey==='Fn'?'Fn is claimed by macOS for the emoji picker.':`Hotkey set to ${g.hotkey} — nothing else claims it.`);return;}
@@ -2033,6 +2696,24 @@ document.addEventListener('click',e=>{
   case 'govocab':stop();S.settings=false;S.route='vocabulary';S.view='all';render();return;
   case 'resetDemo':stop();S.settings=false;resetDemo(true);return;
   case 'reloadDemo':stop();S.settings=false;resetDemo(false);return;
+  /* ── demo page ─────────────────────────────────────────────────────── */
+  case 'dtoast':{stop();
+    if(p==='long'){toast('<b>Cloud transcription is off.</b> Dictation is running on this Mac, '+
+      'so accents and noisy rooms will be a little rougher. Change it in Settings &rsaquo; Engine.',4200,'info');return}
+    if(p==='stack'){toast('Task added.');
+      setTimeout(()=>toast(`${ic('check',15)}<span><b>Moved</b> to Client Calls / Acme.</span>`,2600,'ok'),320);
+      setTimeout(()=>toast(`${ic('alert',15)}<span><b>Fn is claimed by macOS.</b> Pick another key.</span>`,2600,'warn'),640);
+      return}
+    const L={'':'Link copied to your clipboard.',
+      ok:`${ic('check',15)}<span><b>Notes regenerated</b> from your notes and the transcript.</span>`,
+      warn:`${ic('alert',15)}<span><b>8 of 10 meetings used</b> this month on the Free plan.</span>`,
+      dg:`${ic('alertc',15)}<span><b>Could not reach the clipboard.</b> Nothing was copied.</span>`,
+      info:`${ic('info',15)}<span>Transcripts stay on this Mac until you delete them.</span>`};
+    toast(L[p],2800,p);return;}
+  case 'dosn':{stop();
+    if(p==='clear'){osnClear();return}
+    if(p==='all'){Object.keys(OSN).forEach((k,i)=>setTimeout(()=>osNotif(k),i*260));return}
+    osNotif(p);return;}
   case 'tfilter':stop();S.taskFilter=p;render();return;
   case 'showdone':stop();S.showDone=!S.showDone;render();return;
   case 'toggletask':{stop();const t=task(p);t.done=!t.done;render();
@@ -2044,8 +2725,25 @@ document.addEventListener('click',e=>{
   case 'cyclepri':{stop();const t=task(p);const o=['','md','hi'];
     t.pri=o[(o.indexOf(t.pri)+1)%3];render();return;}
   case 'deltask':stop();db.tasks=db.tasks.filter(t=>t.id!==p);S.menu=null;S.panel=false;render();
-    toast('Follow-up deleted.');return;
+    toast('Task deleted.');return;
   case 'holdstart':stop();holdStart();return;
+  /* ── floating bubble ───────────────────────────────────────────────── */
+  case 'bubtalk':stop();
+    /* a drag that ended on the core must not also read as a click */
+    if(Date.now()-BUBSUP<220)return;
+    S.bub.rec?bubStop():bubStart();return;
+  case 'bubact':{stop();
+    if(p==='record'){if(S.bub.rec)bubStop();startRecording();return}
+    if(p==='ask'){if(S.bub.rec)bubStop();S.route='assistant';S.cid='new';S.menu=null;render();
+      setTimeout(()=>{const i=document.querySelector('#askbox');if(i)i.focus()},80);return}
+    if(p==='more'){const r=el.getBoundingClientRect();const fr=$('#frame').getBoundingClientRect();
+      S.menuXY={x:(r.left-fr.left)/SCALE-206,y:(r.top-fr.top)/SCALE-8};
+      S.menu='bubmore:';render();return}
+    return;}
+  case 'bubreset':{stop();const h=bubHome();S.bub.x=h.x;S.bub.y=h.y;S.menu=null;render();
+    toast('Bubble back at the bottom right.');return;}
+  case 'bubhide':stop();if(S.bub.rec)bubStop();db.settings.bubble=false;S.menu=null;render();
+    toast(`${ic('info',15)}<span><b>Bubble hidden.</b> Settings &rsaquo; Hotkey brings it back.</span>`,3400,'info');return;
   case 'copytx':stop();toast('Transcript copied to your clipboard.');return;
   case 'deltx':stop();db.transcripts=db.transcripts.filter(t=>t.id!==p);render();toast('Transcript deleted.');return;
   case 'delterm':stop();db.vocab=db.vocab.filter(v=>v.t!==p);render();toast(`“${esc(p)}” removed from your vocabulary.`);return;
@@ -2064,7 +2762,7 @@ document.addEventListener('click',e=>{
     else{S.zoom=!S.zoom;fit();render();
       toast(S.zoom?'Filling the screen.':'Back to a window.');}
     return;}
-  case 'addperson':stop();S.addPerson=p;render();
+  case 'addperson':stop();S.settings=false;S.addPerson=p;render();
     setTimeout(()=>{const i=document.querySelector('#pname');if(i)i.focus()},60);return;
   case 'closeperson':stop();S.addPerson=false;render();return;
   case 'saveperson':{stop();const n=(document.querySelector('#pname')||{}).value||'';
@@ -2100,7 +2798,7 @@ document.addEventListener('keydown',e=>{
     if(a==='addtask'&&el.value.trim()){
       db.tasks.unshift({id:'u'+Date.now(),title:el.value.trim(),mid:null,due:'No date',late:false,
         pri:'',done:false,grp:'Today',quote:'',who:'',at:''});
-      el.value='';render();toast('Follow-up added.');return;}
+      el.value='';render();toast('Task added.');return;}
     if(a==='addterm'&&el.value.trim()){
       db.vocab.unshift({t:el.value.trim(),h:'—',n:0,s:'you'});el.value='';render();
       toast('Term added. It applies to dictation and meetings.');return;}
@@ -2117,6 +2815,35 @@ document.addEventListener('keydown',e=>{
     if(S.panel){S.panel=false;render();return}
   }
   if(e.key===','&&(e.metaKey||e.ctrlKey)){e.preventDefault();S.settings=true;S.spane='appearance';render()}
+});
+
+/* ── bubble dragging ──────────────────────────────────────────────────────
+   Pointer coordinates are viewport-space and the frame may be scaled, so every
+   delta is divided by SCALE. A press that moves less than a few pixels is left
+   alone and becomes an ordinary click; anything more sets BUBSUP so the click
+   that follows mouseup is ignored. */
+let BDRAG=null,BUBSUP=0;
+document.addEventListener('mousedown',e=>{
+  const el=$('#bubble');
+  if(!el||!db.settings.bubble||!e.target.closest('#bubble'))return;
+  if(e.target.closest('[data-a="bubact"]'))return;   /* tray buttons are not handles */
+  const r=el.getBoundingClientRect();
+  BDRAG={ox:(e.clientX-r.left)/SCALE,oy:(e.clientY-r.top)/SCALE,x0:e.clientX,y0:e.clientY,live:false};
+});
+document.addEventListener('mousemove',e=>{
+  if(!BDRAG)return;
+  if(!BDRAG.live&&Math.abs(e.clientX-BDRAG.x0)+Math.abs(e.clientY-BDRAG.y0)<4)return;
+  BDRAG.live=true;
+  e.preventDefault();
+  const fr=$('#frame').getBoundingClientRect();
+  S.bub.x=Math.max(8,Math.min((e.clientX-fr.left)/SCALE-BDRAG.ox,FW()-68));
+  S.bub.y=Math.max(72,Math.min((e.clientY-fr.top)/SCALE-BDRAG.oy,FH()-76));
+  const el=$('#bubble');
+  if(el){el.style.left=S.bub.x+'px';el.style.top=S.bub.y+'px';el.classList.add('drag')}
+});
+document.addEventListener('mouseup',()=>{
+  if(BDRAG&&BDRAG.live){BUBSUP=Date.now();const el=$('#bubble');if(el)el.classList.remove('drag')}
+  BDRAG=null;
 });
 
 /* ══════════════════════════════════ boot / sizing ══════════════════════════════════ */
@@ -2151,6 +2878,7 @@ function fit(){
   if(wantList!==AUTO.list){AUTO.list=wantList;S.listmin=wantList;ch=true}
   if(wantRail!==AUTO.rail){AUTO.rail=wantRail;S.railmin=wantRail;ch=true}
   if(ch&&BOOTED)render();
+  else if(BOOTED)renderBubble();
 }
 window.addEventListener('resize',fit);
 fit();render();BOOTED=true;
