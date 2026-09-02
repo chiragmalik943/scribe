@@ -591,13 +591,21 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .sendb:hover{background:var(--brandFillHov)}
 .sendb.off{background:var(--sunk);box-shadow:none;cursor:not-allowed}
 .compbox .sendb.off .ic{color:var(--ter)}
-.msg{display:flex;gap:12px;margin-bottom:20px}
+.msg{display:flex;gap:10px;margin-bottom:18px;align-items:flex-end}
+/* row-reverse makes flex-start the right edge, so the user's turn packs right
+   with its avatar outermost — no margin-left:auto needed */
+.msg.u{flex-direction:row-reverse}
 .msg .who{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;
   justify-content:center;font-family:Poppins,sans-serif;font-size:12px;font-weight:600}
 .msg.u .who{background:var(--tint);color:var(--brandInk)}
 .msg.a .who{background:var(--ink);color:var(--surf)}
-.msg .tx{font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.msg .tx{font-size:13.5px;line-height:1.6;color:var(--ink2);padding:10px 14px;border-radius:15px;
+  max-width:min(76%,620px)}
+.msg.a .tx{background:var(--sunk);border:1px solid var(--line);border-bottom-left-radius:5px}
+.msg.u .tx{background:var(--tint);color:var(--ink);border:1px solid transparent;
+  border-bottom-right-radius:5px}
 .msg .tx b{color:var(--ink)}
+.msg.a .tx.typing{padding:13px 16px}
 .src{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;
   color:var(--brandInk);background:var(--tint2);border:1px solid var(--tint);border-radius:16px;
   padding:4px 11px;cursor:pointer}
@@ -910,6 +918,90 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .dgrid{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 /* rows of sample chips; opts the row into the host-scoped .live / .badge rules */
 .dchips{}
+
+/* ══════════════════════════════ folder detail ══════════════════════════════ */
+/* A top-level folder shows its sub-folders as cards and then its own meetings;
+   a sub-folder shows the rolled-up notes instead, since it has no children. */
+.fhead{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.fhead .fi{width:44px;height:44px;border-radius:13px;background:var(--tint);color:var(--brandInk);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.fhead .ft{min-width:0;flex:1}
+.fhead h1{font-family:Poppins,sans-serif;font-size:24px;font-weight:600;letter-spacing:-.015em;
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.fhead h1 .edit{opacity:0;color:var(--sec);display:inline-flex;pointer-events:none}
+.fhead:hover h1 .edit{opacity:1}
+.fhead .fs{font-size:13px;color:var(--sec);margin-top:5px;display:flex;align-items:center;
+  gap:9px;flex-wrap:wrap}
+.fhead .fa{margin-left:auto;display:flex;gap:8px;flex:0 0 auto;flex-wrap:wrap}
+.fcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(224px,1fr));gap:12px;margin-bottom:24px}
+.fcard{border:1px solid var(--line);border-radius:14px;padding:15px;cursor:pointer;background:var(--surf);
+  display:flex;flex-direction:column;gap:10px;transition:border-color .14s,box-shadow .14s}
+.fcard:hover{border-color:var(--brand);box-shadow:var(--shadow2)}
+.fcard .top{display:flex;align-items:center;gap:10px}
+.fcard .top .fi{width:32px;height:32px;border-radius:10px;background:var(--tint2);color:var(--brandInk);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.fcard .nm{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fcard .fm{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;opacity:0;pointer-events:none}
+.fcard:hover .fm{opacity:1;pointer-events:auto}
+.fcard .fm:hover{background:var(--sunk);color:var(--ink2)}
+.fcard .ds{font-size:12.5px;color:var(--sec);line-height:1.5;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fcard .mt{font-size:12px;color:var(--ter);display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  margin-top:auto}
+.fcard .mt b{color:var(--ink2);font-family:Poppins,sans-serif;font-weight:600}
+.fcard.add{border-style:dashed;align-items:center;justify-content:center;text-align:center;
+  color:var(--sec);min-height:118px}
+.fcard.add:hover{color:var(--brandInk)}
+.fcard.add .nm{font-size:13px;white-space:normal;text-align:center;flex:0 0 auto}
+/* the rolled-up notes on a sub-folder page reuse the meeting note sections but
+   need a source chip per line, since each line came from a different call */
+.rollgrid{display:grid;grid-template-columns:1fr 340px;gap:26px;align-items:start}
+.bul li .from{font-size:11.5px;color:var(--ter);white-space:nowrap;margin-left:auto;flex:0 0 auto;
+  cursor:pointer;font-family:Poppins,sans-serif;font-weight:600}
+.bul li .from:hover{color:var(--brandInk);text-decoration:underline}
+#frame.w2 .rollgrid{grid-template-columns:1fr}
+
+/* ══════════════════════════════ attendees ══════════════════════════════ */
+.attx{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);
+  font-family:Poppins,sans-serif;font-weight:600;cursor:pointer;border-radius:7px;padding:3px 7px;
+  margin-left:2px}
+.attx:hover{background:var(--sunk);color:var(--brandInk)}
+.faces i.more{background:var(--sunk)!important;color:var(--sec);font-size:10px}
+.prow{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:8px}
+.prow:hover{background:var(--sunk)}
+.prow .av{width:26px;height:26px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;font-size:10.5px;font-weight:700;color:#FFF;font-family:Poppins,sans-serif}
+.prow .nm{flex:1;min-width:0;font-size:13px;color:var(--ink2)}
+.prow .nm span{display:block;font-size:11px;color:var(--ter);margin-top:1px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.prow .rm{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;cursor:pointer;opacity:.45;
+  transition:opacity .12s}
+.prow:hover .rm{opacity:1}
+.prow .rm:hover{background:var(--dangerTint);color:var(--dangerInk)}
+.prow .me{font-size:11px;color:var(--ter);font-family:Poppins,sans-serif;font-weight:600;flex:0 0 auto}
+
+/* ══════════════════════════════ meeting assistant panel ══════════════════════════════ */
+/* Shares .panel with the task details panel, so only the chat body differs. */
+.app.mchat .notesgrid,.app.mchat .rollgrid{grid-template-columns:1fr;gap:18px}
+.app.mchat .notesgrid{overflow-y:auto}
+.panel.chat .pb2{padding:18px 18px 0;gap:0;flex:1}
+.panel .cfoot{padding:0 18px 16px;flex:0 0 auto}
+.panel .cfoot .comp{margin-top:0;padding-top:10px}
+.panel .cfoot .compbox{padding:9px 11px;border-radius:11px}
+.panel .cfoot .compbox input{font-size:13px}
+.panel.chat .msg{margin-bottom:15px}
+.panel.chat .msg .tx{max-width:82%;font-size:13px}
+.panel.chat .msg .who{width:26px;height:26px;border-radius:8px}
+.cempty{font-size:13px;color:var(--sec);line-height:1.6}
+.cchips{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.cchips span{border:1px solid var(--line2);border-radius:10px;padding:9px 12px;font-size:12.5px;
+  color:var(--ink2);cursor:pointer;display:flex;align-items:center;gap:9px;background:var(--surf)}
+.cchips span:hover{border-color:var(--brand);color:var(--brandInk)}
+.cchips span .ic{color:var(--sec);flex:0 0 auto}
+.cchips span:hover .ic{color:var(--brandInk)}
 .hidden{display:none!important}
 </style>
 </head>
@@ -1009,21 +1101,28 @@ const theme=id=>THEMES.find(t=>t.id===id)||THEMES[0];
 
 /* ══════════════════════════════════ data ══════════════════════════════════ */
 const AV={J:'#C24600',T:'#1570EF',M:'#0A7548',E:'#7C3AED',D:'#8A5300',R:'#0E7490',A:'#BE185D',K:'#4D7C0F'};
-const F=(n,i)=>({n,i,c:AV[i]||'#C24600'});
+const F=(n,i,e)=>({n,i,c:AV[i]||'#C24600',e:e||''});
+/* email is optional on purpose: the attendee popover has to show both states,
+   because only people with one can be sent the notes */
 
 function seed(){return{
-user:{name:'Michael Carter',initial:'M',plan:'Free'},
+user:{name:'Michael Carter',initial:'M',plan:'Free',email:'michael.carter@example.com'},
 folders:[{id:'client',name:'Client Calls'},
-           {id:'f-acme',name:'Acme',parent:'client'},
-           {id:'f-northwind',name:'Northwind',parent:'client'},
+           {id:'f-acme',name:'Acme',parent:'client',
+            sum:'The Acme rollout is agreed in principle at 400 seats with a March go-live, and the commercials are close to final. Everything now hangs on two things: the revised pricing sheet reaching Jennifer before her internal review, and Legal clearing the data-processing addendum, which Tom has made a condition of signature.'},
+           {id:'f-northwind',name:'Northwind',parent:'client',
+            sum:'Northwind will renew on a two-year term provided the uplift holds at 4%. Robert has the authority to sign but needs the final figure in writing before he takes it to finance, so the whole renewal is waiting on one document.'},
          {id:'interviews',name:'Interviews'},
-           {id:'f-backend',name:'Backend',parent:'interviews'},
-           {id:'f-frontend',name:'Frontend',parent:'interviews'},
+           {id:'f-backend',name:'Backend',parent:'interviews',
+            sum:'One candidate screened for the senior backend role. Strong on distributed systems and incident response, noticeably lighter on data modelling than the role calls for. Recommendation is to progress with a take-home scoped at exactly that gap.'},
+           {id:'f-frontend',name:'Frontend',parent:'interviews',
+            sum:'One frontend screen so far. Good product instincts and unusually strong accessibility awareness. The candidate is willing to do the take-home but wants a stated time budget before committing, which we have agreed to cap at four hours.'},
          {id:'projects',name:'Projects'},
-           {id:'f-q3',name:'Q3 planning',parent:'projects'},
+           {id:'f-q3',name:'Q3 planning',parent:'projects',
+            sum:'Headcount, not scope, is the binding constraint this quarter. Migration work takes priority over the reporting rebuild, and the plan cannot be finalised until Ashley has the headcount numbers ahead of Friday\u2019s budget lock.'},
          {id:'internal',name:'Internal'}],
 meetings:[
- {id:'m1',title:'Acme kickoff',people:[F('Jennifer Walsh','J'),F('Tom Ellis','T'),F('you','M')],
+ {id:'m1',title:'Acme kickoff',people:[F('Jennifer Walsh','J','jennifer.walsh@acme.com'),F('Tom Ellis','T','t.ellis@acme.com'),F('you','M')],
   group:'Today',day:'11 Aug 2026',time:'2:14 pm',dur:'34:02',folder:'f-acme',fups:3,
   notes:{summary:'Kickoff for the Acme rollout. Jennifer confirmed a 400-seat starting licence with a March go-live, contingent on revised pricing landing before her internal review on Friday. Tom raised the data-processing addendum as a blocker for signature, and both sides agreed a technical deep-dive is needed before scoping the migration.',
    decisions:[['400 seats at the starting tier, revisited at 90 days.','12:04'],
@@ -1040,7 +1139,7 @@ meetings:[
    ['21:55','You','And who owns SSO configuration on your side?',''],
    ['22:03','Tom Ellis','Good question. I will have to come back to you on that one.',''],
    ['27:12','Jennifer Walsh','For the deep-dive, I want our platform team in the room, not just procurement.','Source of task 3']]},
- {id:'m2',title:'Design review — onboarding',people:[F('Emily Foster','E'),F('you','M')],
+ {id:'m2',title:'Design review — onboarding',people:[F('Emily Foster','E','emily@aithinkers.com'),F('you','M')],
   group:'Today',day:'11 Aug 2026',time:'11:00 am',dur:'22:41',folder:'internal',fups:1,
   notes:{summary:'Walkthrough of the reworked onboarding flow. Emily approved the three-step setup but pushed back on the empty-state copy, which she felt over-explains the mechanics rather than the next action.',
    decisions:[['Three-step setup checklist ships as designed.','04:10'],['Empty-state copy to be rewritten before handoff.','15:22']],
@@ -1056,7 +1155,7 @@ meetings:[
   mynotes:'Strong on distributed systems. Data modelling is the gap.',
   transcript:[['36:40','You','I think we take this to the technical round.',''],
    ['38:02','David Kim','I would scope the take-home around data modelling, since that is where the gap is.','Source of task 1']]},
- {id:'m4',title:'Northwind renewal',people:[F('Robert Hayes','R'),F('you','M')],
+ {id:'m4',title:'Northwind renewal',people:[F('Robert Hayes','R','r.hayes@northwind.co'),F('you','M')],
   group:'Yesterday',day:'10 Aug 2026',time:'1:05 pm',dur:'27:55',folder:'f-northwind',fups:4,
   notes:{summary:'Renewal conversation for Northwind. Robert wants the uplift held at 4% and is prepared to sign a two-year term to get it. He needs the final figure confirmed in writing before he takes it to finance.',
    decisions:[['Uplift held at 4% for a two-year term.','09:30'],['Final figure to be confirmed in writing.','21:14']],
@@ -1087,7 +1186,35 @@ meetings:[
   notes:{summary:'Frontend screen. Good product instincts and accessibility awareness; wants clarity on the take-home time budget before committing.',
    decisions:[['Send the take-home with an explicit four-hour cap.','33:20']],questions:[]},
   mynotes:'Good a11y awareness. Wants a time cap on the take-home.',
-  transcript:[['33:20','Tom Ellis','Send it over with a hard four-hour cap and I will do it this weekend.','Source of task 1']]}],
+  transcript:[['33:20','Tom Ellis','Send it over with a hard four-hour cap and I will do it this weekend.','Source of task 1']]},
+ {id:'m9',title:'All-hands — Q3 results',
+  people:[F('Ashley Nguyen','A','ashley@aithinkers.com'),F('Daniel Brooks','D','daniel@aithinkers.com'),
+          F('Emily Foster','E','emily@aithinkers.com'),F('Tom Ellis','T'),
+          F('Robert Hayes','R'),F('Karen Doyle','K'),F('David Kim','D'),F('Priya Raman','P'),
+          F('Marcus Webb','M'),F('Sofia Alvarez','S'),F('Liam Novak','L'),F('you','M')],
+  group:'Today',day:'11 Aug 2026',time:'9:30 am',dur:'46:12',folder:'',fups:0,
+  notes:{summary:'Company-wide read-out of the quarter. Revenue landed ahead of plan on the back of two large renewals; hiring is behind, which is now the main constraint on the Q4 roadmap. Leadership committed to publishing the revised roadmap before the end of the month.',
+   decisions:[['Q4 roadmap to be republished with the revised hiring plan.','31:20'],
+              ['Renewals team gets one additional headcount ahead of other teams.','38:05']],
+   questions:[['Does the hiring freeze apply to backfills as well as new roles?','41:52']]},
+  mynotes:'Revenue ahead of plan. Hiring is the constraint.\nRoadmap republished before month end.',
+  transcript:[['31:20','Ashley Nguyen','We will republish the Q4 roadmap once the hiring plan is settled — before the end of the month.',''],
+   ['38:05','Daniel Brooks','Renewals gets the next head. That is the one team where the pipeline is the bottleneck.',''],
+   ['41:52','Priya Raman','Is the freeze on backfills too, or only new roles?','']]},
+ {id:'m10',title:'Intro call — Meridian Health',people:[F('Nadia Haddad','N','n.haddad@meridianhealth.org'),F('you','M')],
+  group:'Yesterday',day:'10 Aug 2026',time:'11:20 am',dur:'19:04',folder:'',fups:0,
+  notes:{summary:'First conversation with Meridian Health. They are replacing a manual note-taking process across 60 clinicians and are early in the evaluation. Procurement will not engage until their security review is complete.',
+   decisions:[['Security questionnaire goes out before any commercial discussion.','12:30']],
+   questions:[['Who owns the security review on their side?','16:40']]},
+  mynotes:'60 clinicians. Security review gates everything.',
+  transcript:[['12:30','Nadia Haddad','Send the security questionnaire first. We cannot talk numbers until that clears.',''],
+   ['16:40','You','And who owns that review internally?','']]},
+ {id:'m11',title:'Support escalation — Volta',people:[F('Karen Doyle','K'),F('Marcus Webb','M'),F('you','M')],
+  group:'Yesterday',day:'10 Aug 2026',time:'8:45 am',dur:'24:37',folder:'',fups:0,
+  notes:{summary:'Escalation review after Volta lost transcripts on two recorded calls. Root cause was a failed upload retry rather than data loss; both recordings were recovered from the local cache. Volta asked for a written incident note.',
+   decisions:[['Send Volta a written incident note by end of week.','18:15']],questions:[]},
+  mynotes:'Not data loss — failed retry. Both recovered.\nWritten incident note owed.',
+  transcript:[['18:15','Karen Doyle','They want something in writing. A short incident note is enough, but it has to come this week.','']]}],
 tasks:[
  {id:'t1',title:'Send the revised pricing sheet to Jennifer',mid:'m1',due:'2 days late',late:true,pri:'hi',done:false,grp:'Overdue',quote:'I need the revised pricing in front of me before Friday. I am presenting it internally and I cannot go in with the old numbers.',who:'Jennifer Walsh',at:'11:48'},
  {id:'t2',title:'Loop in Legal on the data-processing addendum',mid:'m1',due:'Yesterday',late:true,pri:'hi',done:false,grp:'Overdue',quote:'The data-processing addendum has to be reviewed before I can sign anything.',who:'Tom Ellis',at:'12:19'},
@@ -1134,9 +1261,10 @@ setupDone:3
 
 /* ══════════════════════════════════ state ══════════════════════════════════ */
 let db=seed();
-const S={route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:'c1',
+const S={route:'meetings',view:'all',mid:null,fid:null,tab:'notes',tid:null,cid:'c1',
   settings:false,spane:'appearance',share:false,menu:null,panel:false,
   openF:{client:true,interviews:true},
+  mpanel:false,mtyping:false,
   bub:{x:null,y:null,rec:false,secs:0},
   railmin:false,listmin:false,q:'',tq:'',vq:'',taskFilter:'all',showDone:false,
   speakers:'All speakers',range:'week',
@@ -1215,6 +1343,30 @@ const folderCount=id=>db.meetings.filter(m=>inFolder(m,id)).length;
 const folderColor=id=>({client:'var(--brandInk)',internal:'var(--okInk)',
   interviews:'var(--info)',projects:'var(--warnInk)'}[rootOf(id)]||'var(--sec)');
 const newFolderId=()=>'f'+Math.random().toString(36).slice(2,8);
+/* A sub-folder control is named after the folder it will sit in — "Add Client
+   Calls Folder" — so the destination is unambiguous wherever the button appears.
+   Passing no id gives the top-level wording. */
+const addFolderLabel=id=>id?`Add ${folderName(id)} Folder`:'Add Folder';
+const folderMeetings=id=>db.meetings.filter(m=>inFolder(m,id));
+/* Decisions and open questions are rolled up from the member meetings, each line
+   keeping a link back to the call it was said on. */
+const folderLines=(id,key)=>folderMeetings(id).flatMap(m=>
+  (m.notes&&m.notes[key]||[]).map(d=>({tx:d[0],at:d[1],mid:m.id,mt:m.title})));
+const folderTasks=id=>{const ids=folderMeetings(id).map(m=>m.id);
+  return db.tasks.filter(t=>ids.includes(t.mid)&&!t.done);};
+/* Seeded sub-folders carry a written summary; anything the user creates gets a
+   derived one so the page never looks broken. */
+function folderSummary(id){
+  const f=folder(id);
+  if(f&&f.sum)return f.sum;
+  const ms=folderMeetings(id),n=ms.length;
+  if(!n)return id===''?'Nothing is waiting to be filed — every meeting has a folder.'
+    :'Nothing has been filed here yet. Move a meeting in and AIT-Scribe will roll its notes up on this page.';
+  const who=[...new Set(ms.flatMap(m=>m.people.map(x=>x.n)).filter(x=>x!=='you'))];
+  return `${n} meeting${n>1?'s':''} filed here, with ${who.slice(0,3).join(', ')}${
+    who.length>3?` and ${who.length-3} other${who.length-3>1?'s':''}`:''}. `+
+    `A written summary appears once AIT-Scribe has read across all of them.`;
+}
 const openTasks=()=>db.tasks.filter(t=>!t.done);
 const taskCount=id=>db.tasks.filter(t=>t.mid===id).length;
 const overdue=()=>db.tasks.filter(t=>!t.done&&t.late);
@@ -1297,8 +1449,8 @@ function folderRows(f){
   if(!kids.length||!S.openF[f.id])return folderRow(f,false);
   return folderRow(f,false)+kids.map(k=>folderRow(k,true)).join('')+
     `<a class="sub" data-a="newfolder" data-p="${f.id}" style="color:var(--ter)"
-       title="New sub-folder in ${esc(f.name)}">${ic('folderplus',15)}
-      <span class="lbl">New sub-folder</span></a>`;
+       title="${esc(addFolderLabel(f.id))}">${ic('folderplus',15)}
+      <span class="lbl">${esc(addFolderLabel(f.id))}</span></a>`;
 }
 function listMeetings(){
   const all=db.meetings.length,rec=db.meetings.filter(m=>['Today','Yesterday'].includes(m.group)).length;
@@ -1312,8 +1464,10 @@ function listMeetings(){
     ${db.meetings.length?`<div class="slabel">Folders</div>
     <div class="views">
      ${topFolders().map(f=>folderRows(f)).join('')}
-     <a data-a="newfolder" data-p="" style="color:var(--sec)" title="New folder">${
-        ic('folderplus',16)}<span class="lbl">New folder</span></a>
+     ${folderCount('')?v(S.view==='unfiled','folder','Unfiled',
+        cnt(folderCount('')),'view','unfiled'):''}
+     <a data-a="newfolder" data-p="" style="color:var(--sec)" title="Add Folder">${
+        ic('folderplus',16)}<span class="lbl">Add Folder</span></a>
     </div>`:`<div class="note">Folders appear here once AIT&#8209;Scribe files your first call.</div>`}
     </div></div>`;
 }
@@ -1384,7 +1538,6 @@ function meterBars(n,live,seedv=0){
 /* ══════════════════════════════════ meetings ══════════════════════════════════ */
 function viewMeetings(){
   let list=db.meetings.slice();
-  if(S.view.startsWith('f:'))list=list.filter(m=>inFolder(m,S.view.slice(2)));
   if(S.view==='recent')list=list.filter(m=>['Today','Yesterday'].includes(m.group));
   if(S.q)list=list.filter(m=>(m.title+' '+m.people.map(p=>p.n).join(' ')+' '+
     m.transcript.map(t=>t[2]).join(' ')).toLowerCase().includes(S.q.toLowerCase()));
@@ -1430,14 +1583,133 @@ function viewMeetings(){
          <span class="mt">${m.time} · ${taskCount(m.id)} task${taskCount(m.id)===1?'':'s'}</span>`}</span></div>`}).join('')}
     </div>`).join('')}</div>`;
 }
+/* ══════════════════════════════════ folder detail ══════════════════════════════════ */
+/* One row per meeting, shared by the folder page and the Unfiled page. `showFolder`
+   forces the move-to-folder control visible, which is the whole point of Unfiled. */
+function meetingRow(m,showFolder){
+  const live=S.rec&&S.rec.mid===m.id;
+  return `<div class="mrow" data-a="open" data-p="${m.id}">
+    <span><span class="t">${esc(m.title)}</span>
+      <span class="s">${m.people.length} attendee${m.people.length===1?'':'s'} · ${
+        live?'recording now':m.dur}</span></span>
+    ${live?'':`<span class="macts" ${showFolder?'style="opacity:1;pointer-events:auto"':''}>
+      <span data-a="menu" data-p="folder:${m.id}" title="Move to folder">${ic('folder',14)}</span>
+      <span data-a="share" data-p="${m.id}" title="Share">${ic('share',14)}</span>
+      <span class="dg" data-a="confirmDelete" data-p="${m.id}" title="Delete">${ic('trash',14)}</span></span>`}
+    <span class="rt">${live?`<span class="live">${ic('rec',12)}Recording</span>`:
+      `<span class="tg" style="color:${folderColor(m.folder)}">${esc(folderPath(m.folder))}</span>
+       <span class="mt">${m.time} · ${taskCount(m.id)} task${taskCount(m.id)===1?'':'s'}</span>`}</span></div>`;
+}
+function viewFolder(){
+  const id=S.fid,unfiled=id==='';
+  const f=folder(id);
+  if(!unfiled&&!f)return `<div class="body"><div class="empty"><h2>Folder not found</h2>
+    <p>It may have been deleted.</p>
+    <button class="btn s sm" style="margin-top:16px" data-a="go" data-p="meetings">All meetings</button></div></div>`;
+  const kids=unfiled?[]:subFolders(id);
+  const isTop=!unfiled&&!f.parent;
+  const own=db.meetings.filter(m=>m.folder===id);
+  const all=folderMeetings(id);
+  const tasks=folderTasks(id);
+
+  const head=`<div class="fhead">
+    <span class="fi">${ic(unfiled?'file':'folder',21)}</span>
+    <span class="ft"><h1 class="h" ${unfiled?'':`data-a="renamefolder" data-p="${id}" style="cursor:text"`}>${
+        esc(unfiled?'Unfiled':f.name)}${unfiled?'':`<span class="edit">${ic('edit',15)}</span>`}</h1>
+      <span class="fs">${unfiled?'Not in a folder yet'
+        :isTop?`Top-level folder${kids.length?` · ${kids.length} folder${kids.length>1?'s':''}`:''}`
+        :`In ${esc(folderName(f.parent))}`}
+        <span class="sp" style="width:3px;height:3px;border-radius:50%;background:var(--ter)"></span>
+        <span>${all.length} meeting${all.length===1?'':'s'}</span>
+        ${tasks.length?`<span class="sp" style="width:3px;height:3px;border-radius:50%;background:var(--ter)"></span>
+          <span>${tasks.length} open task${tasks.length===1?'':'s'}</span>`:''}</span></span>
+    <span class="fa">
+      ${isTop?`<button class="btn p sm" data-a="newfolder" data-p="${id}">${
+        ic('folderplus',15)}${esc(addFolderLabel(id))}</button>`:''}
+      ${unfiled?'':`<button class="btn s sm" data-a="menu" data-p="fmenu:${id}">${ic('dots',15)}</button>`}
+    </span></div>`;
+
+  /* Unfiled is the one page whose job is to get meetings out of it */
+  if(unfiled){
+    return `<div class="body">${head}
+      <div class="notice info" style="margin-bottom:20px">${ic('info',17)}
+        <span><b>These calls have no folder.</b> AIT-Scribe could not tell where they belonged, or
+        filing was off when they were recorded. Use ${ic('folder',13)} on a row — or the folder chip
+        inside a meeting — to move one, and you can create a folder from the same menu.</span></div>
+      ${all.length?`<div class="card">${all.map(m=>meetingRow(m,true)).join('')}</div>`
+        :`<div class="empty" style="padding-bottom:60px"><span class="ico">${ic('check',27,1.5)}</span>
+          <h2>Everything is filed</h2><p>Nothing is waiting for a folder.</p></div>`}</div>`;
+  }
+
+  /* A top-level folder leads with its sub-folders; a sub-folder has none, so it
+     leads with the notes rolled up across the calls filed in it. */
+  const cards=isTop?`<div class="ghd">Folders <span class="n">· ${kids.length}</span></div>
+    <div class="fcards">${kids.map(k=>{
+      const km=folderMeetings(k.id),kt=folderTasks(k.id);
+      return `<div class="fcard" data-a="view" data-p="f:${k.id}">
+        <div class="top"><span class="fi">${ic('folder',16)}</span>
+          <span class="nm">${esc(k.name)}</span>
+          <span class="fm" data-a="menu" data-p="fmenu:${k.id}" title="Folder options">${ic('dots',14)}</span></div>
+        <div class="ds">${esc(folderSummary(k.id))}</div>
+        <div class="mt"><b>${km.length}</b> meeting${km.length===1?'':'s'}
+          ${kt.length?`<span>·</span><b>${kt.length}</b> open task${kt.length===1?'':'s'}`:''}</div></div>`}).join('')}
+      <div class="fcard add" data-a="newfolder" data-p="${id}">
+        ${ic('folderplus',20)}<span class="nm">${esc(addFolderLabel(id))}</span></div></div>`:'';
+
+  const roll=isTop?'':rollup(id);
+
+  const mlist=`<div class="ghd">${isTop?'Meetings in this folder':'Meetings'}
+      <span class="n">· ${(isTop?own:all).length}</span>${
+      isTop&&all.length>own.length?`<span class="n" style="margin-left:auto;text-transform:none;
+        letter-spacing:0">${all.length-own.length} more in its folders</span>`:''}</div>
+    ${(isTop?own:all).length?`<div class="card">${(isTop?own:all).map(m=>meetingRow(m)).join('')}</div>`
+      :`<div class="card" style="padding:26px 20px;text-align:center;font-size:13px;color:var(--sec)">
+        ${isTop?'No meetings sit directly in this folder — they are all in its sub-folders.'
+          :'Nothing filed here yet.'}</div>`}`;
+
+  return `<div class="body">${head}${cards}${roll}${mlist}</div>`;
+}
+/* Summary, decisions, open questions and open tasks, read across every meeting
+   filed in the folder. */
+function rollup(id){
+  const dec=folderLines(id,'decisions'),qs=folderLines(id,'questions'),tasks=folderTasks(id);
+  const src=l=>`<span class="from" data-a="open" data-p="${l.mid}" title="${
+    esc(l.mt)} · ${l.at}">${esc(l.mt.length>22?l.mt.slice(0,21)+'…':l.mt)} &rsaquo;</span>`;
+  return `<div class="rollgrid" style="margin-bottom:24px">
+    <div>
+      <div class="sec"><h3>${ic('spark',15)}Summary</h3><p>${esc(folderSummary(id))}</p></div>
+      ${dec.length?`<div class="sec"><h3>${ic('checkc',15)}Decisions <span class="n"
+          style="font-weight:500;color:var(--ter);font-size:12px">· ${dec.length}</span></h3>
+        <ul class="bul">${dec.map(l=>`<li><span class="dot"></span><span>${esc(l.tx)}</span>${src(l)}</li>`).join('')}</ul></div>`:''}
+      ${qs.length?`<div class="sec"><h3>${ic('alertc',15)}Open questions <span class="n"
+          style="font-weight:500;color:var(--ter);font-size:12px">· ${qs.length}</span></h3>
+        <ul class="bul">${qs.map(l=>`<li><span class="dot"></span><span>${esc(l.tx)}</span>${src(l)}</li>`).join('')}</ul></div>`:''}
+      ${!dec.length&&!qs.length?`<div class="sec"><p style="color:var(--sec)">No decisions or open
+        questions have come out of these calls yet.</p></div>`:''}
+    </div>
+    <div><div class="sec"><h3>${ic('list',15)}Open tasks
+      <span class="jump" data-a="go" data-p="tasks">View in Tasks &rsaquo;</span></h3>
+      ${tasks.length?`<div class="card">${tasks.map(t=>taskRow(t,true)).join('')}</div>`
+        :`<div class="card" style="padding:22px;text-align:center;font-size:13px;color:var(--sec)">
+          Nothing open from this folder.</div>`}</div></div></div>`;
+}
+
 /* ══════════════════════════════════ meeting detail ══════════════════════════════════ */
-function faces(m){return `<span class="faces">${m.people.map(p=>
-  `<i style="background:${p.c}" title="${esc(p.n)}">${p.i}</i>`).join('')}</span>`;}
+/* Avatars only, capped so a twelve-person all-hands does not push the meta row
+   onto a second line — the remainder becomes a +N chip. Names live in the
+   attendee popover now. */
+function faces(m,max=6){
+  const shown=m.people.slice(0,max),rest=m.people.length-shown.length;
+  return `<span class="faces">${shown.map(p=>
+    `<i style="background:${p.c}" title="${esc(p.n)}">${p.i}</i>`).join('')}${
+    rest>0?`<i class="more" title="${esc(m.people.slice(max).map(x=>x.n).join(', '))}">+${rest}</i>`:''}</span>`;
+}
 function titleBlock(m,extra){
   return `<div class="titleblk"><h1 class="h" data-a="rename" data-p="${m.id}" style="cursor:text">${esc(m.title)}
       <span class="edit">${ic('edit',15)}</span></h1>
-    <div class="metarow">${faces(m)}<span>${m.people.map(p=>p.n).join(', ')}</span>
-      <span class="addp" data-a="addperson" data-p="${m.id}">${ic('userplus',13)}Add person</span><span class="sp"></span>
+    <div class="metarow">${faces(m)}
+      <span class="attx" data-a="menu" data-p="people:${m.id}" title="Attendees">${
+        m.people.length} attendee${m.people.length===1?'':'s'} ${ic('chevd',12)}</span><span class="sp"></span>
       <span>${m.day}, ${m.time}</span>${extra}<span class="sp"></span>
       <span class="fchipx" data-a="menu" data-p="folder:${m.id}">${ic('folder',14)}${esc(folderPath(m.folder))} ${ic('chevd',12)}</span>
     </div></div>`;
@@ -1472,9 +1744,9 @@ function viewMeeting(){
         <div class="hint" style="margin-top:10px">Jot key points as they come up — AI notes expand them into
         a summary, decisions and tasks when you stop.</div></div>`;
     }
-    body+=`<div class="comp"><div class="compbox">${ic('spark',17)}
-      <input placeholder="Ask anything about this meeting so far…" data-a="askMeeting">
-      <span class="sendb" data-a="askSend">${ic('send',15,2)}</span></div></div>`;
+    body+=`<div class="comp"><div class="compbox" data-a="mchat" style="cursor:pointer">${ic('spark',17)}
+      <span style="flex:1;font-size:13.5px;color:var(--ter)">Ask anything about this meeting so far…</span>
+      <span class="sendb">${ic('send',15,2)}</span></div></div>`;
     return `<div class="body">${titleBlock(m,'')}${body}</div>`;
   }
   if(S.busy){
@@ -2148,14 +2420,15 @@ function menuEl(){
       `<a data-a="movefolder" data-p="${id}|${x.id}" ${i?'style="padding-left:26px"':''}>${
         ic('folder',15)}${esc(x.name)}
       ${m.folder===x.id?`<span class="k">${ic('check',13)}</span>`:''}</a>`).join('')).join('')}
-    <hr><a data-a="newfolder" data-p="|${id}">${ic('folderplus',15)}New folder…</a></div>`;}
+    <hr><a data-a="newfolder" data-p="|${id}">${ic('folderplus',15)}Add Folder…</a></div>`;}
   if(kind==='fmenu'){const f=folder(id);if(!f)return '';const pos=S.menuXY||{x:300,y:240};
    const kids=subFolders(id);
    return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
    <div class="menu" style="left:${clampX(pos.x,246)}px;top:${clampY(pos.y,260)}px;width:246px">
     <div class="mh">${esc(folderPath(id))}</div>
     <a data-a="view" data-p="f:${id}">${ic('folder',15)}Open folder<span class="k">${folderCount(id)}</span></a>
-    ${f.parent?'':`<a data-a="newfolder" data-p="${id}">${ic('folderplus',15)}New sub-folder…</a>`}
+    ${f.parent?'':`<a data-a="newfolder" data-p="${id}">${ic('folderplus',15)}${
+      esc(addFolderLabel(id))}…</a>`}
     <a data-a="renamefolder" data-p="${id}">${ic('edit',15)}Rename…</a><hr>
     <a class="dg" data-a="delfolder" data-p="${id}">${ic('trash',15)}Delete folder</a>
     <div class="fn">${kids.length?`Its ${kids.length} sub-folder${kids.length>1?'s':''} go too. `:''}${
@@ -2192,6 +2465,21 @@ function menuEl(){
         .map(([k,l])=>`<div class="srow" style="padding:11px 2px"><span class="t">${l}</span>
           <span class="a"><span class="keycap">${k}</span></span></div>`).join('')}
     </div></div>`;
+  if(kind==='people'){const m=meeting(id);if(!m)return '';const pos=S.menuXY||{x:300,y:200};
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="left:${clampX(pos.x,276)}px;top:${clampY(pos.y,340)}px;width:276px">
+    <div class="mh">${m.people.length} attendee${m.people.length===1?'':'s'}</div>
+    <div style="max-height:246px;overflow-y:auto">${m.people.map((x,i)=>{
+      const me=x.n==='you';
+      return `<div class="prow">
+        <span class="av" style="background:${x.c}">${x.i}</span>
+        <span class="nm">${esc(me?db.user.name:x.n)}${x.e?`<span>${esc(x.e)}</span>`
+          :me?`<span>${esc(db.user.email||'you')}</span>`:'<span>No email</span>'}</span>
+        ${me?`<span class="me">You</span>`
+          :`<span class="rm" data-a="delperson" data-p="${id}|${i}" title="Remove ${esc(x.n)}">${ic('x',13)}</span>`}
+      </div>`}).join('')}</div>
+    <hr><a data-a="addperson" data-p="${id}">${ic('userplus',15)}Add person…</a>
+    <div class="fn">Only people with an email can be sent the notes.</div></div>`;}
   if(kind==='bubmore'){const pos=S.menuXY||{x:FW()-280,y:FH()-320};const g=db.settings;
    return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
    <div class="menu" style="left:${clampX(pos.x,252)}px;top:${clampY(pos.y,300)}px;width:252px">
@@ -2296,6 +2584,89 @@ function taskPanel(){
    </div></div>`;
 }
 
+/* ══════════════════════════════════ meeting assistant ══════════════════════════════════ */
+/* A side panel rather than a tab, so a question can be asked while the notes or
+   the transcript stay on screen. The thread lives on the meeting, so switching
+   tabs — or leaving and coming back — keeps it. */
+const MCHIPS=[['What did I commit to?','list'],['Summarise this call','file'],
+              ['What was left unresolved?','alertc'],['Draft a recap email','send']];
+function meetingChat(m){
+  if(!m)return '';
+  const msgs=m.chat||[];
+  return `<div class="panel chat"><div class="ph">${ic('spark',17)}<b>Ask about this meeting</b>
+    <span style="margin-left:auto;display:flex;gap:4px">
+      ${msgs.length?`<span class="tbtn" data-a="mclear" data-p="${m.id}" title="Clear this thread">${
+        ic('reset',17)}</span>`:''}
+      <span class="tbtn" data-a="mchat" title="Close">${ic('x',17)}</span></span></div>
+   <div class="pb2">
+    ${msgs.length?msgs.map(x=>`<div class="msg ${x.r}">
+        <span class="who">${x.r==='u'?db.user.initial:ic('spark',14,2)}</span>
+        <span class="tx">${x.tx}</span></div>`).join('')
+      :`<div class="cempty">Ask anything about <b>${esc(m.title)}</b> — the assistant reads this
+        call's transcript and notes only, and answers from what was actually said.
+        <div class="cchips">${MCHIPS.map(([q,i])=>
+          `<span data-a="mask" data-p="${esc(q)}">${ic(i,15)}${q}</span>`).join('')}</div></div>`}
+    ${S.mtyping?`<div class="msg a"><span class="who">${ic('spark',14,2)}</span>
+      <span class="tx typing"><i></i><i></i><i></i></span></div>`:''}
+   </div>
+   <div class="cfoot"><div class="comp"><div class="compbox">
+     <span class="ic" data-a="demo" data-p="dictate your question">${ic('mic',16)}</span>
+     <input placeholder="Ask about this meeting…" data-a="mask" id="mbox">
+     <span class="sendb" data-a="msend">${ic('send',15,2)}</span></div></div></div></div>`;
+}
+/* Canned but not random: each answer is assembled from this meeting's own notes,
+   tasks and transcript, so it stays true to whatever is on screen. */
+function meetingAnswer(m,q){
+  const l=q.toLowerCase();
+  const ts=db.tasks.filter(t=>t.mid===m.id);
+  const cite=` <span class="src" data-a="jump" data-p="${(m.transcript[0]||['00:00'])[0]}">${
+    ic('users',13)}${esc(m.title)} · from the transcript</span>`;
+  if(/commit|task|action|owe|follow/.test(l))
+    return ts.length?`You took ${ts.length} thing${ts.length>1?'s':''} away from this call:<br>${
+      ts.map((t,i)=>`&nbsp;&nbsp;${i+1}.&nbsp; ${esc(t.title)} — <b>${esc(t.due)}</b>.`).join('<br>')}`+
+      `<br>All of them are already on your task list.`
+      :'Nothing was committed on this call — no task came out of it.';
+  if(/summar|recap|overview|what happened|about/.test(l)&&!/email|draft/.test(l))
+    return esc(m.notes.summary||'This call has not been summarised yet.')+cite;
+  if(/draft|email|write|send/.test(l))
+    return `Here is a recap you could send:<br><br>Hi ${esc((m.people.find(x=>x.n!=='you')||{n:'there'}).n.split(' ')[0])},<br><br>`+
+      `Thanks for the time today. ${esc((m.notes.summary||'').split('.')[0])}.`+
+      (m.notes.decisions.length?` To confirm what we agreed: ${
+        m.notes.decisions.map(d=>esc(d[0].replace(/\.$/,'').toLowerCase())).join('; ')}.`:'')+
+      `<br><br>Best,<br>${esc(db.user.name.split(' ')[0])}`;
+  if(/unresolved|open|question|unanswered|unclear/.test(l))
+    return m.notes.questions.length?`${m.notes.questions.length} thing${
+      m.notes.questions.length>1?'s were':' was'} left open:<br>${
+      m.notes.questions.map(x=>`&nbsp;&nbsp;·&nbsp; ${esc(x[0])} <b>(${x[1]})</b>`).join('<br>')}`
+      :'Nothing was left hanging — every question raised on this call got an answer.';
+  if(/decide|decision|agree/.test(l))
+    return m.notes.decisions.length?`${m.notes.decisions.length} decision${
+      m.notes.decisions.length>1?'s':''} came out of it:<br>${
+      m.notes.decisions.map(d=>`&nbsp;&nbsp;·&nbsp; ${esc(d[0])} <b>(${d[1]})</b>`).join('<br>')}`
+      :'No decisions were recorded on this call.';
+  if(/who|attend|people|present/.test(l))
+    return `${m.people.length} people were on it: ${esc(m.people.map(x=>
+      x.n==='you'?db.user.name:x.n).join(', '))}.`;
+  if(/when|time|how long|durat/.test(l))
+    return `${esc(m.day)} at ${esc(m.time)}, and it ran ${m.dur}.`;
+  return `I can only answer from this call. Here is what it covered:<br><br>${
+    esc(m.notes.summary||'No notes have been generated for it yet.')}${cite}`;
+}
+function askMeeting(q){
+  const m=meeting(S.mid);if(!m||!q.trim())return;
+  m.chat=m.chat||[];
+  m.chat.push({r:'u',tx:esc(q.trim())});
+  S.mtyping=true;render();
+  const el=document.querySelector('.panel.chat .pb2');if(el)el.scrollTop=el.scrollHeight;
+  setTimeout(()=>{
+    S.mtyping=false;
+    m.chat.push({r:'a',tx:meetingAnswer(m,q)});
+    render();
+    const e2=document.querySelector('.panel.chat .pb2');if(e2)e2.scrollTop=e2.scrollHeight;
+    const i=document.querySelector('#mbox');if(i)i.focus();
+  },1100);
+}
+
 /* ══════════════════════════════════ render ══════════════════════════════════ */
 function render(){
   document.documentElement.dataset.theme=db.settings.theme;
@@ -2304,11 +2675,27 @@ function render(){
   if(S.route==='meetings'){lc=listMeetings();
     main=mhead('Meetings',meetingsState(),`<button class="btn ${db.meetings.length?'p':'s'} sm" data-a="record">${
       ic('rec',15)}Record meeting</button>`)+viewMeetings();}
-  else if(S.route==='meeting'){const m=meeting(S.mid);lc=listMeetings();
-    main=mhead('','',`<button class="btn s sm" data-a="share" data-p="${S.mid}">${ic('share',15)}Share</button>
-      <span class="tbtn" data-a="menu" data-p="meeting:${S.mid}">${ic('dots',18)}</span>`,
+  else if(S.route==='folder'){lc=listMeetings();
+    const unf=S.fid==='',f=folder(S.fid);
+    const nm=unf?'Unfiled':(f?f.name:'Folder');
+    main=mhead('','','',
       `<span class="bk" data-a="go" data-p="meetings">${ic('back',15)}All meetings</span> ${ic('chev',13)}
-       <b>${esc(m?m.title:'')}</b>`)+viewMeeting();}
+       ${!unf&&f&&f.parent?`<span class="bk" data-a="view" data-p="f:${f.parent}">${
+         esc(folderName(f.parent))}</span> ${ic('chev',13)}`:''}
+       <b>${esc(nm)}</b>`)+viewFolder();}
+  else if(S.route==='meeting'){const m=meeting(S.mid);lc=listMeetings();
+    const mf=m?m.folder:'',mfo=folder(mf);
+    main=mhead('','',
+      `<button class="btn ${S.mpanel?'p':'s'} sm" data-a="mchat">${ic('spark',15)}Ask AI</button>
+       <button class="btn s sm" data-a="share" data-p="${S.mid}">${ic('share',15)}Share</button>
+       <span class="tbtn" data-a="menu" data-p="meeting:${S.mid}">${ic('dots',18)}</span>`,
+      `<span class="bk" data-a="go" data-p="meetings">${ic('back',15)}All meetings</span> ${ic('chev',13)}
+       ${mfo&&mfo.parent?`<span class="bk" data-a="view" data-p="f:${mfo.parent}">${
+         esc(folderName(mfo.parent))}</span> ${ic('chev',13)}`:''}
+       <span class="bk" data-a="view" data-p="${mf===''?'unfiled':'f:'+mf}">${
+         esc(mf===''?'Unfiled':folderName(mf))}</span> ${ic('chev',13)}
+       <b>${esc(m?m.title:'')}</b>`)+viewMeeting();
+    if(S.mpanel)aside=meetingChat(m);}
   else if(S.route==='speech'){lc=listSpeech();
     main=mhead('Speech to Text',db.transcripts.filter(t=>t.when==='today').length+' today')+viewSpeech();}
   else if(S.route==='vocabulary'){lc=listVocab();
@@ -2326,7 +2713,7 @@ function render(){
     main=mhead(c?'':'AI Assistant','',c?`<button class="btn s sm" data-a="demo" data-p="share this conversation">${
       ic('share',15)}Share</button>`:'',c?`<span class="bk" data-a="newchat">AI Assistant</span> ${ic('chev',13)}
       <b>${esc(c.title)}</b>`:null)+viewAssistant();}
-  const cls=(S.railmin?'railmin ':'')+(S.listmin?'listmin':'');
+  const cls=(S.railmin?'railmin ':'')+(S.listmin?'listmin ':'')+(S.mpanel?'mchat':'');
   if(lc)lc=withFoot(lc);
   $('#app').innerHTML=`<div class="shell">${topbar()}
     <div class="app ${cls}">${rail()}${lc}<div class="main">${main}</div>${aside}</div>
@@ -2454,7 +2841,7 @@ const LINES=[['00:04','Jennifer Walsh','Thanks for making the time — let us st
 function startRecording(){
   if(S.bub&&S.bub.rec){S.bub.rec=false;S.bub.secs=0;S.rec2=null;}
   const id='m'+(Date.now()%100000);
-  const m={id,title:'New recording',people:[F('Jennifer Walsh','J'),F('Tom Ellis','T'),F('you','M')],
+  const m={id,title:'New recording',people:[F('Jennifer Walsh','J','jennifer.walsh@acme.com'),F('Tom Ellis','T','t.ellis@acme.com'),F('you','M')],
     group:'Today',day:'11 Aug 2026',time:'3:20 pm',
     dur:'00:00',folder:'client',fups:0,mynotes:'',transcript:[],
     notes:{summary:'',decisions:[],questions:[]}};
@@ -2564,23 +2951,27 @@ document.addEventListener('click',e=>{
   switch(a){
   case 'noop':return;
   case 'demo':stop();demo(p);return;
-  case 'go':stop();S.route=p;S.q='';S.panel=false;S.menu=null;
+  case 'go':stop();S.route=p;S.q='';S.panel=false;S.menu=null;S.mpanel=false;S.fid=null;
     S.view=p==='tasks'?'all':p==='speech'?'today':p==='vocabulary'?'all':'all';render();return;
-  case 'view':{stop();S.view=p;S.q='';S.menu=null;
-    /* a view belongs to a list, so clicking one from a detail page navigates
-       back out to that list rather than just re-highlighting the sidebar */
-    if(S.route==='meeting'){S.route='meetings';S.mid=null;}
+  case 'view':{stop();S.view=p;S.q='';S.menu=null;S.mpanel=false;
     if(S.route==='tasks')S.panel=false;
-    /* selecting a sub-folder opens its parent so the selection stays visible */
-    if(p.startsWith('f:')){const f=folder(p.slice(2));if(f&&f.parent)S.openF[f.parent]=true;}
-    render();return;}
+    if(p.startsWith('f:')){
+      /* a folder has its own page: sub-folders, rolled-up notes and its meetings */
+      const fid=p.slice(2);const f=folder(fid);
+      if(!f){S.route='meetings';S.view='all';render();return}
+      if(f.parent)S.openF[f.parent]=true;
+      S.route='folder';S.fid=fid;S.mid=null;render();return;}
+    if(p==='unfiled'){S.route='folder';S.fid='';S.mid=null;render();return;}
+    /* everything else is a filter on the meeting list, so a detail page steps
+       back out to that list rather than just re-highlighting the sidebar */
+    S.route='meetings';S.mid=null;render();return;}
   case 'foldtoggle':stop();S.openF[p]=!S.openF[p];render();return;
   case 'newfolder':{stop();
     /* p is either a parent folder id, '' for a new top-level folder, or
        '|<meetingId>' when it came from a move-to-folder menu */
     let parent=p,moveMid='';
     if(p.indexOf('|')>=0){[parent,moveMid]=p.split('|');}
-    const n=prompt(parent?`New sub-folder in ${folderName(parent)}`:'New folder','');
+    const n=prompt(parent?`${addFolderLabel(parent)} — name it`:'Add Folder — name it','');
     if(!n||!n.trim()){S.menu=null;render();return}
     const name=n.trim();
     if(db.folders.some(f=>f.name.toLowerCase()===name.toLowerCase()&&(f.parent||'')===(parent||''))){
@@ -2594,7 +2985,9 @@ document.addEventListener('click',e=>{
     else db.folders.push(f);
     if(moveMid){meeting(moveMid).folder=id;}
     S.menu=null;S.view='f:'+id;
-    if(S.route==='meeting'&&!moveMid){S.route='meetings';S.mid=null;}
+    /* land on the new folder unless it was created to receive a meeting, in
+       which case stay where the user was */
+    if(!moveMid){S.route='folder';S.fid=id;S.mid=null;S.mpanel=false;}
     render();
     toast(moveMid?`<b>${esc(name)}</b> created — the meeting moved into it.`
       :`<b>${esc(name)}</b> created.`,2800,'ok');return;}
@@ -2608,6 +3001,10 @@ document.addEventListener('click',e=>{
     db.meetings.forEach(m=>{if(gone.includes(m.folder))m.folder='';});
     db.folders=db.folders.filter(x=>!gone.includes(x.id));
     if(gone.some(g=>S.view==='f:'+g))S.view='all';
+    if(S.route==='folder'&&gone.includes(S.fid)){
+      /* step up to the parent if there is one, otherwise out to all meetings */
+      if(f.parent&&!gone.includes(f.parent)){S.fid=f.parent;S.view='f:'+f.parent}
+      else {S.route='meetings';S.view='all';S.fid=null}}
     S.menu=null;render();
     toast(`<b>${esc(f.name)}</b> deleted. ${n?`${n} meeting${n>1?'s':''} now Unfiled`
       :'It was empty'} — no notes were removed.`,3400,'warn');return;}
@@ -2754,7 +3151,6 @@ document.addEventListener('click',e=>{
     const i=document.querySelector('#askbox');if(i)i.focus();return;}
   case 'asksend':{stop();const i=document.querySelector('#askbox');
     if(i&&i.value.trim()){const q=i.value;i.value='';askAssistant(q)}return;}
-  case 'askSend':stop();toast('The assistant answers from this meeting once you send.');return;
   case 'clearq':stop();S.q='';render();return;
   case 'win':{stop();
     if(p==='close')demo('close the window');
@@ -2762,7 +3158,28 @@ document.addEventListener('click',e=>{
     else{S.zoom=!S.zoom;fit();render();
       toast(S.zoom?'Filling the screen.':'Back to a window.');}
     return;}
-  case 'addperson':stop();S.settings=false;S.addPerson=p;render();
+  /* ── meeting assistant panel ────────────────────────────────────────── */
+  case 'mchat':stop();S.mpanel=!S.mpanel;S.menu=null;render();
+    if(S.mpanel){const i=document.querySelector('#mbox');if(i)i.focus();}
+    return;
+  case 'mask':{stop();
+    /* a suggestion chip carries its question in data-p; the input does not */
+    if(p){askMeeting(p);return}
+    const i=document.querySelector('#mbox');
+    if(i&&i.value.trim()){const q=i.value;i.value='';askMeeting(q)}
+    else if(i)i.focus();
+    return;}
+  case 'msend':{stop();const i=document.querySelector('#mbox');
+    if(i&&i.value.trim()){const q=i.value;i.value='';askMeeting(q)}return;}
+  case 'mclear':{stop();const m=meeting(p);if(m)m.chat=[];render();
+    toast('Thread cleared.');return;}
+  /* ── attendees ──────────────────────────────────────────────────────── */
+  case 'delperson':{stop();const [mid,ix]=p.split('|');const m=meeting(mid);
+    const who=m.people[+ix];
+    if(!who||who.n==='you')return;
+    m.people.splice(+ix,1);render();
+    toast(`<b>${esc(who.n)} removed.</b> They will not be sent the notes.`,2800,'warn');return;}
+  case 'addperson':stop();S.settings=false;S.menu=null;S.addPerson=p;render();
     setTimeout(()=>{const i=document.querySelector('#pname');if(i)i.focus()},60);return;
   case 'closeperson':stop();S.addPerson=false;render();return;
   case 'saveperson':{stop();const n=(document.querySelector('#pname')||{}).value||'';
@@ -2803,6 +3220,7 @@ document.addEventListener('keydown',e=>{
       db.vocab.unshift({t:el.value.trim(),h:'—',n:0,s:'you'});el.value='';render();
       toast('Term added. It applies to dictation and meetings.');return;}
     if(a==='ask'&&el.value.trim()){const q=el.value;el.value='';askAssistant(q);return;}
+    if(a==='mask'&&el.value.trim()){const q=el.value;el.value='';askMeeting(q);return;}
     if(a==='key'){db.settings.anthropicKey=el.value;render();return;}
   }
   if(e.key==='Enter'&&S.addPerson&&(e.target.id==='pname'||e.target.id==='pmail')){
@@ -2813,6 +3231,7 @@ document.addEventListener('keydown',e=>{
     if(S.share){S.share=false;render();return}
     if(S.settings){S.settings=false;render();return}
     if(S.panel){S.panel=false;render();return}
+    if(S.mpanel){S.mpanel=false;render();return}
   }
   if(e.key===','&&(e.metaKey||e.ctrlKey)){e.preventDefault();S.settings=true;S.spane='appearance';render()}
 });
