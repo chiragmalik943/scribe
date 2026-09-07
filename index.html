@@ -35,6 +35,17 @@
   --info:#1570EF; --infoTint:#EFF5FF; --infoInk:#0B4FB0; --infoLine:#CFE0FB;
   --shadow:0 24px 70px rgba(26,24,32,.20),0 2px 8px rgba(26,24,32,.09);
   --shadow2:0 16px 40px rgba(26,24,32,.15);
+  /* the floating pill is its own surface, not a theme surface: it has to read as
+     an object hovering over other apps, so it stays dark in light mode and only
+     lifts a little in dark mode. Shared across themes for the same reason a red
+     is shared — a recording control should look the same wherever it lands. */
+  --pill:#161C27; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.60);
+  --pillLine:rgba(255,255,255,.13); --pillWell:rgba(255,255,255,.09);
+  --pillShadow:0 18px 44px rgba(12,18,28,.38),0 2px 6px rgba(12,18,28,.24),0 0 0 1px rgba(255,255,255,.06);
+  /* watchouts: conflict is the only one that earns a red */
+  --wcf:var(--danger); --wcfInk:var(--dangerInk); --wcfTint:var(--dangerTint); --wcfLine:var(--dangerLine);
+  --wdc:var(--warn); --wdcInk:var(--warnInk); --wdcTint:var(--warnTint); --wdcLine:var(--warnLine);
+  --wcl:var(--info); --wclInk:var(--infoInk); --wclTint:var(--infoTint); --wclLine:var(--infoLine);
 }
 [data-theme="dark"]{
   --danger:#F0483A; --dangerOn:#26100C; --dangerInk:#FFA79B; --dangerTint:#3A1713; --dangerLine:#55231C;
@@ -43,6 +54,9 @@
   --info:#5B95F0; --infoTint:#15233A; --infoInk:#A8C8F8; --infoLine:#274068;
   --shadow:0 24px 70px rgba(0,0,0,.58),0 2px 8px rgba(0,0,0,.42);
   --shadow2:0 16px 40px rgba(0,0,0,.46);
+  --pill:#232C3B; --pillInk:#F4F8FE; --pillSec:rgba(244,248,254,.60);
+  --pillLine:rgba(255,255,255,.11); --pillWell:rgba(255,255,255,.08);
+  --pillShadow:0 18px 44px rgba(0,0,0,.62),0 2px 6px rgba(0,0,0,.44),0 0 0 1px rgba(255,255,255,.09);
 }
 
 /* ─────────── Ocean — cool blue, the default ─────────── */
@@ -403,11 +417,15 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .fchip .b{font-size:11px;font-weight:700;color:var(--dangerOn);background:var(--danger);
   border-radius:9px;padding:0 6px}
 .fchip.on .b{background:var(--brand);color:var(--brandOn)}
+/* the watchout filters count rather than warn, so their badge stays neutral */
+.fchip.wf .b{background:var(--line2);color:var(--ink2)}
+.fchip.wf.on .b{background:var(--brand);color:var(--brandOn)}
 /* ══════════════════════════════ meetings ══════════════════════════════ */
 .mrow{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer}
 .mrow+.mrow{border-top:1px solid var(--line)}
 .mrow:hover{background:var(--sunk)}
 .mrow .t{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;display:block}
+.mrow .t .wdot{margin-left:9px;vertical-align:1px}
 .mrow .s{font-size:12.5px;color:var(--sec);display:block;margin-top:3px}
 .mrow .rt{text-align:right;white-space:nowrap;flex:0 0 auto;min-width:118px}
 .mrow .rt .tg{font-size:12px;font-weight:600;font-family:Poppins,sans-serif;display:block}
@@ -470,7 +488,10 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .recbar.pause .t{color:var(--warnInk)}
 .recbar .s{font-size:12.5px;color:var(--sec);min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .recbar .a{margin-left:auto;display:flex;gap:8px;flex:0 0 auto}
-.tabs{display:flex;gap:26px;border-bottom:1px solid var(--line);margin:20px 0 18px;flex:0 0 auto}
+.tabs{display:flex;gap:26px;border-bottom:1px solid var(--line);margin:20px 0 18px;flex:0 0 auto;
+  overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{flex:0 0 auto;white-space:nowrap}
 .tabs a{display:flex;align-items:center;gap:8px;padding-bottom:11px;font-family:Poppins,sans-serif;
   font-size:14px;font-weight:600;color:var(--sec);border-bottom:2px solid transparent;
   margin-bottom:-1px;cursor:pointer}
@@ -481,6 +502,8 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .tabs a .cnt{font-size:11.5px;font-weight:700;background:var(--tint);color:var(--brandInk);
   border-radius:9px;padding:1px 7px}
 .tabs a.off .cnt{background:var(--sunk);color:var(--ter)}
+.tabs a .cnt.hot{background:var(--dangerTint);color:var(--dangerInk)}
+.tabs a.on .cnt.hot{background:var(--danger);color:var(--dangerOn)}
 .sec{margin-bottom:18px}
 .sec h3{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;margin-bottom:9px;
   display:flex;align-items:center;gap:8px}
@@ -498,6 +521,10 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .notebox .hint{font-size:12.5px;color:var(--ter)}
 .trs{display:flex;gap:14px;padding:12px 14px;border-radius:10px}
 .trs.hl{background:var(--tint2);border:1px solid var(--tint)}
+/* a line the assistant spoke into the call, so the record shows who raised it */
+.trs.said{background:var(--okTint);border:1px solid var(--okLine)}
+.trs.said .spk{color:var(--okInk)}
+.trs.said .badge{background:var(--okLine);color:var(--okInk)}
 .trs .tm{font-size:12px;color:var(--sec);font-variant-numeric:tabular-nums;width:44px;
   flex:0 0 auto;padding-top:2px;cursor:pointer}
 .trs .tm:hover{color:var(--brandInk)}
@@ -861,18 +888,152 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .osn .x:hover{background:var(--sunk);color:var(--ink2)}
 @keyframes osin{from{opacity:0;transform:translateX(22px)}}
 
+/* ══════════════════════════════ watchouts ══════════════════════════════ */
+/* Type is the only signal that varies, so every watchout surface reads its
+   colours off one `.w-<type>` class rather than repeating three rulesets.
+   --wc is the accent, --wcT the tinted well, --wcL its border, --wcI the ink
+   that stays legible on the tint in both modes. */
+.w-conflict{--wc:var(--wcf);--wcI:var(--wcfInk);--wcT:var(--wcfTint);--wcL:var(--wcfLine)}
+.w-discrepancy{--wc:var(--wdc);--wcI:var(--wdcInk);--wcT:var(--wdcTint);--wcL:var(--wdcLine)}
+.w-clarification{--wc:var(--wcl);--wcI:var(--wclInk);--wcT:var(--wclTint);--wcL:var(--wclLine)}
+
+/* the type chip, used in rows, panels, the pill popover and the rollup */
+.wchip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;
+  font-family:Poppins,sans-serif;border-radius:7px;padding:3px 9px;
+  background:var(--wcT);color:var(--wcI);border:1px solid var(--wcL);white-space:nowrap;flex:0 0 auto}
+.wchip .ic{flex:0 0 auto}
+.wchip.plain{background:var(--sunk);color:var(--sec);border-color:var(--line)}
+.wchip.brand{background:var(--tint);color:var(--brandInk);border-color:var(--tint)}
+
+/* one row per watchout. The icon well carries the type colour, the title is the
+   assistant's own sentence, and the sub-line is always the same shape:
+   what was said here, then what it collides with. */
+.wrow{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;cursor:pointer;
+  position:relative;flex-wrap:wrap}
+.wrow+.wrow{border-top:1px solid var(--line)}
+.wrow:hover{background:var(--sunk)}
+.wrow.wsel{background:var(--tint2)}
+.wrow:before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--wc);
+  opacity:0;transition:opacity .14s}
+.wrow.wsel:before,.wrow:hover:before{opacity:1}
+.wrow .wi{width:30px;height:30px;border-radius:9px;background:var(--wcT);color:var(--wcI);
+  border:1px solid var(--wcL);display:flex;align-items:center;justify-content:center;
+  flex:0 0 auto;margin-top:1px}
+.wrow .wmain{flex:1 1 190px;min-width:0}
+.wrow .wt{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;line-height:1.4;
+  color:var(--ink);display:block}
+.wrow .ws{font-size:12.5px;color:var(--sec);line-height:1.5;margin-top:5px;display:block}
+.wrow .ws b{color:var(--ink2);font-weight:600}
+.wrow .wm{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11.5px;color:var(--ter);
+  flex-wrap:wrap}
+.wrow .wm .wsr{display:inline-flex;align-items:center;gap:5px}
+.wrow .wr{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:9px;
+  margin-left:auto}
+.wrow .wr .age{font-size:12px;color:var(--ter);white-space:nowrap;line-height:1.3}
+.wrow .wacts{display:flex;gap:4px;opacity:0;pointer-events:none;flex:0 0 auto}
+.wrow:hover .wacts,.wrow.wsel .wacts{opacity:1;pointer-events:auto}
+.wrow .wacts span{width:29px;height:29px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;color:var(--sec);background:var(--surf);border:1px solid var(--line2)}
+.wrow .wacts span:hover{border-color:var(--brand);color:var(--brandInk)}
+.wrow .wacts span.gd:hover{border-color:var(--ok);color:var(--okInk)}
+/* a settled watchout stays readable but stops competing for attention */
+.wrow.done{opacity:.62}
+.wrow.done .wi{background:var(--sunk);color:var(--ter);border-color:var(--line)}
+.wrow.done:before{display:none}
+.wrow.done .wt{color:var(--ink2)}
+
+/* the compare block: what was said now, and what it collides with. Two columns
+   wherever the container has room, stacked below that, with the relation
+   sitting in the gap so the pair reads as one statement either way. */
+.wcmp{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line2);
+  border-radius:12px;overflow:hidden;background:var(--surf)}
+.wcmp>div{padding:14px 15px;min-width:0}
+.wcmp>div+div{border-left:1px solid var(--line2);background:var(--rail)}
+.wcmp .hd{display:flex;align-items:center;gap:7px;font-family:Poppins,sans-serif;font-size:11px;
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--sec);margin-bottom:9px}
+.wcmp .hd .ic{color:var(--ter)}
+.wcmp .q{font-size:13px;line-height:1.6;color:var(--ink2);font-style:italic}
+.wcmp .who{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12px;color:var(--sec);
+  flex-wrap:wrap}
+.wcmp .who b{font-family:Poppins,sans-serif;font-weight:600;color:var(--ink2);font-size:12.5px}
+.wcmp .lk{font-family:Poppins,sans-serif;font-size:11.5px;font-weight:600;color:var(--brandInk);
+  cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:9px}
+.wcmp .lk:hover{text-decoration:underline}
+.wrel{display:flex;align-items:center;gap:9px;margin:0;padding:9px 2px;font-size:11.5px;
+  font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--wcI)}
+.wrel:before,.wrel:after{content:'';height:1px;background:var(--wcL);flex:1}
+/* the wording the assistant would say out loud */
+.wsay{border:1px dashed var(--line2);border-radius:12px;padding:13px 15px;background:var(--sunk)}
+.wsay .hd{display:flex;align-items:center;gap:8px;font-family:Poppins,sans-serif;font-size:12px;
+  font-weight:600;color:var(--ink2);margin-bottom:8px}
+.wsay .hd .ic{color:var(--brandInk)}
+.wsay p{font-size:13px;line-height:1.6;color:var(--ink2);font-style:italic}
+.wsay .a{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+/* the band a project leads with. Restrained on purpose — it is a heading with
+   evidence under it, not an alarm. */
+.wband{border:1px solid var(--line2);border-radius:14px;background:var(--surf);
+  margin-bottom:24px;overflow:hidden;flex:0 0 auto}
+.wband.hot{border-color:var(--wcfLine)}
+.wband .bh{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line);
+  flex-wrap:wrap}
+.wband.hot .bh{background:var(--wcfTint);border-bottom-color:var(--wcfLine)}
+.wband .bh .bi{width:30px;height:30px;border-radius:9px;background:var(--tint);color:var(--brandInk);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.wband.hot .bh .bi{background:var(--wcfLine);color:var(--wcfInk)}
+.wband .bh b{font-family:Poppins,sans-serif;font-size:14px;font-weight:600}
+.wband .bh .s{font-size:12.5px;color:var(--sec)}
+.wband .bh .r{margin-left:auto;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.wband .bf{padding:11px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--sec);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+/* stat counts, e.g. 2 conflicts · 1 discrepancy */
+.wstat{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+  font-family:Poppins,sans-serif;color:var(--wcI)}
+.wstat i{width:7px;height:7px;border-radius:50%;background:var(--wc);font-style:normal;flex:0 0 auto}
+
+/* meeting rows and list rows get a quiet marker so a conflict is findable
+   without opening the meeting */
+.wdot{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
+  font-family:Poppins,sans-serif;border-radius:20px;padding:1px 8px 1px 6px;
+  background:var(--wcT);color:var(--wcI);border:1px solid var(--wcL)}
+.wdot .ic{flex:0 0 auto}
+
+.wscroll{flex:1;min-height:0;overflow-y:auto}
+.wfoot2{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--sec);
+  padding:15px 2px 4px;border-top:1px solid var(--line);flex-wrap:wrap;flex:0 0 auto;margin-top:14px}
+.wfoot2 .ic{color:var(--brandInk)}
+
+#frame.w2 .wcmp{grid-template-columns:1fr}
+#frame.w2 .wcmp>div+div{border-left:0;border-top:1px solid var(--line2)}
+/* the watchout panel needs the extra width to keep the pair side by side */
+.panel.wo{width:492px;flex:0 0 492px}
+#frame.w3 .panel.wo{position:absolute;right:0;top:0;bottom:0;width:min(430px,86%);
+  flex-basis:auto;z-index:15;box-shadow:var(--shadow)}
+#frame.w2 .panel.wo{width:min(370px,92%)}
+#frame.w2 .panel.wo .wcmp{grid-template-columns:1fr}
+#frame.w2 .panel.wo .wcmp>div+div{border-left:0;border-top:1px solid var(--line2)}
+
 /* ══════════════════════════════ floating bubble ══════════════════════════════ */
 /* Lives in the frame, not in #app, so a re-render never interrupts a drag or a
    hover. z-index sits below .scrim (20) on purpose: an open modal covers it.
 
-   #bubble is exactly the size of its core. The hover tray and the label are
-   absolutely positioned off it so they cost no layout — otherwise the hidden
-   tray would push the core out through the bottom of the window. The tray's
-   10px offset is its own padding rather than a gap, so travelling from the core
-   to a tray button never leaves #bubble and never drops the :hover. */
-#bubble{position:absolute;z-index:18;width:60px;height:60px;user-select:none}
+   Three shapes, one container, because they are three states of one object and
+   the user should see it change rather than see it swapped:
+
+     idle        a 60px round core with a hover tray — dictate, record, ask, more
+     dictating   a short capsule: meter, label, stop. Nothing to configure.
+     recording   a pill: mark, timer, meter, pause, stop, and a watchouts badge
+
+   #bubble is sized by its content and positioned from its top-left, so the
+   width changes as the shape does; renderBubble() re-clamps x afterwards using
+   the measured width, which is why the pill never opens off-screen. */
+#bubble{position:absolute;z-index:18;width:max-content;user-select:none}
 #bubble.off{display:none}
-#bubble.drag .bcore{cursor:grabbing;transform:scale(1.05)}
+#bubble.drag .bcore,#bubble.drag .pill{cursor:grabbing}
+#bubble.drag .bcore{transform:scale(1.05)}
+
+/* ── idle: the round core and its tray ─────────────────────────────────── */
 .btray{position:absolute;left:0;bottom:100%;width:60px;padding-bottom:10px;
   display:flex;flex-direction:column;align-items:center;gap:8px;
   opacity:0;transform:translateY(10px) scale(.9);transform-origin:50% 100%;pointer-events:none;
@@ -880,7 +1041,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 /* near the top of the window the tray drops below the core instead */
 #bubble.flip .btray{bottom:auto;top:100%;padding-bottom:0;padding-top:10px;
   flex-direction:column-reverse;transform-origin:50% 0;transform:translateY(-10px) scale(.9)}
-#bubble:hover .btray,#bubble.open .btray{opacity:1;transform:none;pointer-events:auto}
+#bubble.idle:hover .btray,#bubble.idle.open .btray{opacity:1;transform:none;pointer-events:auto}
 .btray span{width:40px;height:40px;border-radius:50%;background:var(--surf);
   border:1px solid var(--line2);box-shadow:var(--shadow2);display:flex;align-items:center;
   justify-content:center;color:var(--ink2);cursor:pointer;position:relative;flex:0 0 auto;
@@ -892,24 +1053,123 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   font-family:Poppins,sans-serif;font-weight:500}
 .btray span:hover .tip{opacity:1}
 .bcore{width:60px;height:60px;border-radius:50%;background:var(--brandFill);color:var(--brandOn);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  display:flex;align-items:center;justify-content:center;
   box-shadow:0 10px 26px rgba(0,0,0,.26),0 0 0 1px rgba(0,0,0,.06);cursor:grab;
   transition:background .16s,transform .12s}
 .bcore:hover{background:var(--brandFillHov)}
-#bubble.rec .bcore{background:var(--danger);color:var(--dangerOn);
-  animation:bpulse 1.6s ease-in-out infinite}
-#bubble.rec .bcore:hover{background:var(--danger)}
-.bcore .tm{font-size:10px;font-weight:700;font-family:Poppins,sans-serif;letter-spacing:.02em}
-.bmeter{display:flex;align-items:flex-end;justify-content:center;gap:2px;height:9px;margin-top:1px}
-.bmeter i{width:2px;border-radius:1px;background:currentColor;opacity:.8}
 .blabel{position:absolute;left:50%;top:calc(100% + 7px);transform:translateX(-50%);
   font-size:11px;font-family:Poppins,sans-serif;font-weight:600;color:var(--surf);
   background:var(--ink);padding:3px 9px;border-radius:7px;white-space:nowrap;
   opacity:0;transition:opacity .15s;pointer-events:none}
 #bubble.flip .blabel{top:auto;bottom:calc(100% + 7px)}
-#bubble:hover .blabel,#bubble.rec .blabel{opacity:1}
-@keyframes bpulse{0%,100%{box-shadow:0 10px 26px rgba(0,0,0,.26),0 0 0 0 var(--ring)}
-  50%{box-shadow:0 10px 26px rgba(0,0,0,.26),0 0 0 9px var(--ring)}}
+#bubble.idle:hover .blabel{opacity:1}
+
+/* ── the pill: dictating and recording ─────────────────────────────────────
+   One dark chrome surface in both modes, because a recording control that
+   restyles itself per theme stops being recognisable. Everything inside is
+   36px tall so the pill reads as a single object rather than a toolbar. */
+.pill{display:flex;align-items:center;gap:9px;height:52px;padding:0 9px 0 8px;
+  border-radius:26px;background:var(--pill);color:var(--pillInk);box-shadow:var(--pillShadow);
+  cursor:grab;position:relative;
+  animation:pgrow .22s cubic-bezier(.2,.9,.3,1)}
+@keyframes pgrow{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.pill .pmark{width:36px;height:36px;border-radius:50%;background:var(--pillWell);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;color:var(--pillInk)}
+.pill .pdiv{width:1px;height:22px;background:var(--pillLine);flex:0 0 auto}
+.pill .pstat{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding-left:1px}
+.pill .pstat .rdot{width:9px;height:9px;border-radius:50%;background:var(--danger);flex:0 0 auto;
+  animation:pdot 1.7s ease-in-out infinite}
+@keyframes pdot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(217,45,32,.55)}
+  55%{opacity:.55;box-shadow:0 0 0 5px rgba(217,45,32,0)}}
+.pill .pstat b{font-family:Poppins,sans-serif;font-size:15px;font-weight:600;letter-spacing:.01em;
+  font-variant-numeric:tabular-nums;color:var(--pillInk)}
+.pill .plabel{font-family:Poppins,sans-serif;font-size:13px;font-weight:600;color:var(--pillInk);
+  white-space:nowrap;flex:0 0 auto}
+.pill .psub{font-size:12px;color:var(--pillSec);white-space:nowrap;flex:0 0 auto}
+/* paused: the timer stops and the red drops out entirely, so a glance at the
+   pill can never mistake paused for recording */
+#bubble.paused .pill .pstat .rdot{background:var(--warn);animation:none}
+#bubble.paused .pill .pstat b{color:var(--pillSec)}
+.pmeter{display:flex;align-items:center;gap:2.5px;height:20px;flex:0 0 auto}
+.pmeter i{width:2.5px;border-radius:2px;background:var(--pillInk);opacity:.5;
+  transition:height .14s linear}
+.pmeter.live i{background:#4ADE80;opacity:.95}
+#bubble.paused .pmeter i{background:var(--pillInk);opacity:.28}
+.pbtn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--pillInk);background:var(--pillWell);flex:0 0 auto;cursor:pointer;position:relative;
+  transition:background .13s,transform .11s}
+.pbtn:hover{background:rgba(255,255,255,.19);transform:translateY(-1px)}
+.pbtn.stop{background:var(--danger);color:#fff}
+.pbtn.stop:hover{background:var(--danger);filter:brightness(1.1)}
+.pbtn .b{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;
+  padding:0 5px;font-style:normal;font-family:Poppins,sans-serif;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--warn);color:#241500;border:2px solid var(--pill)}
+.pbtn .b.hot{background:var(--danger);color:#fff}
+.pbtn.on{background:var(--pillInk);color:var(--pill)}
+/* the alert ring. Only a conflict turns it on, and it clears the moment the
+   watchout is looked at, so a permanent red halo is impossible. */
+#bubble.alert .pill{box-shadow:var(--pillShadow),0 0 0 1.5px var(--danger),0 0 0 7px var(--dangerTint);
+  animation:phalo 2.4s ease-in-out infinite}
+@keyframes phalo{0%,100%{box-shadow:var(--pillShadow),0 0 0 1.5px var(--danger),0 0 0 5px var(--dangerTint)}
+  50%{box-shadow:var(--pillShadow),0 0 0 1.5px var(--danger),0 0 0 10px var(--dangerTint)}}
+/* speaking: the pill hands the room over and shows how long it will take */
+.pill.saying{padding-right:14px}
+.pill .pbar{width:104px;height:4px;border-radius:2px;background:var(--pillWell);overflow:hidden;flex:0 0 auto}
+.pill .pbar i{display:block;height:100%;border-radius:2px;background:#4ADE80;
+  animation:pfill 3.1s linear forwards}
+@keyframes pfill{from{width:6%}to{width:100%}}
+
+/* ── the watchout popover ──────────────────────────────────────────────────
+   Anchored to the pill's right edge — the badge is what opens it — and it
+   flips to below the pill near the top of the window, like the tray. */
+.wpop{position:absolute;right:0;bottom:100%;padding-bottom:14px;width:326px;
+  transform-origin:88% 100%;animation:wpin .17s cubic-bezier(.2,.9,.3,1)}
+#bubble.flip .wpop{bottom:auto;top:100%;padding-bottom:0;padding-top:14px;transform-origin:88% 0}
+@keyframes wpin{from{opacity:0;transform:translateY(8px) scale(.95)}to{opacity:1;transform:none}}
+.wpop .wcard{background:var(--surf);border:1px solid var(--line2);border-radius:15px;
+  box-shadow:var(--shadow);overflow:hidden}
+/* the little tail that ties the card to the badge */
+.wpop:after{content:'';position:absolute;right:25px;bottom:9px;width:12px;height:12px;
+  background:var(--surf);border-right:1px solid var(--line2);border-bottom:1px solid var(--line2);
+  transform:rotate(45deg);border-bottom-right-radius:3px}
+#bubble.flip .wpop:after{bottom:auto;top:9px;transform:rotate(225deg)}
+.wpop .ph2{display:flex;align-items:center;gap:9px;padding:12px 14px 0}
+.wpop .ph2 .age{margin-left:auto;font-size:11.5px;color:var(--ter);white-space:nowrap}
+.wpop .wtx{padding:10px 15px 0;font-size:13.5px;line-height:1.55;color:var(--ink)}
+.wpop .wsy{padding:9px 15px 0;font-size:12.5px;line-height:1.55;color:var(--sec)}
+.wpop .wsy b{color:var(--ink2);font-weight:600}
+.wpop .wfoot{display:flex;gap:7px;padding:13px 14px 14px;flex-wrap:wrap}
+.wpop .wfoot .btn{flex:1 1 auto;justify-content:center}
+.wpop .more{border-top:1px solid var(--line);padding:10px 15px;font-family:Poppins,sans-serif;
+  font-size:12.5px;font-weight:600;color:var(--brandInk);cursor:pointer;display:flex;
+  align-items:center;gap:7px}
+.wpop .more:hover{background:var(--sunk)}
+.wpop .more .n{margin-left:auto;color:var(--ter);font-weight:500}
+/* the expanded list: one tappable line per watchout, colour-railed by type */
+.wlist{max-height:224px;overflow-y:auto}
+.wlist .wl{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;cursor:pointer;
+  border-left:3px solid var(--wc);background:var(--wcT)}
+.wlist .wl+.wl{border-top:1px solid var(--surf)}
+.wlist .wl:hover{filter:brightness(.985)}
+.wlist .wl .wi{width:22px;height:22px;border-radius:7px;background:var(--surf);color:var(--wcI);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:1px}
+.wlist .wl .l1{font-family:Poppins,sans-serif;font-size:12.5px;font-weight:600;color:var(--wcI);
+  display:block}
+.wlist .wl .l2{font-size:12px;color:var(--ink2);display:block;margin-top:3px;line-height:1.45;
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.wlist .wl .age{font-size:11px;color:var(--sec);white-space:nowrap;flex:0 0 auto;margin-top:2px}
+[data-theme="dark"] .wlist .wl:hover{filter:brightness(1.14)}
+
+.wpop .pbar{width:auto;height:5px;border-radius:3px;background:var(--meterOff);overflow:hidden}
+.wpop .pbar i{display:block;height:100%;border-radius:3px;background:var(--brand);
+  animation:pfill 3.1s linear forwards}
+
+/* a narrow window shrinks the pill rather than letting it run off the edge */
+#frame.w1 .pill{height:46px;gap:7px}
+#frame.w1 .pill .pmark{display:none}
+#frame.w1 .pill .pbtn{width:32px;height:32px}
+#frame.w1 .wpop{width:274px}
 
 /* ══════════════════════════════ demo page ══════════════════════════════ */
 .dwrap{padding:14px 16px;display:flex;flex-direction:column;gap:11px}
@@ -985,8 +1245,10 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 
 /* ══════════════════════════════ meeting assistant panel ══════════════════════════════ */
 /* Shares .panel with the task details panel, so only the chat body differs. */
-.app.mchat .notesgrid,.app.mchat .rollgrid{grid-template-columns:1fr;gap:18px}
-.app.mchat .notesgrid{overflow-y:auto}
+.app.mchat .notesgrid,.app.mchat .rollgrid,
+.app.hasaside .notesgrid,.app.hasaside .rollgrid{grid-template-columns:1fr;gap:18px}
+.app.mchat .notesgrid,.app.hasaside .notesgrid{overflow-y:auto}
+.app.hasaside .tabs{gap:17px}
 .panel.chat .pb2{padding:18px 18px 0;gap:0;flex:1}
 .panel .cfoot{padding:0 18px 16px;flex:0 0 auto}
 .panel .cfoot .comp{margin-top:0;padding-top:10px}
@@ -1070,7 +1332,18 @@ reset:'<path d="M2.6 8a5.4 5.4 0 1 1 1.6 3.8"/><path d="M2.2 12.4V8.4h4"/>',
 minus:'<path d="M3.4 8h9.2"/>',
 expand:'<path d="M3.2 3.2h5.6L3.2 8.8z" fill="currentColor" stroke="none"/><path d="M12.8 12.8H7.2l5.6-5.6z" fill="currentColor" stroke="none"/>',
 md:'<rect x="1.6" y="3.4" width="12.8" height="9.2" rx="1.8"/><path d="M4.2 10.4V5.6l2 2.4 2-2.4v4.8M11 5.6v4.8M9.4 8.8L11 10.4l1.6-1.6"/>',
-userplus:'<circle cx="6.4" cy="5.6" r="2.7"/><path d="M1.9 13.6a4.5 4.5 0 0 1 9 0"/><path d="M12.6 5.2v4M14.6 7.2h-4"/>'
+userplus:'<circle cx="6.4" cy="5.6" r="2.7"/><path d="M1.9 13.6a4.5 4.5 0 0 1 9 0"/><path d="M12.6 5.2v4M14.6 7.2h-4"/>',
+/* ── watchouts ─────────────────────────────────────────────────────────────
+   One glyph per classification, readable at 13px: two arrows meeting head-on
+   for a conflict, a not-equals for a discrepancy, a question for a
+   clarification, and a radar sweep for the set as a whole. */
+radar:'<path d="M8 8L12.6 5.4"/><path d="M8 2.4a5.6 5.6 0 1 1-5.35 3.9"/><path d="M8 5.2a2.8 2.8 0 1 1-2.6 1.8"/><circle cx="8" cy="8" r=".95" fill="currentColor" stroke="none"/>',
+conflict:'<path d="M1.9 5.4h4.1M4.3 3.5L6.2 5.4 4.3 7.3"/><path d="M14.1 10.6H10M11.7 8.7L9.8 10.6l1.9 1.9"/><path d="M8 2.2v3M8 10.8v3"/>',
+delta:'<path d="M3 5.6h10M3 10.4h10"/><path d="M11.4 3.2L4.6 12.8"/>',
+speak:'<path d="M3 6.2h1.9L8.4 3.4v9.2L4.9 9.8H3z"/><path d="M11 5.9a3 3 0 0 1 0 4.2"/><path d="M13 4.1a5.6 5.6 0 0 1 0 7.8"/>',
+eyeoff:'<path d="M6.1 6.2A2 2 0 0 0 8 10a2 2 0 0 0 1.9-1.3"/><path d="M3.1 4.4C1.9 5.5 1.4 8 1.4 8s2.5 4.4 6.6 4.4c1 0 1.9-.2 2.7-.6"/><path d="M12.6 10.4c1.3-1.1 2-2.4 2-2.4s-2.5-4.4-6.6-4.4c-.5 0-1 .1-1.4.2"/><path d="M2.4 2.4l11.2 11.2"/>',
+undo:'<path d="M13.4 9a5.4 5.4 0 1 0-1.6 3.8"/><path d="M13.8 12.4V8.4h-4"/>',
+history:'<path d="M2.6 8a5.4 5.4 0 1 1 5.4 5.4A5.4 5.4 0 0 1 3.4 11"/><path d="M2.2 4.2v3.6h3.6"/><path d="M8 5.6V8l2 1.3"/>'
 };
 const ic=(n,s=16,w=1.7)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${P[n]||''}</svg>`;
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1136,8 +1409,10 @@ meetings:[
    ['12:19','Tom Ellis','And on our side the data-processing addendum has to be reviewed before I can sign anything. That is the blocker, not the commercials.','Source of task 2'],
    ['12:41','You','I will get Legal on the DPA this week.',''],
    ['18:40','Jennifer Walsh','On timing — we are aiming for the first week of March. That is firm on our side; the training window sits behind it.',''],
+   ['12:52','Jennifer Walsh','Start us at four hundred seats and we will revisit at ninety days.',''],
    ['21:55','You','And who owns SSO configuration on your side?',''],
    ['22:03','Tom Ellis','Good question. I will have to come back to you on that one.',''],
+   ['25:30','Jennifer Walsh','One thing to be clear on — everything runs in our AWS account. That is a security requirement, not a preference.',''],
    ['27:12','Jennifer Walsh','For the deep-dive, I want our platform team in the room, not just procurement.','Source of task 3']]},
  {id:'m2',title:'Design review — onboarding',people:[F('Emily Foster','E','emily@aithinkers.com'),F('you','M')],
   group:'Today',day:'11 Aug 2026',time:'11:00 am',dur:'22:41',folder:'internal',fups:1,
@@ -1169,8 +1444,10 @@ meetings:[
    decisions:[['Migration work moves ahead of the reporting rebuild.','22:15']],
    questions:[['Where does the contractor budget sit after the freeze?','44:30']]},
   mynotes:'Headcount is the constraint. Numbers to Ashley before Friday.',
-  transcript:[['22:15','Daniel Brooks','Migration has to go first. Reporting can wait a quarter.',''],
-   ['31:08','Ashley Nguyen','I need the headcount numbers before the budget locks on Friday.','Source of task 1']]},
+  transcript:[['18:44','Daniel Brooks','Renewals hold at six percent minimum this year. Anything under that has to come through me.',''],
+   ['22:15','Daniel Brooks','Migration has to go first. Reporting can wait a quarter.',''],
+   ['31:08','Ashley Nguyen','I need the headcount numbers before the budget locks on Friday.','Source of task 1'],
+   ['44:30','Ashley Nguyen','And where does the contractor budget sit once the freeze applies?','']]},
  {id:'m6',title:'Weekly sync',people:[F('Ashley Nguyen','A'),F('Emily Foster','E'),F('you','M')],
   group:'Monday',day:'8 Aug 2026',time:'9:00 am',dur:'18:22',folder:'internal',fups:0,
   notes:{summary:'Standing team sync. No blockers raised; two items carried over from last week.',decisions:[],questions:[]},
@@ -1215,6 +1492,75 @@ meetings:[
    decisions:[['Send Volta a written incident note by end of week.','18:15']],questions:[]},
   mynotes:'Not data loss — failed retry. Both recovered.\nWritten incident note owed.',
   transcript:[['18:15','Karen Doyle','They want something in writing. A short incident note is enough, but it has to come this week.','']]}],
+/* ── watchouts ─────────────────────────────────────────────────────────────
+   What the assistant noticed by reading a call against everything said before
+   it. Three classifications, and the classification carries the weight: a
+   conflict is a contradiction that will cost something, a discrepancy is two
+   numbers or terms that do not agree, a clarification is a question that was
+   asked and never answered.
+
+   Each one is a pair. `now` is the line in this meeting; `ref` is what it
+   collides with — an earlier line in the same call, a line in another meeting
+   (`mid` set, so it can be opened), or project history with no recording
+   behind it (`mid` null, the way a note or an email would be). `say` is the
+   wording the assistant would speak if asked to raise it in the room. */
+watchouts:[
+ {id:'w1',mid:'m1',type:'conflict',
+  title:'AWS is a hard requirement, but the deep-dive is being scoped on GCP',
+  why:'Jennifer called AWS a security requirement rather than a preference. Anything scoped against GCP will not survive their security review, and the deep-dive agenda is being written now.',
+  now:{tx:'One thing to be clear on — everything runs in our AWS account. That is a security requirement, not a preference.',who:'Jennifer Walsh',at:'25:30'},
+  ref:{tx:'We are open on cloud — GCP is where our platform team is strongest, so assume that unless someone says otherwise.',who:'Daniel Brooks',mid:null,mt:'Internal scoping note',date:'4 Aug 2026',at:''},
+  say:'Quick check before we scope the deep-dive — Jennifer, you said AWS is a security requirement. Our note internally assumed GCP, so I want to correct that now rather than later.',
+  status:'open',age:'4 min ago'},
+ {id:'w2',mid:'m1',type:'discrepancy',
+  title:'400 seats today, 250 in the pricing sheet you are about to send',
+  why:'The revised sheet due to Jennifer on Thursday is built on the 250 licences agreed at discovery. A 60% jump moves Acme into the next tier, so the sheet would be wrong on arrival.',
+  now:{tx:'Start us at four hundred seats and we will revisit at ninety days.',who:'Jennifer Walsh',at:'12:52'},
+  ref:{tx:'We are budgeting for 250 licences in year one, and we would rather start small and grow into it.',who:'Jennifer Walsh',mid:null,mt:'Acme discovery',date:'28 Jul 2026',at:'19:12'},
+  say:'Before I send the sheet through — are we pricing four hundred seats now, or the two hundred and fifty from the discovery call?',
+  status:'open',age:'18 min ago'},
+ {id:'w3',mid:'m1',type:'clarification',
+  title:'SSO ownership was asked and never came back',
+  why:'It has been open since 21:55 and the deep-dive agenda depends on knowing who to invite. Tom said he would come back to it and the conversation moved on.',
+  now:{tx:'And who owns SSO configuration on your side?',who:'You',at:'21:55'},
+  ref:{tx:'Good question. I will have to come back to you on that one.',who:'Tom Ellis',mid:'m1',mt:'Acme kickoff',date:'11 Aug 2026',at:'22:03'},
+  say:'Coming back to something we left open — do we know yet who owns SSO configuration on your side?',
+  status:'open',age:'12 min ago'},
+ {id:'w4',mid:'m1',type:'clarification',
+  title:'A March go-live was called firm while signature is still blocked',
+  why:'Tom made the data-processing addendum a condition of signature and it has no owner or date. A firm first-week-of-March go-live leaves about three weeks for a Legal review nobody has started.',
+  now:{tx:'On timing — we are aiming for the first week of March. That is firm on our side; the training window sits behind it.',who:'Jennifer Walsh',at:'18:40'},
+  ref:{tx:'And on our side the data-processing addendum has to be reviewed before I can sign anything. That is the blocker, not the commercials.',who:'Tom Ellis',mid:'m1',mt:'Acme kickoff',date:'11 Aug 2026',at:'12:19'},
+  say:'One thing to square before we lock March — the DPA review has to land before signature and it does not have an owner yet. Should we put a date on that today?',
+  status:'resolved',age:'22 min ago'},
+ {id:'w5',mid:'m4',type:'conflict',
+  title:'4% uplift sits under the 6% renewal floor set in Q3 planning',
+  why:'Daniel set a six percent minimum on renewals this year and asked for anything below it to come through him. Robert has been offered four, and the figure is about to go to him in writing.',
+  now:{tx:'Hold the uplift at four percent and I will sign for two years.',who:'Robert Hayes',at:'09:30'},
+  ref:{tx:'Renewals hold at six percent minimum this year. Anything under that has to come through me.',who:'Daniel Brooks',mid:'m5',mt:'Q3 planning',date:'8 Aug 2026',at:'18:44'},
+  say:'I should be straight with you — we have a floor on renewals this year, so let me confirm four percent internally before I put a figure in writing.',
+  status:'open',age:'Yesterday'},
+ {id:'w6',mid:'m3',type:'discrepancy',
+  title:'This take-home has no time cap; the frontend candidate was promised four hours',
+  why:'Tom was given a hard four-hour cap on the same hiring round. Sending an uncapped take-home to David makes the two candidates incomparable and is hard to defend later.',
+  now:{tx:'I would scope the take-home around data modelling, since that is where the gap is.',who:'David Kim',at:'38:02'},
+  ref:{tx:'Send it over with a hard four-hour cap and I will do it this weekend.',who:'Tom Ellis',mid:'m8',mt:'Candidate screen — Frontend',date:'5 Aug 2026',at:'33:20'},
+  say:'Worth saying now — we capped the frontend take-home at four hours, so let us hold this one to the same budget.',
+  status:'open',age:'Yesterday'},
+ {id:'w7',mid:'m5',type:'clarification',
+  title:'The contractor budget question is open in two places at once',
+  why:'Ashley asked it here and Priya asked a version of it at the all-hands. Neither has an answer, and the budget locks on Friday.',
+  now:{tx:'And where does the contractor budget sit once the freeze applies?',who:'Ashley Nguyen',at:'44:30'},
+  ref:{tx:'Is the freeze on backfills too, or only new roles?',who:'Priya Raman',mid:'m9',mt:'All-hands — Q3 results',date:'11 Aug 2026',at:'41:52'},
+  say:'This came up at the all-hands as well and is still unanswered — can we get a ruling on the freeze before Friday?',
+  status:'open',age:'Monday'},
+ {id:'w8',mid:'m2',type:'clarification',
+  title:'Whether the checklist survives a reinstall was never confirmed',
+  why:'Emily approved the three-step checklist without this settled. It changes the empty-state copy she asked to have rewritten.',
+  now:{tx:'Does the checklist reset if someone reinstalls?',who:'You',at:'19:05'},
+  ref:{tx:'The three steps work. I would ship that as it is.',who:'Emily Foster',mid:'m2',mt:'Design review — onboarding',date:'11 Aug 2026',at:'04:10'},
+  say:'Before we call this done — does the setup checklist survive a reinstall, or reset?',
+  status:'dismissed',age:'This morning'}],
 tasks:[
  {id:'t1',title:'Send the revised pricing sheet to Jennifer',mid:'m1',due:'2 days late',late:true,pri:'hi',done:false,grp:'Overdue',quote:'I need the revised pricing in front of me before Friday. I am presenting it internally and I cannot go in with the old numbers.',who:'Jennifer Walsh',at:'11:48'},
  {id:'t2',title:'Loop in Legal on the data-processing addendum',mid:'m1',due:'Yesterday',late:true,pri:'hi',done:false,grp:'Overdue',quote:'The data-processing addendum has to be reviewed before I can sign anything.',who:'Tom Ellis',at:'12:19'},
@@ -1255,6 +1601,7 @@ settings:{detect:true,screenRec:true,hearOthers:true,recScreen:false,autoFile:tr
   convo:false,anthropicKey:'',spoken:false,convoHotkey:'⌃⌥Space',askFirst:true,
   gmail:false,gcal:false,slack:false,actFollowups:true,
   extract:true,onlyNamed:false,names:['Michael','Mike','MC'],daily:true,dailyAt:'6:00 PM',
+  woOn:true,woConflict:true,woDiscrepancy:true,woClarify:true,woPeek:'conflict',woSpeak:true,
   overdue:true,overdueAt:'9:00 AM',noInterrupt:true,theme:'light',th:'ocean',bubble:true},
 setupDone:3
 };}
@@ -1266,6 +1613,11 @@ const S={route:'meetings',view:'all',mid:null,fid:null,tab:'notes',tid:null,cid:
   openF:{client:true,interviews:true},
   mpanel:false,mtyping:false,
   bub:{x:null,y:null,rec:false,secs:0},
+  /* watchouts. wid+wpanel are the app-side detail panel; wpeek/wopen/walert are
+     the pill's popover, and wsay is an interjection in progress. Kept apart
+     because the pill and the panel can be open at the same time. */
+  wid:null,wpanel:false,wfilter:'all',wdone:false,
+  wpeek:null,wopen:false,walert:false,wsay:null,wseen:[],
   railmin:false,listmin:false,q:'',tq:'',vq:'',taskFilter:'all',showDone:false,
   speakers:'All speakers',range:'week',
   rec:null,playing:false,playPos:44,busy:false,typing:false,firstRun:false,
@@ -1367,6 +1719,27 @@ function folderSummary(id){
     who.length>3?` and ${who.length-3} other${who.length-3>1?'s':''}`:''}. `+
     `A written summary appears once AIT-Scribe has read across all of them.`;
 }
+/* ── watchouts ────────────────────────────────────────────────────────────
+   Kept in one flat table keyed by meeting, exactly like tasks, so a project
+   can roll them up without walking meetings twice. `open` is the only count
+   that ever reaches a badge — resolved and dismissed ones stay readable but
+   never nag. */
+const WT={conflict:{label:'Conflict',plural:'Conflicts',icon:'conflict',
+            rel:'conflicts with',verb:'Conflicts with'},
+          discrepancy:{label:'Discrepancy',plural:'Discrepancies',icon:'delta',
+            rel:'does not match',verb:'Does not match'},
+          clarification:{label:'Clarification',plural:'Clarifications',icon:'help',
+            rel:'still open since',verb:'Still open since'}};
+const WORDER=['conflict','discrepancy','clarification'];
+const watchout=id=>db.watchouts.find(w=>w.id===id);
+const mWatch=id=>db.watchouts.filter(w=>w.mid===id);
+const mWatchOpen=id=>db.watchouts.filter(w=>w.mid===id&&w.status==='open');
+const fWatch=id=>{const ids=folderMeetings(id).map(m=>m.id);
+  return db.watchouts.filter(w=>ids.includes(w.mid));};
+const fWatchOpen=id=>fWatch(id).filter(w=>w.status==='open');
+/* a conflict is the only classification that earns an interruption */
+const hasConflict=list=>list.some(w=>w.type==='conflict');
+const wCounts=list=>WORDER.map(t=>[t,list.filter(w=>w.type===t).length]).filter(x=>x[1]);
 const openTasks=()=>db.tasks.filter(t=>!t.done);
 const taskCount=id=>db.tasks.filter(t=>t.mid===id).length;
 const overdue=()=>db.tasks.filter(t=>!t.done&&t.late);
@@ -1589,7 +1962,7 @@ function viewMeetings(){
 function meetingRow(m,showFolder){
   const live=S.rec&&S.rec.mid===m.id;
   return `<div class="mrow" data-a="open" data-p="${m.id}">
-    <span><span class="t">${esc(m.title)}</span>
+    <span><span class="t">${esc(m.title)}${live?'':mwDot(m.id)}</span>
       <span class="s">${m.people.length} attendee${m.people.length===1?'':'s'} · ${
         live?'recording now':m.dur}</span></span>
     ${live?'':`<span class="macts" ${showFolder?'style="opacity:1;pointer-events:auto"':''}>
@@ -1599,6 +1972,12 @@ function meetingRow(m,showFolder){
     <span class="rt">${live?`<span class="live">${ic('rec',12)}Recording</span>`:
       `<span class="tg" style="color:${folderColor(m.folder)}">${esc(folderPath(m.folder))}</span>
        <span class="mt">${m.time} · ${taskCount(m.id)} task${taskCount(m.id)===1?'':'s'}</span>`}</span></div>`;
+}
+function mwDot(id){
+  const w=mWatchOpen(id);if(!w.length)return '';
+  const t=hasConflict(w)?'conflict':w[0].type;
+  return `<span class="wdot w-${t}" title="${w.length} watchout${w.length>1?'s':''}">${
+    ic('radar',11)}${w.length}</span>`;
 }
 function viewFolder(){
   const id=S.fid,unfiled=id==='';
@@ -1622,7 +2001,11 @@ function viewFolder(){
         <span class="sp" style="width:3px;height:3px;border-radius:50%;background:var(--ter)"></span>
         <span>${all.length} meeting${all.length===1?'':'s'}</span>
         ${tasks.length?`<span class="sp" style="width:3px;height:3px;border-radius:50%;background:var(--ter)"></span>
-          <span>${tasks.length} open task${tasks.length===1?'':'s'}</span>`:''}</span></span>
+          <span>${tasks.length} open task${tasks.length===1?'':'s'}</span>`:''}
+        ${unfiled?'':fWatchOpen(id).length?`<span class="sp" style="width:3px;height:3px;border-radius:50%;
+          background:var(--ter)"></span><span class="wstat w-${
+          hasConflict(fWatchOpen(id))?'conflict':fWatchOpen(id)[0].type}"><i></i>${
+          fWatchOpen(id).length} watchout${fWatchOpen(id).length===1?'':'s'}</span>`:''}</span></span>
     <span class="fa">
       ${isTop?`<button class="btn p sm" data-a="newfolder" data-p="${id}">${
         ic('folderplus',15)}${esc(addFolderLabel(id))}</button>`:''}
@@ -1645,18 +2028,21 @@ function viewFolder(){
      leads with the notes rolled up across the calls filed in it. */
   const cards=isTop?`<div class="ghd">Folders <span class="n">· ${kids.length}</span></div>
     <div class="fcards">${kids.map(k=>{
-      const km=folderMeetings(k.id),kt=folderTasks(k.id);
+      const km=folderMeetings(k.id),kt=folderTasks(k.id),kw=fWatchOpen(k.id);
       return `<div class="fcard" data-a="view" data-p="f:${k.id}">
         <div class="top"><span class="fi">${ic('folder',16)}</span>
           <span class="nm">${esc(k.name)}</span>
           <span class="fm" data-a="menu" data-p="fmenu:${k.id}" title="Folder options">${ic('dots',14)}</span></div>
         <div class="ds">${esc(folderSummary(k.id))}</div>
         <div class="mt"><b>${km.length}</b> meeting${km.length===1?'':'s'}
-          ${kt.length?`<span>·</span><b>${kt.length}</b> open task${kt.length===1?'':'s'}`:''}</div></div>`}).join('')}
+          ${kt.length?`<span>·</span><b>${kt.length}</b> open task${kt.length===1?'':'s'}`:''}
+          ${kw.length?`<span>·</span><span class="wstat w-${hasConflict(kw)?'conflict':kw[0].type}"
+            style="font-size:12px"><i></i>${kw.length} watchout${kw.length===1?'':'s'}</span>`:''}</div></div>`}).join('')}
       <div class="fcard add" data-a="newfolder" data-p="${id}">
         ${ic('folderplus',20)}<span class="nm">${esc(addFolderLabel(id))}</span></div></div>`:'';
 
   const roll=isTop?'':rollup(id);
+  const band=watchBand(id);
 
   const mlist=`<div class="ghd">${isTop?'Meetings in this folder':'Meetings'}
       <span class="n">· ${(isTop?own:all).length}</span>${
@@ -1667,7 +2053,28 @@ function viewFolder(){
         ${isTop?'No meetings sit directly in this folder — they are all in its sub-folders.'
           :'Nothing filed here yet.'}</div>`}`;
 
-  return `<div class="body">${head}${cards}${roll}${mlist}</div>`;
+  return `<div class="body">${head}${band}${cards}${roll}${mlist}</div>`;
+}
+/* Watchouts across every call filed in a project. This is the view where they
+   earn their place: a conflict between two meetings is invisible from inside
+   either one of them. Capped at three so the band stays a heading with
+   evidence rather than a second list. */
+function watchBand(id,limit){
+  const open=fWatchOpen(id);if(!open.length)return '';
+  const hot=hasConflict(open),shown=open.slice(0,limit||3),rest=open.length-shown.length;
+  return `<div class="wband ${hot?'hot':''}">
+    <div class="bh"><span class="bi">${ic('radar',16)}</span>
+      <span><b>Meeting Watchouts</b>
+        <span class="s" style="display:block;margin-top:2px">Read across ${
+          folderMeetings(id).length} call${folderMeetings(id).length===1?'':'s'} in this project</span></span>
+      <span class="r">${wCounts(open).map(([t,n])=>`<span class="wstat w-${t}"><i></i>${n} ${
+        n===1?WT[t].label.toLowerCase():WT[t].plural.toLowerCase()}</span>`).join('')}</span></div>
+    ${shown.map(w=>watchRow(w,true)).join('')}
+    ${rest?`<div class="bf"><span>${rest} more open in this project.</span>
+      <span style="margin-left:auto"><span class="link" data-a="open" data-p="${
+        open[shown.length].mid}">Open the next one ${ic('chev',12)}</span></span></div>`
+      :`<div class="bf">${ic('info',13)}<span>Each one is a pair — what was said in the call, and what
+        it collides with. Open one to see both sides.</span></div>`}</div>`;
 }
 /* Summary, decisions, open questions and open tasks, read across every meeting
    filed in the folder. */
@@ -1717,11 +2124,16 @@ function titleBlock(m,extra){
 function viewMeeting(){
   const m=meeting(S.mid);if(!m)return `<div class="body"><div class="empty"><h2>Meeting not found</h2></div></div>`;
   const rec=S.rec&&S.rec.mid===m.id;
+  const wo=mWatch(m.id),woOpen=mWatchOpen(m.id),woHot=hasConflict(woOpen);
+  const wTab=`<a class="${S.tab==='watch'?'on':''}" data-a="tab" data-p="watch">${ic('radar',14)}Watchouts${
+    woOpen.length?`<span class="cnt${woHot?' hot':''}">${woOpen.length}</span>`:''}</a>`;
   const tabs=`<div class="tabs">
     ${rec?`<a class="${S.tab==='mynotes'?'on':''}" data-a="tab" data-p="mynotes">My notes</a>
+      ${wTab}
       <a class="off">${ic('spark',14)}AI notes <span class="cnt">after you stop</span></a>
       <a class="${S.tab==='transcript'?'on':''}" data-a="tab" data-p="transcript">Transcript <span class="cnt">live</span></a>`
      :`<a class="${S.tab==='notes'?'on':''}" data-a="tab" data-p="notes">${ic('spark',14)}AI notes</a>
+      ${wTab}
       <a class="${S.tab==='mynotes'?'on':''}" data-a="tab" data-p="mynotes">My notes</a>
       <a class="${S.tab==='transcript'?'on':''}" data-a="tab" data-p="transcript">Transcript</a>`}</div>`;
   let body='';
@@ -1730,12 +2142,20 @@ function viewMeeting(){
     body=`<div class="recbar ${r.paused?'pause':''}"><span class="rdot"></span>
       <b>${r.paused?'Paused':'Recording'}</b><span class="t">${mm}:${ss}</span>
       <span class="s">· ${r.paused?'nothing is being captured':'both sides captured'}</span>
-      <span class="a"><button class="btn s sm" data-a="pauseRec">${r.paused?ic('play',14)+'Resume':ic('pause',14)+'Pause'}</button>
-        <button class="btn d sm" data-a="stopRec">${ic('stop',14)}Stop &amp; generate notes</button></span></div>
-     <div style="margin-top:12px">${meterBars(74,!r.paused,r.secs)}</div>${tabs}`;
-    if(S.tab==='transcript'){
+      <span class="a">
+        ${woOpen.length?`<span class="wdot w-${woHot?'conflict':woOpen[0].type}" data-a="tab" data-p="watch"
+          style="cursor:pointer">${ic('radar',12)}${woOpen.length} watchout${woOpen.length>1?'s':''}</span>`:''}
+        <button class="btn s sm" data-a="stopRec">${ic('stop',14)}Stop &amp; generate notes</button></span></div>
+     <div style="margin-top:12px;display:flex;align-items:center;gap:14px">
+      ${meterBars(74,!r.paused,r.secs)}
+      <span style="margin-left:auto;font-size:12px;color:var(--ter);display:flex;align-items:center;
+        gap:7px;flex:0 0 auto">${ic('spark',13)}Pause, stop and watchouts are on the floating pill</span></div>${tabs}`;
+    if(S.tab==='watch'){body+=watchBody(m,wo,woOpen,true);}
+    else if(S.tab==='transcript'){
       body+=`<div style="flex:1;overflow-y:auto">${r.lines.map(l=>
-        `<div class="trs"><span class="tm">${l[0]}</span><span><span class="spk">${l[1]}</span>
+        `<div class="trs ${l[3]==='spoken'?'said':''}"><span class="tm">${l[0]}</span>
+          <span><span class="spk">${l[1]}${l[3]==='spoken'?`<span class="badge" style="margin:0 0 0 8px">${
+            ic('speak',11)}raised by the assistant</span>`:''}</span>
           <span class="tx">${esc(l[2])}</span></span></div>`).join('')||
         `<div class="hint" style="padding:20px 4px">Listening… lines appear here as people speak.</div>`}</div>`;
     }else{
@@ -1782,6 +2202,8 @@ function viewMeeting(){
           <button class="btn s sm" data-a="confirmDelete" data-p="${m.id}"
             style="color:var(--dangerInk);border-color:var(--dangerLine)">${ic('trash',14)}Delete</button>
         </span></div>`;
+  } else if(S.tab==='watch'){
+    body=`${tabs}${watchBody(m,wo,woOpen,false)}`;
   } else if(S.tab==='mynotes'){
     body=`${tabs}<div class="notebox" style="flex:1"><div class="ln" contenteditable="true">${
       esc(m.mynotes).replace(/\n/g,'<br>')}</div></div>`;
@@ -1806,6 +2228,10 @@ function viewMeeting(){
       ${player(m)}`;
   }
   return `<div class="body">${titleBlock(m,`<span class="sp"></span><span>${m.dur}</span>`)}
+    ${woOpen.length&&S.tab==='notes'?`<div class="notice ${woHot?'dg':'warn'}" style="margin-bottom:14px">
+      ${ic('radar',17)}<span><b>${woOpen.length} watchout${woOpen.length>1?'s':''} from this call</b> —
+      ${esc(woOpen[0].title)}${woOpen.length>1?`, and ${woOpen.length-1} more`:''}.</span>
+      <span class="act"><button class="btn s sm" data-a="tab" data-p="watch">Review ${ic('chev',13)}</button></span></div>`:''}
     ${mytasks.length&&S.tab==='notes'&&!m.ackd?`<div class="notice ok" style="margin-bottom:18px">${ic('check',17)}
       <span><b>${mytasks.length} task${mytasks.length>1?'s':''} added to Tasks</b> — owners and dates taken from what was said.</span>
       <span class="act"><button class="btn t sm" data-a="ackNotes" data-p="${m.id}">Dismiss</button></span></div>`:''}
@@ -1834,6 +2260,175 @@ function taskRow(t,compact){
         ${ic('users',13)}${m?esc(m.title):'Added by you'}</span></span>
     <span class="due ${t.late&&!t.done?'dg':''}">${t.done?'Done':t.due}</span>
     ${compact?'':`<span class="kb2" data-a="menu" data-p="task:${t.id}">${ic('dots',16)}</span>`}</div>`;
+}
+
+/* ══════════════════════════════════ watchouts ══════════════════════════════════ */
+/* What the assistant noticed reading this call against everything said before
+   it. The list is deliberately shallow — a title, the pair in one line, and the
+   actions that settle it — because the reason a watchout exists is a comparison,
+   and a comparison needs room. That room is the detail panel. */
+const wsrc=w=>w.ref.mid===w.mid?'Earlier in this call'
+  :w.ref.mid?esc(w.ref.mt):esc(w.ref.mt||'Project history');
+
+function watchRow(w,showMeeting){
+  const t=WT[w.type],settled=w.status!=='open',m=meeting(w.mid);
+  return `<div class="wrow w-${w.type} ${settled?'done':''} ${
+      S.wid===w.id&&S.wpanel?'wsel':''}" data-a="wdetail" data-p="${w.id}">
+    <span class="wi">${ic(settled?(w.status==='resolved'?'check':'eyeoff'):t.icon,15)}</span>
+    <span class="wmain">
+      <span class="wt">${esc(w.title)}</span>
+      <span class="ws"><b>${esc(w.now.who)}</b>, ${w.now.at} — “${clip(w.now.tx,66)}”</span>
+      <span class="wm">
+        <span class="wsr">${ic(t.icon,12)}${t.rel}</span>
+        <span>·</span>
+        <span class="wsr">${w.ref.mid?ic('users',12):ic('history',12)}${wsrc(w)}${
+          w.ref.date&&w.ref.mid!==w.mid?' · '+esc(w.ref.date):''}${w.ref.at?' · '+w.ref.at:''}</span>
+        ${showMeeting&&m?`<span>·</span><span class="wsr">${ic('file',12)}${esc(m.title)}</span>`:''}
+        ${settled?`<span>·</span><span style="font-weight:600">${
+          w.status==='resolved'?(w.raised?'Raised in the call':'Resolved'):'Dismissed'}</span>`:''}</span></span>
+    <span class="wr">
+      ${settled?`<span class="wacts"><span data-a="wreopen" data-p="${w.id}" title="Reopen">${
+          ic('undo',14)}</span></span>`
+        :`<span class="age">${esc(w.age)}</span>
+          <span class="wacts">
+            <span data-a="wtask" data-p="${w.id}" title="Turn into a task">${ic('list',14)}</span>
+            <span class="gd" data-a="wresolve" data-p="${w.id}" title="Mark resolved">${ic('check',14)}</span>
+            <span data-a="wdismiss" data-p="${w.id}" title="Not an issue">${ic('eyeoff',14)}</span></span>`}
+    </span></div>`;
+}
+/* Grouped by classification rather than by time, because the three of them ask
+   for different things: a conflict needs a decision, a discrepancy needs a
+   number checked, a clarification needs someone asked. */
+function watchBody(m,all,open,live){
+  const settled=all.filter(w=>w.status!=='open');
+  const shown=S.wfilter==='all'?open:open.filter(w=>w.type===S.wfilter);
+  const counts=wCounts(open);
+  if(!all.length){
+    return `<div class="empty" style="padding-bottom:70px"><span class="ico">${ic('radar',27,1.5)}</span>
+      <h2>Nothing to watch out for</h2>
+      <p>${live?'The assistant is reading this call against everything said before it. Anything that contradicts an earlier decision, a number or an open question will appear here — and on the floating pill — as it comes up.'
+        :'Nothing in this call contradicted an earlier decision, disagreed with a number already agreed, or left a question hanging.'}</p></div>`;
+  }
+  return `${live&&open.length?`<div class="notice ${hasConflict(open)?'dg':'warn'}" style="margin-bottom:18px;flex:0 0 auto">
+      ${ic(hasConflict(open)?'alertc':'alert',17)}
+      <span><b>${open.length} watchout${open.length>1?'s':''} while you are still on the call.</b>
+      ${db.settings.woSpeak?'“Bring this up” has the assistant say it out loud, so it lands in the room and in the transcript.'
+        :'Raise it yourself — nothing is spoken unless you turn that on in Settings.'}</span></div>`:''}
+    <div class="toolrow">
+      <span class="fchip wf ${S.wfilter==='all'?'on':''}" data-a="wfilter" data-p="all">All${
+        open.length?`<span class="b">${open.length}</span>`:''}</span>
+      ${WORDER.map(t=>{const n=open.filter(w=>w.type===t).length;
+        return `<span class="fchip wf ${S.wfilter===t?'on':''}" data-a="wfilter" data-p="${t}">${
+          ic(WT[t].icon,14)}${WT[t].plural}${n?`<span class="b">${n}</span>`:''}</span>`}).join('')}
+      <span class="r">${settled.length?`<span class="chk" data-a="wshowdone">
+        <span class="cbx ${S.wdone?'on':''}">${ic('check',12,2.6)}</span>Show ${settled.length} settled</span>`:''}</span></div>
+    <div class="wscroll">
+    ${counts.length?`<div style="display:flex;gap:16px;flex-wrap:wrap;margin:0 2px 16px">${
+      counts.map(([t,n])=>`<span class="wstat w-${t}"><i></i>${n} ${
+        n===1?WT[t].label.toLowerCase():WT[t].plural.toLowerCase()}</span>`).join('')}</div>`:''}
+    ${shown.length?`<div class="card" style="overflow:hidden">${
+        shown.map(w=>watchRow(w)).join('')}</div>`
+      :`<div class="card" style="padding:26px 20px;text-align:center;font-size:13px;color:var(--sec)">
+        ${open.length?`No open ${WT[S.wfilter]?WT[S.wfilter].plural.toLowerCase():'watchouts'} in this call.`
+          :'Everything here has been settled.'}</div>`}
+    ${S.wdone&&settled.length?`<div class="ghd" style="margin:22px 2px 10px">Settled
+        <span class="n">· ${settled.length}</span></div>
+      <div class="card" style="overflow:hidden">${settled.map(w=>watchRow(w)).join('')}</div>`:''}
+    </div>
+    <div class="wfoot2">${ic('radar',14)}Read against ${db.meetings.length} recorded meetings and
+      this project's history.
+      <span style="margin-left:auto"><button class="btn s sm" data-a="settings" data-p="ainotes">${
+        ic('sliders',14)}What the assistant looks for</button></span></div>`;
+}
+/* ── detail panel ─────────────────────────────────────────────────────────
+   The comparison is the whole content, so it gets the top of the panel and the
+   full width: what was said in this meeting, what it collides with, and the
+   relation between them named in words rather than implied by colour. */
+function watchPanel(){
+  const w=watchout(S.wid);if(!w)return '';
+  const t=WT[w.type],m=meeting(w.mid),rm=w.ref.mid?meeting(w.ref.mid):null;
+  const live=S.rec&&S.rec.mid===w.mid;
+  const settled=w.status!=='open';
+  return `<div class="panel wo w-${w.type}"><div class="ph">
+    <span class="wi" style="width:28px;height:28px;border-radius:9px;background:var(--wcT);
+      color:var(--wcI);border:1px solid var(--wcL);display:flex;align-items:center;
+      justify-content:center;flex:0 0 auto">${ic(t.icon,15)}</span>
+    <b>${t.label}</b>
+    <span style="margin-left:auto;display:flex;gap:4px">
+      <span class="tbtn" data-a="menu" data-p="wmenu:${w.id}">${ic('dots',17)}</span>
+      <span class="tbtn" data-a="wclose">${ic('x',17)}</span></span></div>
+   <div class="pb2">
+    <div>
+      <div style="font-family:Poppins;font-size:16px;font-weight:600;line-height:1.42">${esc(w.title)}</div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="wchip">${ic(t.icon,12)}${t.label}</span>
+        ${settled?`<span class="pri ${w.status==='resolved'?'ok':''}">${
+            w.status==='resolved'?ic('check',12)+(w.raised?'Raised in the call':'Resolved'):'Dismissed'}</span>`
+          :`<span class="pri ${w.type==='conflict'?'hi':'md'}">Open</span>`}
+        <span style="font-size:12px;color:var(--ter)">${esc(w.age)}</span></div>
+    </div>
+
+    <div>
+      <div class="ghd" style="margin-bottom:10px">What collides</div>
+      <div class="wcmp">
+        <div>
+          <div class="hd">${ic('mic',12)}${live?'In this call':'In this meeting'}</div>
+          <div class="q">“${esc(w.now.tx)}”</div>
+          <div class="who"><b>${esc(w.now.who)}</b><span>·</span><span>${w.now.at}</span></div>
+          <div class="lk" data-a="jump" data-p="${w.now.at}">${ic('play',12)}Jump to ${w.now.at}</div>
+        </div>
+        <div>
+          <div class="hd">${w.ref.mid===w.mid?ic('clock',12)+'Earlier in this call'
+            :w.ref.mid?ic('users',12)+'Another meeting':ic('history',12)+'Project history'}</div>
+          <div class="q">“${esc(w.ref.tx)}”</div>
+          <div class="who"><b>${esc(w.ref.who)}</b>${w.ref.mt?`<span>·</span><span>${esc(w.ref.mt)}</span>`:''}
+            ${w.ref.date?`<span>·</span><span>${esc(w.ref.date)}</span>`:''}</div>
+          ${w.ref.mid===w.mid?`<div class="lk" data-a="jump" data-p="${w.ref.at}">${
+              ic('play',12)}Jump to ${w.ref.at}</div>`
+            :rm?`<div class="lk" data-a="open" data-p="${w.ref.mid}">${ic('chev',12)}Open ${esc(rm.title)}</div>`
+            :`<div class="lk" data-a="demo" data-p="open the source note this came from">${
+              ic('file',12)}Open the source note</div>`}
+        </div>
+      </div>
+      <div class="wrel">${t.rel}</div>
+    </div>
+
+    <div>
+      <div class="ghd" style="margin-bottom:10px">Why it matters</div>
+      <p style="font-size:13.5px;line-height:1.65;color:var(--ink2)">${esc(w.why)}</p>
+    </div>
+
+    <div class="wsay">
+      <div class="hd">${ic('speak',14)}If you want it said out loud</div>
+      <p>“${esc(w.say)}”</p>
+      <div class="a">
+        ${live&&db.settings.woSpeak?`<button class="btn p sm" data-a="wsay" data-p="${w.id}">${
+            ic('speak',14)}Bring this up</button>`:''}
+        <button class="btn s sm" data-a="wcopy" data-p="${w.id}">${ic('copy',14)}Copy wording</button>
+        ${!live?`<button class="btn s sm" data-a="demo" data-p="draft a follow-up email raising this">${
+          ic('send',14)}Draft a follow-up</button>`:''}</div>
+    </div>
+
+    <div style="border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:12px">
+      <div class="frow"><span class="lb">Status</span>
+        <span class="sel" data-a="menu" data-p="wstatus:${w.id}">${
+          ic(w.status==='open'?'alertc':w.status==='resolved'?'check':'eyeoff',14)}${
+          w.status==='open'?'Open':w.status==='resolved'?'Resolved':'Dismissed'} ${ic('chevd',12)}</span></div>
+      <div class="frow"><span class="lb">Found in</span>
+        <span class="sel" data-a="open" data-p="${w.mid}">${ic('users',14)}${
+          esc(m?m.title:'meeting')} ${ic('chev',12)}</span></div>
+      <div class="frow"><span class="lb">Project</span>
+        <span class="sel" data-a="view" data-p="${m&&m.folder?'f:'+m.folder:'unfiled'}">${
+          ic('folder',14)}${esc(m?folderPath(m.folder):'Unfiled')} ${ic('chev',12)}</span></div>
+    </div>
+
+    <div style="border-top:1px solid var(--line);padding-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+      ${settled?`<button class="btn s sm" data-a="wreopen" data-p="${w.id}">${ic('undo',14)}Reopen</button>`
+        :`<button class="btn s sm" data-a="wtask" data-p="${w.id}">${ic('list',14)}Turn into a task</button>
+          <button class="btn s sm" data-a="wresolve" data-p="${w.id}">${ic('check',14)}Resolve</button>
+          <button class="btn s sm" data-a="wdismiss" data-p="${w.id}"
+            style="color:var(--sec)">${ic('eyeoff',14)}Not an issue</button>`}</div>
+   </div></div>`;
 }
 
 /* ══════════════════════════════════ tasks ══════════════════════════════════ */
@@ -2097,6 +2692,20 @@ function settingsPane(){
       srow('Extract tasks','Owners and dates taken from what was said.',tog('extract',g.extract))+
       srow('Note length','Longer notes keep more detail from the transcript.',
         `<span class="sel" data-a="demo" data-p="change note length">Balanced ${ic('chevd',12)}</span>`))+
+    sgroup('radar','Meeting watchouts','Read a live call against everything said before it',
+      srow('Watch for watchouts','Compares what is being said now against earlier calls, decisions and the numbers already agreed.',tog('woOn',g.woOn))+
+      srow('Conflicts','Something said now contradicts a decision or a stated requirement.',
+        tog('woConflict',g.woConflict,!g.woOn))+
+      srow('Discrepancies','Two numbers, dates or terms that do not agree.',
+        tog('woDiscrepancy',g.woDiscrepancy,!g.woOn))+
+      srow('Clarifications','A question that was asked in the call and never answered.',
+        tog('woClarify',g.woClarify,!g.woOn))+
+      srow('Interrupt me for','Everything else waits behind the badge on the pill until you ask for it.',
+        `<span class="fchip ${g.woPeek==='conflict'?'on':''}" data-a="wopeek" data-p="conflict">Conflicts only</span>
+         <span class="fchip ${g.woPeek==='all'?'on':''}" data-a="wopeek" data-p="all">Anything</span>
+         <span class="fchip ${g.woPeek==='none'?'on':''}" data-a="wopeek" data-p="none">Nothing</span>`)+
+      srow('Let the assistant speak','“Bring this up” says the suggested wording into the call and puts it in the transcript. Off means it only ever suggests.',
+        tog('woSpeak',g.woSpeak,!g.woOn)))+
     sgroup('folder','Filing','Where finished meetings end up',
       srow('File meetings into folders automatically','AIT-Scribe matches the call to a folder from the participants and what was said.',tog('autoFile',g.autoFile))+
       srow('If it cannot tell','Unmatched calls go to a folder you choose.',
@@ -2114,6 +2723,8 @@ function settingsPane(){
     sgroup('mic','Floating bubble','A draggable control that sits over your other windows',
       srow('Show the floating bubble','Click it to dictate. Hover for record, ask and more. Drag it anywhere.',
         tog('bubble',g.bubble))+
+      srow('While a meeting is recording','It stretches into a pill — timer, pause, stop and a badge for anything the assistant notices. It goes back to a circle when you stop.',
+        `<span class="pri ok">${ic('check',12)}Always</span>`)+
       srow('Position','Drag the bubble to move it, or put it back where it started.',
         `<button class="btn s sm" data-a="bubreset">${ic('reset',14)}Reset position</button>`))+
     sgroup('info','What works best','Checked against your other apps as you type a shortcut',
@@ -2271,6 +2882,24 @@ function settingsPane(){
         <button class="btn s sm" data-a="menu" data-p="bubmore:">Bubble menu</button></div>
       <div class="dnote">Menus position themselves from the button that opened them and are clamped
         to the window, so one opened near an edge flips rather than clipping.</div></div>`)+
+    sgroup('radar','Watchouts and the recording pill','The floating control in each of its shapes',
+      `<div class="dwrap"><div class="dbtns">
+        <button class="btn s sm" data-a="bubdemo" data-p="idle">Idle bubble</button>
+        <button class="btn s sm" data-a="bubdemo" data-p="dict">Dictating capsule</button>
+        <button class="btn s sm" data-a="bubdemo" data-p="rec">Recording pill</button>
+        <button class="btn s sm" data-a="bubdemo" data-p="paused">Paused</button>
+        <button class="btn s sm" data-a="bubdemo" data-p="peek">Conflict peek</button>
+        <button class="btn s sm" data-a="bubdemo" data-p="list">Watchout list</button>
+        <button class="btn s sm" data-a="bubdemo" data-p="say">Speaking into the call</button></div>
+      <div class="dgrid dchips w-conflict"><span class="wchip">${ic('conflict',12)}Conflict</span>
+        <span class="wchip brand">${ic('speak',12)}Speaking</span>
+        <span class="wdot">${ic('radar',11)}3</span></div>
+      <div class="dgrid dchips w-discrepancy"><span class="wchip">${ic('delta',12)}Discrepancy</span>
+        <span class="wstat"><i></i>1 discrepancy</span></div>
+      <div class="dgrid dchips w-clarification"><span class="wchip">${ic('help',12)}Clarification</span>
+        <span class="wstat"><i></i>2 clarifications</span></div>
+      <div class="dnote">The pill only interrupts for a conflict — everything else waits on the badge.
+        Close this window to see it; the states above are set on the real control, not a mock.</div></div>`)+
     sgroup('sliders','Native prompts','Browser prompts stand in for the real macOS sheets',
       `<div class="dwrap"><div class="dbtns">
         <button class="btn s sm" data-a="rename" data-p="${(db.meetings[0]||{}).id||''}">Rename a meeting</button>
@@ -2492,6 +3121,25 @@ function menuEl(){
     <a data-a="settings" data-p="hotkey">${ic('sliders',15)}Bubble &amp; hotkey settings<span class="k">⌘,</span></a><hr>
     <a data-a="bubhide">${ic('x',15)}Hide the bubble</a>
     <div class="fn">Bring it back from Settings &rsaquo; Hotkey, or the demo page.</div></div>`;}
+  if(kind==='wstatus'){const pos=S.menuXY||{x:FW()-300,y:260};
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="left:${clampX(pos.x,236)}px;top:${clampY(pos.y,200)}px;width:236px">
+    <div class="mh">Status</div>
+    <a data-a="wstat" data-p="${id}|open">${ic('alertc',15)}Open</a>
+    <a data-a="wstat" data-p="${id}|resolved">${ic('check',15)}Resolved</a>
+    <a data-a="wstat" data-p="${id}|dismissed">${ic('eyeoff',15)}Not an issue</a>
+    <div class="fn">Dismissing tells the assistant not to raise this pairing again.</div></div>`;}
+  if(kind==='wmenu'){const w=watchout(id);if(!w)return '';
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="right:16px;top:70px;width:256px">
+    <a data-a="wtask" data-p="${id}">${ic('list',15)}Turn into a task</a>
+    <a data-a="wcopy" data-p="${id}">${ic('copy',15)}Copy the suggested wording</a>
+    <a data-a="jump" data-p="${w.now.at}">${ic('play',15)}Jump to ${w.now.at}</a>
+    ${w.ref.mid&&w.ref.mid!==w.mid?`<a data-a="open" data-p="${w.ref.mid}">${
+      ic('users',15)}Open ${esc(w.ref.mt)}</a>`:''}<hr>
+    <a data-a="wresolve" data-p="${id}">${ic('check',15)}Mark resolved</a>
+    <a data-a="wdismiss" data-p="${id}">${ic('eyeoff',15)}Not an issue</a><hr>
+    <a data-a="settings" data-p="ainotes">${ic('sliders',15)}What the assistant looks for</a></div>`;}
   if(kind==='infodlg')return `<div class="scrim" data-a="closemenu"></div>
    <div class="modal" style="width:412px;flex-direction:column">
     <div class="mtop"><span style="width:38px;height:38px;border-radius:11px;background:var(--infoTint);
@@ -2676,6 +3324,7 @@ function render(){
     main=mhead('Meetings',meetingsState(),`<button class="btn ${db.meetings.length?'p':'s'} sm" data-a="record">${
       ic('rec',15)}Record meeting</button>`)+viewMeetings();}
   else if(S.route==='folder'){lc=listMeetings();
+    if(S.wpanel&&S.wid)aside=watchPanel();
     const unf=S.fid==='',f=folder(S.fid);
     const nm=unf?'Unfiled':(f?f.name:'Folder');
     main=mhead('','','',
@@ -2695,7 +3344,8 @@ function render(){
        <span class="bk" data-a="view" data-p="${mf===''?'unfiled':'f:'+mf}">${
          esc(mf===''?'Unfiled':folderName(mf))}</span> ${ic('chev',13)}
        <b>${esc(m?m.title:'')}</b>`)+viewMeeting();
-    if(S.mpanel)aside=meetingChat(m);}
+    if(S.wpanel&&S.wid)aside=watchPanel();
+    else if(S.mpanel)aside=meetingChat(m);}
   else if(S.route==='speech'){lc=listSpeech();
     main=mhead('Speech to Text',db.transcripts.filter(t=>t.when==='today').length+' today')+viewSpeech();}
   else if(S.route==='vocabulary'){lc=listVocab();
@@ -2713,7 +3363,7 @@ function render(){
     main=mhead(c?'':'AI Assistant','',c?`<button class="btn s sm" data-a="demo" data-p="share this conversation">${
       ic('share',15)}Share</button>`:'',c?`<span class="bk" data-a="newchat">AI Assistant</span> ${ic('chev',13)}
       <b>${esc(c.title)}</b>`:null)+viewAssistant();}
-  const cls=(S.railmin?'railmin ':'')+(S.listmin?'listmin ':'')+(S.mpanel?'mchat':'');
+  const cls=(S.railmin?'railmin ':'')+(S.listmin?'listmin ':'')+(S.mpanel?'mchat ':'')+(aside?'hasaside':'');
   if(lc)lc=withFoot(lc);
   $('#app').innerHTML=`<div class="shell">${topbar()}
     <div class="app ${cls}">${rail()}${lc}<div class="main">${main}</div>${aside}</div>
@@ -2725,35 +3375,151 @@ function render(){
    in #bubble, a sibling of #app, so a re-render never interrupts a drag or drops
    the CSS :hover that reveals the tray.
 
-   Click the core to start dictating, click again to stop. Hover reveals Dictate,
-   Record, Ask and More. Drag it anywhere in the window; More ▸ Reset position
-   puts it back. */
+   It has three shapes, and which one it wears is derived rather than stored —
+   S.rec means a meeting is being recorded, S.bub.rec means the user is
+   dictating, neither means idle. Nothing can get the shape and the state out
+   of step, which matters because the pill is the surface that stops a recording.
+
+   idle       round core, hover tray: dictate, record, ask, more
+   dictating  a capsule — meter, timer, stop. Click the core to paste.
+   recording  a pill — timer, meter, pause, stop, and the watchouts badge
+
+   The badge is the whole point of the redesign. While a call runs the assistant
+   reads it against everything said before, and anything it notices lands
+   behind that badge rather than on screen. A conflict — and only a conflict —
+   also peeks for a few seconds, because a contradiction that is caught after
+   the call has already cost something. Everything else waits to be asked for. */
 const BUBACTS=[['record','rec','Record a meeting'],['ask','spark','Ask the assistant'],
                ['more','dots','More']];
 /* bottom right, but clear of the action row that sits along the foot of a
    meeting's notes — the bubble is draggable if the user wants it elsewhere */
 function bubHome(){return {x:FW()-88,y:FH()-152};}
+const bubMode=()=>S.rec?'meet':S.bub.rec?'dict':'idle';
+const fmtSecs=n=>{const h=Math.floor(n/3600),m=Math.floor(n/60)%60,x=n%60;
+  return (h?h+':'+String(m).padStart(2,'0'):String(m).padStart(2,'0'))+':'+String(x).padStart(2,'0');};
+/* a fake input meter — deterministic in `secs` so it animates with the timer
+   rather than on every render */
+const pmBars=(n,secs,live)=>Array.from({length:n},(_,i)=>`<i style="height:${
+  live?Math.max(3,Math.round(4+13*Math.abs(Math.sin(i*.85+secs*1.1))*Math.abs(Math.cos(i*.4+secs*.6)))):4}px"></i>`).join('');
+const clip=(t,n)=>t.length>n?esc(t.slice(0,n-1))+'…':esc(t);
+
 function renderBubble(){
   const el=$('#bubble');if(!el)return;
   const b=S.bub;
   if(!db.settings.bubble){el.className='off';el.innerHTML='';return}
   if(b.x===null){const h=bubHome();b.x=h.x;b.y=h.y;}
+  const mode=bubMode();
   /* keep it inside the frame after a resize or a switch to fill mode; the
      bottom margin leaves room for the label that sits under the core */
-  b.x=Math.max(8,Math.min(b.x,FW()-68));
   b.y=Math.max(72,Math.min(b.y,FH()-96));
-  /* the tray needs ~150px of headroom, so drop it below the core near the top */
-  el.className=(b.rec?'rec ':'')+(b.y<226?'flip':'');
+  const cls=[mode];
+  if(mode==='meet'){
+    if(S.rec.paused)cls.push('paused');
+    /* the halo clears the moment the watchout is looked at */
+    if(S.walert&&!S.wopen&&!S.wsay)cls.push('alert');
+  }
+  /* the tray needs ~150px of headroom and the popover rather more, so both
+     drop below the pill near the top of the window */
+  const head=(S.wpeek||S.wopen||S.wsay)?424:mode==='idle'?226:120;
+  if(b.y<head)cls.push('flip');
+  el.className=cls.join(' ');
   el.style.left=b.x+'px';el.style.top=b.y+'px';
-  const mm=Math.floor(b.secs/60),ss=String(b.secs%60).padStart(2,'0');
-  el.innerHTML=`<div class="btray">${BUBACTS.map(([k,i,l])=>
+  el.innerHTML=mode==='meet'?pillMeet():mode==='dict'?pillDict():bubIdle();
+  /* the shapes are different widths, so x can only be clamped once the shape
+     is in the document — this is why the pill never opens off the right edge */
+  const w=el.offsetWidth||60;
+  const nx=Math.max(8,Math.min(b.x,FW()-w-12));
+  if(nx!==b.x){b.x=nx;el.style.left=nx+'px'}
+}
+function bubIdle(){
+  return `<div class="btray">${BUBACTS.map(([k,i,l])=>
       `<span data-a="bubact" data-p="${k}" title="${l}">${ic(i,17)}<span class="tip">${l}</span></span>`).join('')}</div>
-    <div class="bcore" data-a="bubtalk" title="${b.rec?'Stop and paste':'Click to dictate'}">
-      ${b.rec?`${ic('stop',14,2.6)}<span class="tm">${mm}:${ss}</span>
-        <span class="bmeter">${Array.from({length:9},(_,i)=>
-          `<i style="height:${Math.max(3,Math.round(3+6*Math.abs(Math.sin(i*0.9+b.secs))))}px"></i>`).join('')}</span>`
-             :ic('mic',22,2)}</div>
-    <div class="blabel">${b.rec?'Listening — click to paste':'Click to dictate'}</div>`;
+    <div class="bcore" data-a="bubtalk" title="Click to dictate">${ic('mic',22,2)}</div>
+    <div class="blabel">Click to dictate</div>`;
+}
+function pillDict(){
+  const b=S.bub;
+  return `<div class="pill">
+    <span class="pmark">${ic('mic',17,2)}</span>
+    <span class="pmeter live">${pmBars(11,b.secs,true)}</span>
+    <span class="plabel">Listening</span>
+    <span class="psub">${fmtSecs(b.secs)}</span>
+    <span class="pdiv"></span>
+    <span class="pbtn stop nodrag" data-a="bubtalk" title="Stop and paste at your cursor">${ic('stop',14,2.2)}</span>
+    </div>`;
+}
+function pillMeet(){
+  const r=S.rec,open=mWatchOpen(r.mid),hot=hasConflict(open);
+  if(S.wsay){
+    return `${wpop()}<div class="pill saying">
+      <span class="pmark">${ic('speak',17)}</span>
+      <span class="pstat"><i class="rdot"></i><b>${fmtSecs(r.secs)}</b></span>
+      <span class="pdiv"></span>
+      <span class="plabel">Speaking…</span>
+      <span class="pbar"><i></i></span>
+      <span class="pbtn nodrag" data-a="wcancel" title="Do not say it">${ic('x',15,2.2)}</span></div>`;}
+  return `${(S.wpeek||S.wopen)?wpop():''}
+    <div class="pill">
+    <span class="pmark">${ic('spark',17)}</span>
+    <span class="pstat"><i class="rdot"></i><b>${fmtSecs(r.secs)}</b></span>
+    ${r.paused?`<span class="psub">Paused</span>`
+      :`<span class="pmeter live">${pmBars(9,r.secs,true)}</span>`}
+    <span class="pdiv"></span>
+    <span class="pbtn nodrag" data-a="pauseRec" title="${r.paused?'Resume recording':'Pause recording'}">${
+      ic(r.paused?'play':'pause',15,2.2)}</span>
+    <span class="pbtn stop nodrag" data-a="stopRec" title="Stop and generate notes">${ic('stop',14,2.2)}</span>
+    ${open.length?`<span class="pbtn nodrag ${S.wopen?'on':''}" data-a="bubwatch"
+      title="${open.length} watchout${open.length>1?'s':''} — click to review">${ic('radar',17)}<i class="b ${
+        hot?'hot':''}">${open.length}</i></span>`:''}
+    </div>`;
+}
+/* one card, two jobs: the peek that a conflict opens by itself, and the list
+   the badge opens. Both hand off to the same detail panel in the app, so the
+   pill never becomes a second place where watchouts are half-explained. */
+function wpop(){
+  const r=S.rec,open=mWatchOpen(r.mid);
+  if(S.wsay){const x=watchout(S.wsay);if(!x)return '';
+    return `<div class="wpop"><div class="wcard w-${x.type}">
+      <div class="ph2"><span class="wchip brand">${ic('speak',12)}Speaking</span>
+        <span class="age">out loud, into the call</span></div>
+      <div class="wtx" style="font-style:italic;color:var(--ink2)">“${esc(x.say)}”</div>
+      <div class="wfoot"><span class="pbar" style="flex:1;align-self:center"><i></i></span>
+        <button class="btn s sm nodrag" data-a="wcancel">${ic('x',14)}Cancel</button></div>
+      </div></div>`;}
+  if(S.wopen){
+    return `<div class="wpop"><div class="wcard">
+      <div class="ph2">${ic('radar',16)}<b style="font-family:Poppins,sans-serif;font-size:13.5px">Watchouts</b>
+        <span class="age">${open.length} open</span></div>
+      <div style="padding:9px 15px 12px;display:flex;gap:12px;flex-wrap:wrap">${
+        wCounts(open).map(([t,n])=>`<span class="wstat w-${t}"><i></i>${n} ${
+          n===1?WT[t].label.toLowerCase():WT[t].plural.toLowerCase()}</span>`).join('')||
+        '<span style="font-size:12.5px;color:var(--sec)">Nothing outstanding.</span>'}</div>
+      <div class="wlist">${open.map(x=>`<div class="wl w-${x.type}" data-a="wdetail" data-p="${x.id}">
+        <span class="wi">${ic(WT[x.type].icon,12)}</span>
+        <span style="flex:1;min-width:0"><span class="l1">${WT[x.type].label}</span>
+          <span class="l2">${esc(x.title)}</span></span>
+        <span class="age">${esc(x.age)}</span></div>`).join('')}</div>
+      <div class="more" data-a="wall">${ic('file',14)}Review all in the meeting
+        <span class="n">${ic('chev',13)}</span></div>
+      </div></div>`;}
+  const x=watchout(S.wpeek);if(!x)return '';
+  const rest=open.filter(o=>o.id!==x.id).length;
+  return `<div class="wpop"><div class="wcard w-${x.type}">
+    <div class="ph2"><span class="wchip">${ic(WT[x.type].icon,12)}${WT[x.type].label}</span>
+      <span class="age">${esc(x.age)}</span></div>
+    <div class="wtx">${esc(x.title)}</div>
+    <div class="wsy"><b>Said now:</b> “${clip(x.now.tx,74)}”<br>
+      <b>${WT[x.type].verb}:</b> “${clip(x.ref.tx,74)}” — ${esc(x.ref.who)}${
+        x.ref.mt?', '+esc(x.ref.mt):''}${x.ref.date?' · '+esc(x.ref.date):''}</div>
+    <div class="wfoot">
+      ${db.settings.woSpeak?`<button class="btn p sm nodrag" data-a="wsay" data-p="${x.id}"
+        title="The assistant says this out loud">${ic('speak',14)}Bring this up</button>`:''}
+      <button class="btn s sm nodrag" data-a="wdetail" data-p="${x.id}">${ic('eye',14)}Details</button>
+      <button class="btn s sm nodrag" data-a="wsnooze" data-p="${x.id}" title="Keep it behind the badge"
+        style="flex:0 0 auto">${ic('x',14)}</button></div>
+    ${rest?`<div class="more" data-a="bubwatch">${ic('radar',14)}${rest} more watchout${rest>1?'s':''}
+      <span class="n">${ic('chev',13)}</span></div>`:''}
+    </div></div>`;
 }
 /* Click-to-start, click-to-stop. Distinct from holdStart(), which models the
    press-and-hold hotkey and releases itself after a few seconds. */
@@ -2770,7 +3536,7 @@ function bubStart(){
   },1000));
   if(S.route==='speech'){S.rec2={secs:0,bub:true};render()}
   renderBubble();
-  toast(`${ic('mic',15)}<span><b>Listening.</b> Click the bubble again to paste at your cursor.</span>`,2800,'info');
+  toast(`${ic('mic',15)}<span><b>Listening.</b> Click stop on the capsule to paste at your cursor.</span>`,2800,'info');
 }
 function bubStop(){
   if(!S.bub.rec)return;
@@ -2785,6 +3551,48 @@ function bubStop(){
     dest:'pasted at your cursor · from the bubble',when:'today'});
   render();
   toast(`${ic('check',15)}<span><b>Pasted.</b> “${esc(tx.slice(0,40))}…” after ${secs}s.</span>`,3000,'ok');
+}
+/* ── raising a watchout in the room ───────────────────────────────────────
+   The assistant speaks the suggested wording into the call and the line lands
+   in the live transcript attributed to it, so the recording shows who said
+   what. Cancellable for the three seconds before it starts. */
+let SAYT=null;
+function waySay(id){
+  const x=watchout(id);if(!x||!S.rec)return;
+  S.wsay=id;S.wpeek=null;S.wopen=false;S.walert=false;
+  renderBubble();
+  clearTimeout(SAYT);
+  SAYT=setTimeout(()=>{
+    if(S.wsay!==id)return;
+    S.wsay=null;x.raised=true;x.status='resolved';
+    if(S.rec&&S.rec.mid===x.mid){
+      const t=fmtSecs(S.rec.secs);
+      S.rec.lines.push([t,'AIT-Scribe',x.say,'spoken']);
+    }
+    render();
+    toast(`${ic('speak',15)}<span><b>Raised in the call.</b> The wording is in the transcript, and the
+      watchout is marked resolved.</span>`,3400,'ok');
+  },3100);
+}
+function wayCancel(){
+  clearTimeout(SAYT);S.wsay=null;renderBubble();
+  toast('Left unsaid. It stays behind the badge.');
+}
+/* surfaces the next scripted watchout while a recording runs */
+function wFire(x){
+  db.watchouts.unshift(x);
+  const conflict=x.type==='conflict';
+  const peekFor=db.settings.woPeek;
+  const shouldPeek=peekFor==='all'||(peekFor==='conflict'&&conflict);
+  if(shouldPeek&&!S.wopen&&!S.wsay){S.wpeek=x.id;S.walert=conflict;
+    /* the peek retracts on its own — the badge keeps the count */
+    setTimeout(()=>{if(S.wpeek===x.id){S.wpeek=null;S.walert=false;renderBubble()}},7200);}
+  else if(conflict)S.walert=true;
+  render();
+  /* a peek and a toast for the same watchout is two notifications for one
+     event, so only the quiet ones announce themselves */
+  if(!shouldPeek)toast(`${ic('radar',15)}<span><b>${WT[x.type].label} noticed.</b>
+    ${esc(x.title)} — it is on the pill's badge.</span>`,3600,'info');
 }
 
 /* drops the collapse control in just before the list column closes */
@@ -2836,7 +3644,27 @@ const LINES=[['00:04','Jennifer Walsh','Thanks for making the time — let us st
  ['00:29','Jennifer Walsh','Noted. Let us take pricing first and come back to Legal.'],
  ['00:38','You','Understood — I will send the revised sheet through by Thursday.'],
  ['00:47','Tom Ellis','And can we get the platform team into the deep-dive this time?'],
- ['00:55','Jennifer Walsh','Yes. Procurement alone was not enough last round.']];
+ ['00:55','Jennifer Walsh','Yes. Procurement alone was not enough last round.'],
+ ['01:04','You','On environments — I will get the GCP project set up for you this week so it is ready for the deep-dive.'],
+ ['01:13','Tom Ellis','Good. And we are still holding the eighteenth for the deep-dive itself.']];
+/* What the assistant catches as the call runs, keyed to the transcript line
+   that triggers it. `after` is the line index it fires on, so the watchout
+   always arrives just behind something the user can see was said. */
+const LIVEW=[
+ {after:7,type:'conflict',
+  title:'GCP is being set up, but the client called AWS a security requirement',
+  why:'On the kickoff Jennifer said everything runs in their AWS account and called it a security requirement rather than a preference. A GCP environment would not clear their security review, and the work is being committed to now.',
+  now:{tx:'On environments — I will get the GCP project set up for you this week so it is ready for the deep-dive.',who:'You',at:'01:04'},
+  ref:{tx:'One thing to be clear on — everything runs in our AWS account. That is a security requirement, not a preference.',who:'Jennifer Walsh',mid:'m1',mt:'Acme kickoff',date:'11 Aug 2026',at:'25:30'},
+  say:'Just a quick heads up before I set anything up — on the kickoff Jennifer said everything has to run in your AWS account. Should I be standing up AWS rather than GCP?',
+  age:'just now'},
+ {after:8,type:'discrepancy',
+  title:'The deep-dive is on the eighteenth, but pricing is not due until Thursday the twentieth',
+  why:'Jennifer needs the revised sheet before her internal review, and the deep-dive was meant to follow that conversation, not precede it. One of the two dates has to move.',
+  now:{tx:'And we are still holding the eighteenth for the deep-dive itself.',who:'Tom Ellis',at:'01:13'},
+  ref:{tx:'Understood — I will send the revised sheet through by Thursday.',who:'You',mid:null,mt:'Earlier in this call',date:'',at:'00:38'},
+  say:'One sequencing thing — the pricing sheet lands Thursday, which is after the eighteenth. Do we want the deep-dive after that conversation instead?',
+  age:'just now'}];
 
 function startRecording(){
   if(S.bub&&S.bub.rec){S.bub.rec=false;S.bub.secs=0;S.rec2=null;}
@@ -2846,8 +3674,9 @@ function startRecording(){
     dur:'00:00',folder:'client',fups:0,mynotes:'',transcript:[],
     notes:{summary:'',decisions:[],questions:[]}};
   db.meetings.unshift(m);
-  S.rec={mid:id,secs:0,paused:false,lines:[],next:0};
+  S.rec={mid:id,secs:0,paused:false,lines:[],next:0,wnext:0};
   S.route='meeting';S.mid=id;S.tab='mynotes';
+  S.wpeek=null;S.wopen=false;S.walert=false;S.wsay=null;S.wfilter='all';
   clearTimers();
   timers.push(setInterval(()=>{
     if(!S.rec)return;
@@ -2855,15 +3684,26 @@ function startRecording(){
       S.rec.secs++;
       if(S.rec.next<LINES.length&&S.rec.secs>=(S.rec.next+1)*3){
         S.rec.lines.push(LINES[S.rec.next]);S.rec.next++;}
+      /* the assistant is a beat behind the line that triggered it, which is
+         also what makes the pill feel like it is listening rather than scripted */
+      const w=LIVEW[S.rec.wnext];
+      if(w&&db.settings.woOn&&S.rec.next>=w.after&&S.rec.secs>=w.after*3+2){
+        S.rec.wnext++;
+        const on={conflict:db.settings.woConflict,discrepancy:db.settings.woDiscrepancy,
+                  clarification:db.settings.woClarify}[w.type];
+        if(on){wFire(Object.assign({id:'w'+Date.now(),mid:S.rec.mid,status:'open'},w));return}
+      }
     }
     if(S.route==='meeting'&&S.mid===S.rec.mid)render();
+    else renderBubble();
   },1000));
   render();
-  toast(`<b>Recording started.</b> This is a simulation — the timer, meter and transcript are generated.`);
+  toast(`<b>Recording started.</b> The pill carries the controls — watch for watchouts on its badge.`,3600);
 }
 function stopRecording(){
   const r=S.rec;if(!r)return;const m=meeting(r.mid);
-  clearTimers();S.rec=null;S.busy=true;
+  clearTimers();clearTimeout(SAYT);
+  S.rec=null;S.busy=true;S.wpeek=null;S.wopen=false;S.walert=false;S.wsay=null;
   const mm=String(Math.floor(r.secs/60)).padStart(2,'0'),ss=String(r.secs%60).padStart(2,'0');
   m.dur=`${mm}:${ss}`;m.title='Acme follow-up call';
   m.transcript=r.lines.map(l=>[l[0],l[1],l[2],'']);
@@ -2883,7 +3723,11 @@ function stopRecording(){
       late:false,pri:'',done:false,grp:'Upcoming',quote:'Can we get the platform team into the deep-dive this time?',who:'Tom Ellis',at:'00:47'}];
     db.tasks.push(...nt);m.fups=3;
     S.busy=false;S.tab='notes';render();
+    const w=mWatchOpen(m.id);
     toast(`<b>Notes ready.</b> 3 tasks were added to Tasks.`,3600);
+    if(w.length)setTimeout(()=>toast(`${ic('radar',15)}<span><b>${w.length} watchout${
+      w.length>1?'s':''} still open</b> on this call — they are on the Watchouts tab.</span>`,
+      4000,hasConflict(w)?'dg':'warn'),900);
   },2600);
 }
 function holdStart(){
@@ -2932,9 +3776,12 @@ function resetDemo(hard){
   db=seed();db.settings.theme=mode;db.settings.th=th;db.settings.bubble=bub;
   if(hard){db.meetings=[];db.tasks=[];db.transcripts=[];db.convos=[];db.setupDone=0;
     db.settings.detect=false;db.settings.calendar=false;S.firstRun=true;}
+  clearTimeout(SAYT);
   Object.assign(S,{route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:hard?'new':'c1',
     settings:false,share:false,menu:null,panel:false,q:'',tq:'',vq:'',taskFilter:'all',
-    showDone:false,speakers:'All speakers',rec:null,rec2:null,busy:false,typing:false,addPerson:false});
+    showDone:false,speakers:'All speakers',rec:null,rec2:null,busy:false,typing:false,addPerson:false,
+    wid:null,wpanel:false,wfilter:'all',wdone:false,wpeek:null,wopen:false,walert:false,wsay:null,wseen:[]});
+  if(hard)db.watchouts=[];
   render();
   toast(hard?`<b>Reset.</b> You are now looking at a brand-new install.`:`<b>Sample data restored.</b>`);
 }
@@ -2951,7 +3798,7 @@ document.addEventListener('click',e=>{
   switch(a){
   case 'noop':return;
   case 'demo':stop();demo(p);return;
-  case 'go':stop();S.route=p;S.q='';S.panel=false;S.menu=null;S.mpanel=false;S.fid=null;
+  case 'go':stop();S.route=p;S.q='';S.panel=false;S.menu=null;S.mpanel=false;S.fid=null;S.wpanel=false;
     S.view=p==='tasks'?'all':p==='speech'?'today':p==='vocabulary'?'all':'all';render();return;
   case 'view':{stop();S.view=p;S.q='';S.menu=null;S.mpanel=false;
     if(S.route==='tasks')S.panel=false;
@@ -3015,7 +3862,7 @@ document.addEventListener('click',e=>{
     setTimeout(()=>{const i=document.querySelector('.srch input');if(i)i.focus()},60);return;
   case 'open':stop();S.route='meeting';S.mid=p;S.tab=(S.rec&&S.rec.mid===p)?'mynotes':'notes';
     S.menu=null;S.tq='';S.speakers='All speakers';render();return;
-  case 'tab':stop();S.tab=p;render();return;
+  case 'tab':stop();S.tab=p;if(p!=='watch')S.wpanel=false;render();return;
   case 'record':stop();startRecording();return;
   case 'pauseRec':stop();S.rec.paused=!S.rec.paused;render();
     toast(S.rec.paused?'Paused — nothing is being captured.':'Recording resumed.');return;
@@ -3123,6 +3970,82 @@ document.addEventListener('click',e=>{
     t.pri=o[(o.indexOf(t.pri)+1)%3];render();return;}
   case 'deltask':stop();db.tasks=db.tasks.filter(t=>t.id!==p);S.menu=null;S.panel=false;render();
     toast('Task deleted.');return;
+  /* ── watchouts ─────────────────────────────────────────────────────────
+     Every entry point — a row, the pill's peek, the pill's list, the project
+     band — lands on the same panel, so there is one place a watchout is
+     explained and one place it is settled. */
+  case 'wdetail':{stop();
+    const w=watchout(p);if(!w)return;
+    S.wid=p;S.wpanel=true;S.mpanel=false;S.menu=null;
+    /* opening one acknowledges the pill: the peek retracts and the halo clears */
+    S.wpeek=null;S.wopen=false;S.walert=false;
+    if(!S.wseen.includes(p))S.wseen.push(p);
+    /* if it was opened from the pill, take the user to the meeting it is in */
+    if(S.route!=='folder'||!S.fid){S.route='meeting';S.mid=w.mid;S.tab='watch';}
+    render();return;}
+  case 'wclose':stop();S.wpanel=false;render();return;
+  case 'wfilter':stop();S.wfilter=p;render();return;
+  case 'wshowdone':stop();S.wdone=!S.wdone;render();return;
+  case 'wall':stop();if(!S.rec)return;
+    S.wopen=false;S.wpeek=null;S.walert=false;
+    S.route='meeting';S.mid=S.rec.mid;S.tab='watch';render();return;
+  case 'wresolve':{stop();const w=watchout(p);if(!w)return;
+    w.status='resolved';S.wpeek=null;S.walert=false;render();
+    toast(`${ic('check',15)}<span><b>Resolved.</b> ${esc(w.title)}</span>`,2800,'ok');return;}
+  case 'wdismiss':{stop();const w=watchout(p);if(!w)return;
+    w.status='dismissed';S.wpeek=null;S.walert=false;
+    if(S.wid===p)S.wpanel=false;
+    render();
+    toast(`${ic('eyeoff',15)}<span><b>Dismissed.</b> The assistant will stop raising this one.</span>`,3000,'info');
+    return;}
+  case 'wreopen':{stop();const w=watchout(p);if(!w)return;
+    w.status='open';w.raised=false;render();toast('Reopened.');return;}
+  /* the peek only retracts — the count stays on the badge, because hiding a
+     watchout and settling it are different things */
+  case 'wsnooze':stop();S.wpeek=null;S.walert=false;renderBubble();return;
+  case 'wstat':{stop();const [id,k]=p.split('|');const w=watchout(id);if(!w)return;
+    w.status=k;if(k==='open')w.raised=false;S.menu=null;render();return;}
+  case 'wtask':{stop();const w=watchout(p);if(!w)return;
+    const m=meeting(w.mid);
+    const titles={conflict:'Resolve: '+w.title,discrepancy:'Check: '+w.title,
+                  clarification:'Follow up: '+w.title};
+    db.tasks.unshift({id:'n'+Date.now(),title:titles[w.type],mid:w.mid,due:'Today',late:false,
+      pri:w.type==='conflict'?'hi':'md',done:false,grp:'Today',
+      quote:w.now.tx,who:w.now.who,at:w.now.at,from:w.id});
+    w.status='resolved';render();
+    toast(`${ic('list',15)}<span><b>Task added.</b> Due today, from ${esc(m?m.title:'this meeting')}.</span>`,3200,'ok');
+    return;}
+  case 'bubdemo':{stop();
+    /* drives the real control rather than a mock, so what the demo shows is
+       what a recording shows */
+    clearTimeout(SAYT);
+    db.settings.bubble=true;S.settings=false;S.wpeek=null;S.wopen=false;S.walert=false;S.wsay=null;
+    if(p==='idle'){S.rec=null;S.bub.rec=false;clearTimers();}
+    else if(p==='dict'){S.rec=null;S.bub.rec=true;S.bub.secs=7;}
+    else{
+      S.bub.rec=false;
+      if(!S.rec||S.rec.mid!=='m1')S.rec={mid:'m1',secs:2067,paused:false,lines:[],next:0,wnext:99};
+      S.rec.paused=p==='paused';
+      if(p==='peek'){S.wpeek=(mWatchOpen('m1')[0]||{}).id||null;S.walert=true;}
+      if(p==='list')S.wopen=true;
+      if(p==='say')S.wsay=(mWatchOpen('m1')[0]||{}).id||null;
+    }
+    render();
+    toast(`${ic('info',15)}<span>The bubble is now in its <b>${
+      {idle:'idle',dict:'dictating',rec:'recording',paused:'paused',peek:'conflict peek',
+       list:'watchout list',say:'speaking'}[p]}</b> state. Nothing is really being recorded.</span>`,3200,'info');
+    return;}
+  case 'wopeek':stop();db.settings.woPeek=p;render();
+    toast(p==='none'?'Nothing will interrupt you. Watchouts wait on the badge.'
+      :p==='all'?'Every watchout will peek out of the pill.'
+      :'Only conflicts will interrupt you.');return;
+  case 'wsay':stop();waySay(p);return;
+  case 'wcancel':stop();wayCancel();return;
+  case 'wcopy':{stop();const w=watchout(p);if(!w)return;copyText(w.say,'Wording');return;}
+  case 'bubwatch':stop();
+    /* the badge toggles the list; opening it acknowledges any alert */
+    S.wopen=!S.wopen;S.wpeek=null;if(S.wopen)S.walert=false;
+    renderBubble();return;
   case 'holdstart':stop();holdStart();return;
   /* ── floating bubble ───────────────────────────────────────────────── */
   case 'bubtalk':stop();
@@ -3244,8 +4167,14 @@ document.addEventListener('keydown',e=>{
 let BDRAG=null,BUBSUP=0;
 document.addEventListener('mousedown',e=>{
   const el=$('#bubble');
-  if(!el||!db.settings.bubble||!e.target.closest('#bubble'))return;
+  if(!el||!db.settings.bubble)return;
+  if(!e.target.closest('#bubble')){
+    if(S.wopen||S.wpeek){S.wopen=false;S.wpeek=null;S.walert=false;renderBubble()}
+    return;}
   if(e.target.closest('[data-a="bubact"]'))return;   /* tray buttons are not handles */
+  /* the pill's controls and its popover are not drag handles either — only the
+     bare pill and the round core are */
+  if(e.target.closest('.nodrag')||e.target.closest('.wpop'))return;
   const r=el.getBoundingClientRect();
   BDRAG={ox:(e.clientX-r.left)/SCALE,oy:(e.clientY-r.top)/SCALE,x0:e.clientX,y0:e.clientY,live:false};
 });
@@ -3255,7 +4184,8 @@ document.addEventListener('mousemove',e=>{
   BDRAG.live=true;
   e.preventDefault();
   const fr=$('#frame').getBoundingClientRect();
-  S.bub.x=Math.max(8,Math.min((e.clientX-fr.left)/SCALE-BDRAG.ox,FW()-68));
+  const bw=($('#bubble')||{offsetWidth:60}).offsetWidth||60;
+  S.bub.x=Math.max(8,Math.min((e.clientX-fr.left)/SCALE-BDRAG.ox,FW()-bw-12));
   S.bub.y=Math.max(72,Math.min((e.clientY-fr.top)/SCALE-BDRAG.oy,FH()-76));
   const el=$('#bubble');
   if(el){el.style.left=S.bub.x+'px';el.style.top=S.bub.y+'px';el.classList.add('drag')}
