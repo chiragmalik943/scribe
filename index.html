@@ -337,7 +337,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .crumb .bk{cursor:pointer;display:flex;align-items:center;gap:6px}
 .crumb .bk:hover{color:var(--brandInk)}
 .crumb b{color:var(--ink);font-weight:600;font-family:Poppins,sans-serif;font-size:15px}
-.body{flex:1;padding:24px;overflow-y:auto;display:flex;flex-direction:column}
+.body{flex:1;--bp:24px;padding:var(--bp);overflow-y:auto;display:flex;flex-direction:column}
 
 /* ══════════════════════════════ buttons ══════════════════════════════ */
 .btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;font-family:Poppins,sans-serif;
@@ -366,7 +366,8 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .empty h2{font-family:Poppins,sans-serif;font-size:20px;font-weight:600;margin-bottom:8px}
 .empty p{font-size:14px;color:var(--sec);line-height:1.6;max-width:470px}
 .notice{display:flex;align-items:center;gap:11px;border-radius:12px;padding:12px 14px;
-  font-size:13.5px;line-height:1.45}
+  font-size:13.5px;line-height:1.45;flex-wrap:wrap}
+.notice>span:not(.act){flex:1 1 220px;min-width:0}
 .notice .act{margin-left:auto}
 .notice.warn{background:var(--warnTint);border:1px solid var(--warnLine);color:var(--ink2)}
 .notice.warn .ic{color:var(--warnInk)}
@@ -778,7 +779,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 #frame.w3 .notesgrid{gap:22px}
 #frame.w3 .panel{width:340px;flex-basis:340px}
 #frame.w3 .tabs{gap:18px}
-#frame.w2 .body{padding:16px}
+#frame.w2 .body{--bp:16px}
 #frame.w2 .notesgrid,#frame.w2 .g2{grid-template-columns:1fr;gap:18px}
 #frame.w2 .topbar{gap:10px;padding:0 12px 0 16px}
 #frame.w2 .topbar .state{display:none}
@@ -941,6 +942,8 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .wrow.done .wi{background:var(--sunk);color:var(--ter);border-color:var(--line)}
 .wrow.done:before{display:none}
 .wrow.done .wt{color:var(--ink2)}
+.wlistcard .wrow:first-child:before{border-radius:13px 0 0 0}
+.wlistcard .wrow:last-child:before{border-radius:0 0 0 13px}
 
 /* the compare block: what was said now, and what it collides with. Two columns
    wherever the container has room, stacked below that, with the relation
@@ -974,10 +977,10 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 /* the band a project leads with. Restrained on purpose — it is a heading with
    evidence under it, not an alarm. */
 .wband{border:1px solid var(--line2);border-radius:14px;background:var(--surf);
-  margin-bottom:24px;overflow:hidden;flex:0 0 auto}
+  margin-bottom:24px;flex:0 0 auto}
 .wband.hot{border-color:var(--wcfLine)}
 .wband .bh{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line);
-  flex-wrap:wrap}
+  flex-wrap:wrap;border-radius:13px 13px 0 0}
 .wband.hot .bh{background:var(--wcfTint);border-bottom-color:var(--wcfLine)}
 .wband .bh .bi{width:30px;height:30px;border-radius:9px;background:var(--tint);color:var(--brandInk);
   display:flex;align-items:center;justify-content:center;flex:0 0 auto}
@@ -986,7 +989,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .wband .bh .s{font-size:12.5px;color:var(--sec)}
 .wband .bh .r{margin-left:auto;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .wband .bf{padding:11px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--sec);
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-radius:0 0 13px 13px}
 /* stat counts, e.g. 2 conflicts · 1 discrepancy */
 .wstat{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
   font-family:Poppins,sans-serif;color:var(--wcI)}
@@ -1001,7 +1004,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 
 .wscroll{flex:1;min-height:0;overflow-y:auto}
 .wfoot2{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--sec);
-  padding:15px 2px 4px;border-top:1px solid var(--line);flex-wrap:wrap;flex:0 0 auto;margin-top:14px}
+  padding:14px 2px 2px;flex-wrap:wrap}
 .wfoot2 .ic{color:var(--brandInk)}
 
 #frame.w2 .wcmp{grid-template-columns:1fr}
@@ -1013,6 +1016,111 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 #frame.w2 .panel.wo{width:min(370px,92%)}
 #frame.w2 .panel.wo .wcmp{grid-template-columns:1fr}
 #frame.w2 .panel.wo .wcmp>div+div{border-left:0;border-top:1px solid var(--line2)}
+
+/* ══════════════════════════════ tab action bar ══════════════════════════════ */
+/* Every tab used to keep its controls somewhere different — the transcript in a
+   toolbar above, AI notes in a footer below, watchouts in both. One bar
+   directly under the tabs, always: what the tab is filtered or scoped by on the
+   left, what it can do on the right. The eye learns one place. */
+.actbar{display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap;margin:0 0 16px;flex:0 0 auto;
+  min-height:32px}
+.actbar .l{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;
+  font-size:12.5px;color:var(--sec);line-height:1.45}
+.actbar .l>.ic{color:var(--brandInk);flex:0 0 auto}
+.actbar .r{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  flex:0 1 auto;min-width:0;justify-content:flex-end}
+#frame.w2 .actbar .r{margin-left:0}
+
+/* a boxed side column — the task list was a heading with rows under it, which
+   read as loose next to the bordered cards it sits beside */
+.sidebox{border:1px solid var(--line);border-radius:14px;background:var(--surf)}
+.sidebox .sbh{display:flex;align-items:center;gap:9px;padding:13px 16px;
+  border-bottom:1px solid var(--line);font-family:Poppins,sans-serif;font-size:14px;font-weight:600}
+.sidebox .sbh>.ic{color:var(--brandInk);flex:0 0 auto}
+.sidebox .sbh .n{margin-left:2px;font-weight:500;color:var(--ter);font-size:12.5px}
+.sidebox .sbh .jump{margin-left:auto}
+.sidebox .sbe{padding:24px 20px;text-align:center;font-size:13px;color:var(--sec);line-height:1.55}
+
+/* the Ask AI dock. A full-width composer at the foot of the page rather than a
+   button in the corner, because asking about what is on screen is the most
+   common thing to do with it. Clicking it opens the panel, which has the real
+   input — this one is the door. */
+.compbox.dock{cursor:pointer;gap:12px}
+.compbox.dock .ph{flex:1;font-size:13.5px;color:var(--ter);min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.compbox.dock:hover{border-color:var(--brand)}
+.compbox.dock>.ic{color:var(--brandInk)}
+/* The folder page scrolls as one column, so its dock sticks to the foot of it.
+   The page drops its own bottom padding and the dock supplies it instead —
+   pulling the dock out over the padding with negative margins would make the
+   page scroll sideways by exactly that much. */
+.body.docked{padding-bottom:0}
+.comp.stick{position:sticky;bottom:0;z-index:6;margin-top:22px;
+  padding:20px 0 var(--bp);
+  background:linear-gradient(to bottom,transparent,var(--surf) 34%)}
+
+/* ══════════════════════════════ sidebar hover peek ══════════════════════════════ */
+/* A collapsed sidebar opens under the pointer and closes again when it leaves.
+   Two decisions carry most of the usability here:
+
+   It overlays, it does not push. If the peek widened the sidebar in flow, the
+   whole page would slide sideways under a cursor that is on its way somewhere —
+   the thing being reached for moves away. So the strip keeps its place in the
+   layout (.pkgap) and the full sidebar floats above it.
+
+   It opens on dwell, not on entry. The pointer has to be inside the strip for
+   ~350ms *and* have slowed down; a fast sweep across on the way to the main
+   column never triggers it. Closing waits ~420ms so a small overshoot does not
+   snatch it away. (Timings follow NN/g's guidance for hover-revealed content:
+   300–500ms to open once the pointer settles, ~500ms of grace before hiding.) */
+.pkgap{flex:0 0 auto;pointer-events:none;align-self:stretch}
+.app.pkrail .rail,.app.pklist .listcol{position:absolute;top:0;bottom:0;z-index:16;
+  /* sideways rather than the app's usual downward shadow — this panel's free
+     edge is its right one, and it has to read as floating over the page */
+  box-shadow:20px 0 44px -14px rgba(16,24,38,.30),1px 0 0 var(--line2)}
+[data-theme="dark"] .app.pkrail .rail,[data-theme="dark"] .app.pklist .listcol{
+  box-shadow:22px 0 48px -12px rgba(0,0,0,.62),1px 0 0 var(--line2)}
+.app.pkrail .rail{left:0}
+.app.pklist .listcol{left:var(--railw,72px)}
+/* only the render that opens the peek animates — the sidebar re-renders on
+   every keystroke in its search box, and replaying a slide each time is worse
+   than not animating at all */
+.app.pkin.pkrail .rail,.app.pkin.pklist .listcol{animation:pkslide .17s cubic-bezier(.2,.9,.3,1)}
+@keyframes pkslide{from{opacity:.4;transform:translateX(-12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .app.pkin.pkrail .rail,.app.pkin.pklist .listcol{animation:none}}
+/* the collapse control becomes a pin while the sidebar is only being peeked */
+.colbtn.pin{color:var(--brandInk)}
+.colbtn.pin:hover{background:var(--tint2)}
+
+/* ══════════════════════════════ tooltips ══════════════════════════════ */
+/* Chromium will not render a native `title` tooltip on a span or a div the way
+   Safari does, so every icon-only control in here was silently unlabelled. One
+   pseudo-element replaces the lot: render() rewrites every `title` in the app
+   into `data-tt` (plus an aria-label), and this draws it. `width:max-content`
+   is the part that matters — an absolutely positioned box inside a 30px button
+   otherwise shrinks to the longest word and spills its text out both sides.
+
+   The delay is deliberate. These sit on hover-revealed row actions, and without
+   it a mouse crossing a card flashes four tooltips on its way past. */
+/* There is exactly one tooltip in the document and it lives at the top of the
+   frame, not inside the control it describes.
+
+   A pseudo-element cannot escape an ancestor's overflow, and almost every
+   place an icon button appears in here is inside something that clips: a
+   collapsed sidebar, a scrolling list, a card with rounded corners. It also
+   cannot escape a stacking context, so a tooltip on a sidebar could end up
+   painted under the main column. Both problems disappear once the tooltip is a
+   sibling of #app positioned in frame coordinates — and as a bonus it stops
+   contributing to the scroll width of whatever region the control sits in,
+   which is what a hidden pseudo-element was quietly doing before. */
+#tip{position:absolute;z-index:60;pointer-events:none;max-width:250px;
+  background:var(--ink);color:var(--surf);font-family:Poppins,sans-serif;font-size:11.5px;
+  font-weight:500;line-height:1.45;padding:5px 10px;border-radius:8px;text-align:center;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);opacity:0;transform:translateY(3px);
+  transition:opacity .12s,transform .12s;left:0;top:0;visibility:hidden}
+#tip.on{opacity:1;transform:none;visibility:visible}
+@media (prefers-reduced-motion:reduce){#tip{transition:none;transform:none}}
 
 /* ══════════════════════════════ floating bubble ══════════════════════════════ */
 /* Lives in the frame, not in #app, so a re-render never interrupts a drag or a
@@ -1033,36 +1141,41 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 #bubble.drag .bcore,#bubble.drag .pill{cursor:grabbing}
 #bubble.drag .bcore{transform:scale(1.05)}
 
-/* ── idle: the round core and its tray ─────────────────────────────────── */
-.btray{position:absolute;left:0;bottom:100%;width:60px;padding-bottom:10px;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  opacity:0;transform:translateY(10px) scale(.9);transform-origin:50% 100%;pointer-events:none;
-  transition:opacity .16s,transform .18s cubic-bezier(.2,.9,.3,1)}
-/* near the top of the window the tray drops below the core instead */
-#bubble.flip .btray{bottom:auto;top:100%;padding-bottom:0;padding-top:10px;
-  flex-direction:column-reverse;transform-origin:50% 0;transform:translateY(-10px) scale(.9)}
-#bubble.idle:hover .btray,#bubble.idle.open .btray{opacity:1;transform:none;pointer-events:auto}
-.btray span{width:40px;height:40px;border-radius:50%;background:var(--surf);
-  border:1px solid var(--line2);box-shadow:var(--shadow2);display:flex;align-items:center;
-  justify-content:center;color:var(--ink2);cursor:pointer;position:relative;flex:0 0 auto;
-  transition:transform .12s,border-color .12s,color .12s}
-.btray span:hover{border-color:var(--brand);color:var(--brandInk);transform:translateY(-1px)}
-.btray span .tip{position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);
-  background:var(--ink);color:var(--surf);font-size:11.5px;padding:4px 9px;border-radius:7px;
-  white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .13s;
-  font-family:Poppins,sans-serif;font-weight:500}
-.btray span:hover .tip{opacity:1}
+/* ── idle: a circle that becomes a pill under the cursor ─────────────────
+   The idle bubble and the recording pill are the same object, so the idle one
+   grows into the same shape rather than sprouting a separate floating tray.
+   Dictation is what the bubble is for, so the mic keeps the full 60px height
+   and its brand fill and caps the pill; the three secondary actions are
+   smaller, sit in the dark body, and are named by the shared tooltip.
+
+   #bubble stays 60px in this mode and .bhome is pinned to whichever edge the
+   bubble is nearest, so the expansion runs inward — the mic never moves out
+   from under the cursor that opened it, and the pill never grows off-screen. */
+#bubble.idle{width:60px;height:60px}
+.bhome{position:absolute;bottom:0;right:0;display:flex;align-items:center;
+  border-radius:34px;background:transparent;box-shadow:none;
+  transition:background .2s,box-shadow .2s,padding .22s cubic-bezier(.2,.9,.3,1)}
+#bubble.idle.lft .bhome{right:auto;left:0}
+#bubble.idle:hover .bhome{background:var(--pill);box-shadow:var(--pillShadow);padding-left:15px}
+#bubble.idle.lft:hover .bhome{padding-left:0;padding-right:15px}
+/* Collapsed, the options have no width and simply sit under the core at zero
+   opacity — rather than inside an overflow:hidden wrapper, which would also
+   have clipped their tooltips off the top of the pill. */
+.bopts{display:flex;align-items:center;gap:9px;width:0;opacity:0;pointer-events:none;
+  transition:width .24s cubic-bezier(.2,.9,.3,1),margin .24s cubic-bezier(.2,.9,.3,1),opacity .16s}
+#bubble.idle:hover .bopts{width:132px;margin-right:9px;opacity:1;pointer-events:auto}
+#bubble.idle.lft:hover .bopts{margin-right:0;margin-left:9px}
+.hopt{width:38px;height:38px;border-radius:50%;background:var(--pillWell);color:var(--pillInk);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer;
+  transition:background .13s,transform .11s}
+.hopt:hover{background:rgba(255,255,255,.20);transform:translateY(-1px)}
 .bcore{width:60px;height:60px;border-radius:50%;background:var(--brandFill);color:var(--brandOn);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
   box-shadow:0 10px 26px rgba(0,0,0,.26),0 0 0 1px rgba(0,0,0,.06);cursor:grab;
-  transition:background .16s,transform .12s}
+  transition:background .16s,box-shadow .2s}
 .bcore:hover{background:var(--brandFillHov)}
-.blabel{position:absolute;left:50%;top:calc(100% + 7px);transform:translateX(-50%);
-  font-size:11px;font-family:Poppins,sans-serif;font-weight:600;color:var(--surf);
-  background:var(--ink);padding:3px 9px;border-radius:7px;white-space:nowrap;
-  opacity:0;transition:opacity .15s;pointer-events:none}
-#bubble.flip .blabel{top:auto;bottom:calc(100% + 7px)}
-#bubble.idle:hover .blabel{opacity:1}
+/* inside the pill the core is an end cap, so it drops the standalone shadow */
+#bubble.idle:hover .bcore{box-shadow:0 0 0 1px rgba(0,0,0,.10)}
 
 /* ── the pill: dictating and recording ─────────────────────────────────────
    One dark chrome surface in both modes, because a recording control that
@@ -1268,7 +1381,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 </style>
 </head>
 <body>
-<div id="frame"><div id="app"></div><div id="osnotifs"></div><div id="bubble" class="off"></div><div id="toasts"></div></div>
+<div id="frame"><div id="app"></div><div id="osnotifs"></div><div id="bubble" class="off"></div><div id="toasts"></div><div id="tip"></div></div>
 <script>
 /* ══════════════════════════════════ icons ══════════════════════════════════ */
 const P={
@@ -1613,6 +1726,9 @@ const S={route:'meetings',view:'all',mid:null,fid:null,tab:'notes',tid:null,cid:
   openF:{client:true,interviews:true},
   mpanel:false,mtyping:false,
   bub:{x:null,y:null,rec:false,secs:0},
+  /* a hover peek is temporary and never touches railmin/listmin, so letting go
+     of the pointer always puts the sidebar back the way the user left it */
+  peek:null,
   /* watchouts. wid+wpanel are the app-side detail panel; wpeek/wopen/walert are
      the pill's popover, and wsay is an interjection in progress. Kept apart
      because the pill and the panel can be open at the same time. */
@@ -1663,7 +1779,7 @@ function osNotif(kind){
       <span class="ti">${n.ti}</span><span class="bo">${n.bo}</span>
       <span class="ac">${n.ac.map(([l,st,a,pp])=>
         `<button class="btn ${st} sm" data-a="${a}" data-p="${esc(pp)}">${l}</button>`).join('')}</span></span>
-    <span class="x" data-a="osnclose">${ic('x',14)}</span>`;
+    <span class="x" data-a="osnclose" title="Dismiss">${ic('x',14)}</span>`;
   /* any button in the banner also closes it, whatever else it does */
   d.addEventListener('click',()=>setTimeout(()=>d.remove(),40));
   w.appendChild(d);
@@ -1753,7 +1869,7 @@ function rail(){
     const on=(k===S.route)||(k==='speech'&&isSpeech(S.route));
     let h=`<a class="${on?'on':''}" data-a="go" data-p="${k}" title="${label}">${
       ic(icon,18)}<span class="lbl">${label}</span></a>`;
-    if(k==='speech'&&isSpeech(S.route)&&!S.railmin)
+    if(k==='speech'&&isSpeech(S.route)&&railOpen())
       h+=`<div class="subnav">
         <a class="${S.route==='vocabulary'?'on':''}" data-a="go" data-p="vocabulary">${ic('book',14,1.8)}Vocabulary</a>
         <a class="${S.route==='insights'?'on':''}" data-a="go" data-p="insights">${ic('chart',14,1.8)}Insights</a></div>`;
@@ -1761,8 +1877,7 @@ function rail(){
   return `<div class="rail">
     <div class="slab">Workspace</div>
     <div class="nav">${items}</div><div class="spacer"></div>
-    <div class="colbtn" data-a="railmin" title="${S.railmin?'Expand':'Collapse'} sidebar">${
-      ic(S.railmin?'panelR':'panelL',17)}<b>Collapse</b></div>
+    ${colbtn('rail')}
     <div class="acct"><span class="top"><span class="avat">${db.user.initial}</span>
       <span class="who"><span class="nm">${db.user.name}</span><span class="pl">${db.user.plan} plan</span></span>
       <button class="upg" data-a="demo" data-p="open the upgrade flow">Upgrade</button></span></div></div>`;
@@ -1790,9 +1905,15 @@ function topbar(){
     ${head}<span class="r">${tools()}${t.actions}</span></div>`;
 }
 /* the collapse control that sits at the foot of the list column */
-function lfoot(){
-  return `<div class="lfoot"><div class="colbtn" data-a="listmin" title="${
-    S.listmin?'Expand':'Collapse'} list">${ic(S.listmin?'panelR':'panelL',17)}<b>Collapse</b></div></div>`;
+function lfoot(){return `<div class="lfoot">${colbtn('list')}</div>`;}
+/* One control, three jobs. While a sidebar is only being peeked it offers to
+   keep it open rather than to collapse something that is not really open. */
+function colbtn(k){
+  const min=k==='rail'?S.railmin:S.listmin, pk=S.peek===k;
+  const what=k==='rail'?'sidebar':'list';
+  return `<div class="colbtn ${pk?'pin':''}" data-a="${pk?k+'pin':k+'min'}" title="${
+    pk?'Keep the '+what+' open':(min?'Expand ':'Collapse ')+what}">${
+    ic(min?'panelR':'panelL',17)}<b>${pk?'Pin open':'Collapse'}</b></div>`;
 }
 const v=(on,icon,label,right,act,par)=>`<a class="${on?'on':''}" data-a="${act}" data-p="${par}" title="${
   esc(label)}">${ic(icon,16)}<span class="lbl">${label}</span>${right||''}</a>`;
@@ -1828,7 +1949,7 @@ function folderRows(f){
 function listMeetings(){
   const all=db.meetings.length,rec=db.meetings.filter(m=>['Today','Yesterday'].includes(m.group)).length;
   return `<div class="listcol">
-   <div class="srch" data-a="expandlist">${ic('search',15)}<input placeholder="Search meetings and transcripts" data-a="q" value="${esc(S.q)}"></div>
+   <div class="srch" data-a="expandlist" title="Search meetings and transcripts">${ic('search',15)}<input placeholder="Search meetings and transcripts" data-a="q" value="${esc(S.q)}"></div>
    <div class="lbody">
     <div class="views">
      ${v(S.view==='all','home','All meetings',cnt(all),'view','all')}
@@ -1847,7 +1968,7 @@ function listMeetings(){
 function listSpeech(){
   const t=db.transcripts.filter(x=>x.when==='today').length;
   return `<div class="listcol">
-   <div class="srch" data-a="expandlist">${ic('search',15)}<input placeholder="Search transcripts" data-a="q" value="${esc(S.q)}"></div>
+   <div class="srch" data-a="expandlist" title="Search transcripts">${ic('search',15)}<input placeholder="Search transcripts" data-a="q" value="${esc(S.q)}"></div>
    <div class="lbody"><div class="views">
      ${v(S.view==='today','clock','Today',cnt(t),'view','today')}
      ${v(S.view==='week','cal','This week',cnt(db.transcripts.length),'view','week')}
@@ -1856,7 +1977,7 @@ function listSpeech(){
 }
 function listVocab(){
   return `<div class="listcol">
-   <div class="srch" data-a="expandlist">${ic('search',15)}<input placeholder="Search terms" data-a="vq" value="${esc(S.vq)}"></div>
+   <div class="srch" data-a="expandlist" title="Search vocabulary">${ic('search',15)}<input placeholder="Search terms" data-a="vq" value="${esc(S.vq)}"></div>
    <div class="lbody"><div class="views">
      ${v(S.view==='all','book','All terms',cnt(db.vocab.length),'view','all')}
      ${v(S.view==='you','edit','Added by you',cnt(db.vocab.filter(x=>x.s==='you').length),'view','you')}
@@ -1916,7 +2037,7 @@ function viewMeetings(){
     m.transcript.map(t=>t[2]).join(' ')).toLowerCase().includes(S.q.toLowerCase()));
   const setup=db.setupDone<3?`<div class="card" style="margin-bottom:22px">
     <div class="setuphd"><b>Finish setting up</b><span class="step">${3-db.setupDone} steps left</span>
-      <span class="x" data-a="dismissSetup">${ic('x',15)}</span></div>
+      <span class="x" data-a="dismissSetup" title="Hide the setup checklist">${ic('x',15)}</span></div>
     <div class="setuprow"><span class="si">${ic('rec',17)}</span>
       <span><span class="t">Never miss a call</span><span class="s">Spot Zoom, Meet, Teams calls and Slack
       huddles, and offer to take notes. Without this, nothing is recorded or filed automatically.</span></span>
@@ -1956,6 +2077,20 @@ function viewMeetings(){
          <span class="mt">${m.time} · ${taskCount(m.id)} task${taskCount(m.id)===1?'':'s'}</span>`}</span></div>`}).join('')}
     </div>`).join('')}</div>`;
 }
+/* ── shared page furniture ────────────────────────────────────────────────
+   actbar is the row under the tabs; sidebox is the bordered column beside the
+   notes; askDock is the composer at the foot of a page. All three exist so the
+   meeting page and the project page are laid out the same way. */
+const actbar=(left,right)=>`<div class="actbar"><span class="l">${left||''}</span>${
+  right?`<span class="r">${right}</span>`:''}</div>`;
+const sidebox=(icon,title,count,jump,body)=>`<div class="sidebox">
+  <div class="sbh">${ic(icon,15)}${title}${count!=null?`<span class="n">· ${count}</span>`:''}${
+    jump||''}</div>${body}</div>`;
+const askDock=(ph,stick)=>`<div class="comp${stick?' stick':''}">
+  <div class="compbox dock" data-a="mchat">${ic('spark',17)}
+    <span class="ph">${esc(ph)}</span>
+    <span class="sendb" title="Open the assistant">${ic('send',15,2)}</span></div></div>`;
+
 /* ══════════════════════════════════ folder detail ══════════════════════════════════ */
 /* One row per meeting, shared by the folder page and the Unfiled page. `showFolder`
    forces the move-to-folder control visible, which is the whole point of Unfiled. */
@@ -2009,7 +2144,7 @@ function viewFolder(){
     <span class="fa">
       ${isTop?`<button class="btn p sm" data-a="newfolder" data-p="${id}">${
         ic('folderplus',15)}${esc(addFolderLabel(id))}</button>`:''}
-      ${unfiled?'':`<button class="btn s sm" data-a="menu" data-p="fmenu:${id}">${ic('dots',15)}</button>`}
+      ${unfiled?'':`<button class="btn s sm" data-a="menu" data-p="fmenu:${id}" title="Folder options">${ic('dots',15)}</button>`}
     </span></div>`;
 
   /* Unfiled is the one page whose job is to get meetings out of it */
@@ -2053,7 +2188,8 @@ function viewFolder(){
         ${isTop?'No meetings sit directly in this folder — they are all in its sub-folders.'
           :'Nothing filed here yet.'}</div>`}`;
 
-  return `<div class="body">${head}${band}${cards}${roll}${mlist}</div>`;
+  return `<div class="body${S.mpanel?'':' docked'}">${head}${band}${cards}${roll}${mlist}
+    ${S.mpanel?'':askDock('Ask anything about '+(f?f.name:'this project')+'…',true)}</div>`;
 }
 /* Watchouts across every call filed in a project. This is the view where they
    earn their place: a conflict between two meetings is invisible from inside
@@ -2094,11 +2230,10 @@ function rollup(id){
       ${!dec.length&&!qs.length?`<div class="sec"><p style="color:var(--sec)">No decisions or open
         questions have come out of these calls yet.</p></div>`:''}
     </div>
-    <div><div class="sec"><h3>${ic('list',15)}Open tasks
-      <span class="jump" data-a="go" data-p="tasks">View in Tasks &rsaquo;</span></h3>
-      ${tasks.length?`<div class="card">${tasks.map(t=>taskRow(t,true)).join('')}</div>`
-        :`<div class="card" style="padding:22px;text-align:center;font-size:13px;color:var(--sec)">
-          Nothing open from this folder.</div>`}</div></div></div>`;
+    <div>${sidebox('list','Open tasks',tasks.length||null,
+      `<span class="jump" data-a="go" data-p="tasks">View in Tasks &rsaquo;</span>`,
+      tasks.length?tasks.map(t=>taskRow(t,true)).join('')
+        :`<div class="sbe">Nothing open from this folder.</div>`)}</div></div>`;
 }
 
 /* ══════════════════════════════════ meeting detail ══════════════════════════════════ */
@@ -2164,10 +2299,8 @@ function viewMeeting(){
         <div class="hint" style="margin-top:10px">Jot key points as they come up — AI notes expand them into
         a summary, decisions and tasks when you stop.</div></div>`;
     }
-    body+=`<div class="comp"><div class="compbox" data-a="mchat" style="cursor:pointer">${ic('spark',17)}
-      <span style="flex:1;font-size:13.5px;color:var(--ter)">Ask anything about this meeting so far…</span>
-      <span class="sendb">${ic('send',15,2)}</span></div></div>`;
-    return `<div class="body">${titleBlock(m,'')}${body}</div>`;
+    return `<div class="body">${titleBlock(m,'')}${body}
+      ${S.mpanel?'':askDock('Ask anything about this call so far…')}</div>`;
   }
   if(S.busy){
     return `<div class="body">${titleBlock(m,`<span class="sp"></span><span>${m.dur}</span>`)}
@@ -2177,7 +2310,13 @@ function viewMeeting(){
   }
   const mytasks=db.tasks.filter(t=>t.mid===m.id);
   if(S.tab==='notes'){
-    body=`${tabs}<div class="notesgrid">
+    body=`${tabs}${actbar(
+      `${ic('spark',14)}Generated ${m.genAt||'2:49 pm'} from your notes and the transcript.`,
+      `<button class="btn s sm" data-a="copymd" data-p="${m.id}">${ic('copy',14)}Copy as Markdown</button>
+       <button class="btn s sm" data-a="dlmd" data-p="${m.id}">${ic('md',14)}Download .md</button>
+       <button class="btn s sm" data-a="menu" data-p="meeting:${m.id}"
+         title="Regenerate, export, delete">${ic('dots',15)}</button>`)}
+      <div class="notesgrid">
       <div>
         <div class="sec"><h3>${ic('file',15)}Summary</h3><p>${esc(m.notes.summary)}</p></div>
         ${m.notes.decisions.length?`<div class="sec"><h3>${ic('checkc',15)}Decisions</h3><ul class="bul">
@@ -2187,37 +2326,29 @@ function viewMeeting(){
           ${m.notes.questions.map(d=>`<li><span class="dot"></span><span>${esc(d[0])}</span>
             <span class="jump" data-a="jump" data-p="${d[1]}">${d[1]} &rsaquo;</span></li>`).join('')}</ul></div>`:''}
       </div>
-      <div><div class="sec"><h3>${ic('list',15)}Tasks / Action Items
-        <span class="jump" data-a="go" data-p="tasks">View in Tasks &rsaquo;</span></h3>
-        ${mytasks.length?`<div class="card">${mytasks.map(t=>taskRow(t,true)).join('')}</div>`
-          :`<div class="card" style="padding:22px;text-align:center;font-size:13px;color:var(--sec)">
-            No tasks came out of this meeting.</div>`}</div></div></div>
-      <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--sec);
-        padding:14px 2px 12px;border-top:1px solid var(--line);flex-wrap:wrap">${ic('spark',14)}
-        Generated ${m.genAt||'2:49 pm'} from your notes and the transcript.
-        <span style="margin-left:auto;display:flex;gap:8px">
-          <button class="btn s sm" data-a="copymd" data-p="${m.id}">${ic('copy',14)}Copy as Markdown</button>
-          <button class="btn s sm" data-a="dlmd" data-p="${m.id}">${ic('md',14)}Download .md</button>
-          <button class="btn s sm" data-a="regen" data-p="${m.id}">${ic('rec',14)}Regenerate</button>
-          <button class="btn s sm" data-a="confirmDelete" data-p="${m.id}"
-            style="color:var(--dangerInk);border-color:var(--dangerLine)">${ic('trash',14)}Delete</button>
-        </span></div>`;
+      <div>${sidebox('list','Tasks / Action Items',mytasks.length||null,
+        `<span class="jump" data-a="go" data-p="tasks">View in Tasks &rsaquo;</span>`,
+        mytasks.length?mytasks.map(t=>taskRow(t,true)).join('')
+          :`<div class="sbe">No tasks came out of this meeting.</div>`)}</div></div>`;
   } else if(S.tab==='watch'){
     body=`${tabs}${watchBody(m,wo,woOpen,false)}`;
   } else if(S.tab==='mynotes'){
-    body=`${tabs}<div class="notebox" style="flex:1"><div class="ln" contenteditable="true">${
+    body=`${tabs}${actbar(`${ic('clipb',14)}Only you see these. They are read alongside the transcript
+      when AI notes are generated.`,
+      `<button class="btn s sm" data-a="regen" data-p="${m.id}">${ic('spark',14)}Regenerate AI notes</button>`)}
+      <div class="notebox" style="flex:1"><div class="ln" contenteditable="true">${
       esc(m.mynotes).replace(/\n/g,'<br>')}</div></div>`;
   } else {
     const spk=['All speakers',...new Set(m.transcript.map(t=>t[1]))];
     const q=S.tq.toLowerCase();
     const rows=m.transcript.filter(t=>(S.speakers==='All speakers'||t[1]===S.speakers)&&
       (!q||t[2].toLowerCase().includes(q)));
-    body=`${tabs}<div class="toolrow">
-      <span class="srch" style="margin:0;width:250px">${ic('search',15)}
+    body=`${tabs}${actbar(
+      `<span class="srch" style="margin:0;width:230px">${ic('search',15)}
         <input placeholder="Search this transcript" data-a="tq" value="${esc(S.tq)}"></span>
-      ${spk.map(s=>`<span class="fchip ${S.speakers===s?'on':''}" data-a="spk" data-p="${esc(s)}">${esc(s)}</span>`).join('')}
-      <span class="r"><button class="btn s sm" data-a="demo" data-p="copy the transcript to your clipboard">${ic('copy',15)}Copy</button>
-        <button class="btn s sm" data-a="demo" data-p="export the transcript">${ic('down',15)}Export</button></span></div>
+       ${spk.map(x=>`<span class="fchip ${S.speakers===x?'on':''}" data-a="spk" data-p="${esc(x)}">${esc(x)}</span>`).join('')}`,
+      `<button class="btn s sm" data-a="demo" data-p="copy the transcript to your clipboard">${ic('copy',15)}Copy</button>
+       <button class="btn s sm" data-a="demo" data-p="export the transcript">${ic('down',15)}Export</button>`)}
       <div style="flex:1;overflow-y:auto">${rows.length?rows.map(t=>{
         let tx=esc(t[2]);
         if(q)tx=tx.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');
@@ -2228,18 +2359,23 @@ function viewMeeting(){
       ${player(m)}`;
   }
   return `<div class="body">${titleBlock(m,`<span class="sp"></span><span>${m.dur}</span>`)}
-    ${woOpen.length&&S.tab==='notes'?`<div class="notice ${woHot?'dg':'warn'}" style="margin-bottom:14px">
+    ${woOpen.length&&S.tab==='notes'&&!m.woAck?`<div class="notice ${woHot?'dg':'warn'}" style="margin-bottom:14px">
       ${ic('radar',17)}<span><b>${woOpen.length} watchout${woOpen.length>1?'s':''} from this call</b> —
       ${esc(woOpen[0].title)}${woOpen.length>1?`, and ${woOpen.length-1} more`:''}.</span>
-      <span class="act"><button class="btn s sm" data-a="tab" data-p="watch">Review ${ic('chev',13)}</button></span></div>`:''}
+      <span class="act" style="display:flex;align-items:center;gap:4px">
+        <button class="btn s sm" data-a="tab" data-p="watch">Review ${ic('chev',13)}</button>
+        <span class="tbtn" data-a="ackWatch" data-p="${m.id}" title="Hide this until something new comes up"
+          style="width:28px;height:28px">${ic('x',15)}</span></span></div>`:''}
     ${mytasks.length&&S.tab==='notes'&&!m.ackd?`<div class="notice ok" style="margin-bottom:18px">${ic('check',17)}
       <span><b>${mytasks.length} task${mytasks.length>1?'s':''} added to Tasks</b> — owners and dates taken from what was said.</span>
-      <span class="act"><button class="btn t sm" data-a="ackNotes" data-p="${m.id}">Dismiss</button></span></div>`:''}
-    ${body}</div>`;
+      <span class="act"><span class="tbtn" data-a="ackNotes" data-p="${m.id}" title="Dismiss"
+        style="width:28px;height:28px">${ic('x',15)}</span></span></div>`:''}
+    ${body}
+    ${S.mpanel?'':askDock('Ask anything about this meeting…')}</div>`;
 }
 function player(m){
   const bars=[];for(let i=0;i<80;i++)bars.push(6+Math.round(18*Math.abs(Math.sin(i*0.55))*Math.abs(Math.cos(i*0.23))));
-  return `<div class="player"><span class="pb" data-a="playpause">${ic(S.playing?'pause':'play',15,2)}</span>
+  return `<div class="player"><span class="pb" data-a="playpause" title="Play the recording">${ic(S.playing?'pause':'play',15,2)}</span>
     <span class="tm">${fmtPos(m)}</span>
     <span class="scrub" data-a="seek">${bars.map((h,i)=>
       `<i class="${i<S.playPos?'p':''}" style="height:${h}px"></i>`).join('')}</span>
@@ -2254,12 +2390,13 @@ function fmtPos(m){
 function taskRow(t,compact){
   const m=meeting(t.mid);
   return `<div class="trk ${t.done?'done':''} ${S.tid===t.id&&S.panel?'sel':''}" data-a="opentask" data-p="${t.id}">
-    <span class="cbx ${t.done?'on':''}" data-a="toggletask" data-p="${t.id}">${ic('check',12,2.6)}</span>
+    <span class="cbx ${t.done?'on':''}" data-a="toggletask" data-p="${t.id}"
+      title="${t.done?'Mark not done':'Mark done'}">${ic('check',12,2.6)}</span>
     <span style="flex:1"><span class="t">${esc(t.title)}</span>
       <span class="m">${t.pri?`<span class="pri ${t.pri}">${ic('flag',12)}${t.pri==='hi'?'High':'Medium'}</span>`:''}
         ${ic('users',13)}${m?esc(m.title):'Added by you'}</span></span>
     <span class="due ${t.late&&!t.done?'dg':''}">${t.done?'Done':t.due}</span>
-    ${compact?'':`<span class="kb2" data-a="menu" data-p="task:${t.id}">${ic('dots',16)}</span>`}</div>`;
+    ${compact?'':`<span class="kb2" data-a="menu" data-p="task:${t.id}" title="Task options">${ic('dots',16)}</span>`}</div>`;
 }
 
 /* ══════════════════════════════════ watchouts ══════════════════════════════════ */
@@ -2314,31 +2451,30 @@ function watchBody(m,all,open,live){
       <span><b>${open.length} watchout${open.length>1?'s':''} while you are still on the call.</b>
       ${db.settings.woSpeak?'“Bring this up” has the assistant say it out loud, so it lands in the room and in the transcript.'
         :'Raise it yourself — nothing is spoken unless you turn that on in Settings.'}</span></div>`:''}
-    <div class="toolrow">
-      <span class="fchip wf ${S.wfilter==='all'?'on':''}" data-a="wfilter" data-p="all">All${
-        open.length?`<span class="b">${open.length}</span>`:''}</span>
-      ${WORDER.map(t=>{const n=open.filter(w=>w.type===t).length;
-        return `<span class="fchip wf ${S.wfilter===t?'on':''}" data-a="wfilter" data-p="${t}">${
-          ic(WT[t].icon,14)}${WT[t].plural}${n?`<span class="b">${n}</span>`:''}</span>`}).join('')}
-      <span class="r">${settled.length?`<span class="chk" data-a="wshowdone">
-        <span class="cbx ${S.wdone?'on':''}">${ic('check',12,2.6)}</span>Show ${settled.length} settled</span>`:''}</span></div>
+    ${actbar(
+      `<span class="fchip wf ${S.wfilter==='all'?'on':''}" data-a="wfilter" data-p="all">All${
+         open.length?`<span class="b">${open.length}</span>`:''}</span>
+       ${WORDER.map(t=>{const n=open.filter(w=>w.type===t).length;
+         return `<span class="fchip wf ${S.wfilter===t?'on':''}" data-a="wfilter" data-p="${t}">${
+           ic(WT[t].icon,14)}${WT[t].plural}${n?`<span class="b">${n}</span>`:''}</span>`}).join('')}`,
+      `${settled.length?`<span class="chk" data-a="wshowdone">
+         <span class="cbx ${S.wdone?'on':''}">${ic('check',12,2.6)}</span>Show ${settled.length} settled</span>`:''}
+       <button class="btn s sm" data-a="settings" data-p="ainotes">${
+         ic('sliders',14)}What the assistant looks for</button>`)}
     <div class="wscroll">
     ${counts.length?`<div style="display:flex;gap:16px;flex-wrap:wrap;margin:0 2px 16px">${
       counts.map(([t,n])=>`<span class="wstat w-${t}"><i></i>${n} ${
         n===1?WT[t].label.toLowerCase():WT[t].plural.toLowerCase()}</span>`).join('')}</div>`:''}
-    ${shown.length?`<div class="card" style="overflow:hidden">${
-        shown.map(w=>watchRow(w)).join('')}</div>`
+    ${shown.length?`<div class="card wlistcard">${shown.map(w=>watchRow(w)).join('')}</div>`
       :`<div class="card" style="padding:26px 20px;text-align:center;font-size:13px;color:var(--sec)">
         ${open.length?`No open ${WT[S.wfilter]?WT[S.wfilter].plural.toLowerCase():'watchouts'} in this call.`
           :'Everything here has been settled.'}</div>`}
     ${S.wdone&&settled.length?`<div class="ghd" style="margin:22px 2px 10px">Settled
         <span class="n">· ${settled.length}</span></div>
-      <div class="card" style="overflow:hidden">${settled.map(w=>watchRow(w)).join('')}</div>`:''}
-    </div>
+      <div class="card wlistcard">${settled.map(w=>watchRow(w)).join('')}</div>`:''}
     <div class="wfoot2">${ic('radar',14)}Read against ${db.meetings.length} recorded meetings and
-      this project's history.
-      <span style="margin-left:auto"><button class="btn s sm" data-a="settings" data-p="ainotes">${
-        ic('sliders',14)}What the assistant looks for</button></span></div>`;
+      this project's history.</div>
+    </div>`;
 }
 /* ── detail panel ─────────────────────────────────────────────────────────
    The comparison is the whole content, so it gets the top of the panel and the
@@ -2355,8 +2491,8 @@ function watchPanel(){
       justify-content:center;flex:0 0 auto">${ic(t.icon,15)}</span>
     <b>${t.label}</b>
     <span style="margin-left:auto;display:flex;gap:4px">
-      <span class="tbtn" data-a="menu" data-p="wmenu:${w.id}">${ic('dots',17)}</span>
-      <span class="tbtn" data-a="wclose">${ic('x',17)}</span></span></div>
+      <span class="tbtn" data-a="menu" data-p="wmenu:${w.id}" title="Watchout options">${ic('dots',17)}</span>
+      <span class="tbtn" data-a="wclose" title="Close">${ic('x',17)}</span></span></div>
    <div class="pb2">
     <div>
       <div style="font-family:Poppins;font-size:16px;font-weight:600;line-height:1.42">${esc(w.title)}</div>
@@ -2624,10 +2760,10 @@ function composer(off){
     ${off?`<div class="notice warn" style="margin-bottom:10px">${ic('alert',17)}
       <span>Conversation mode is off, so the assistant cannot reply out loud yet. Text chat works.</span>
       <span class="act"><button class="btn p sm" data-a="settings" data-p="conv">Turn on conversation mode</button></span></div>`:''}
-    <div class="compbox"><span class="ic" data-a="demo" data-p="attach a file">${ic('clip',17)}</span>
-      <span class="ic" data-a="demo" data-p="dictate your question">${ic('mic',17)}</span>
+    <div class="compbox"><span class="ic" data-a="demo" data-p="attach a file" title="Attach a file">${ic('clip',17)}</span>
+      <span class="ic" data-a="demo" data-p="dictate your question" title="Dictate your question">${ic('mic',17)}</span>
       <input placeholder="Ask about your meetings…" data-a="ask" id="askbox">
-      <span class="sendb" data-a="asksend">${ic('send',15,2)}</span></div></div>`;
+      <span class="sendb" data-a="asksend" title="Send">${ic('send',15,2)}</span></div></div>`;
 }
 /* ══════════════════════════════════ settings ══════════════════════════════════ */
 const SNAV=[['MEETINGS',[['meet','Detection & capture','cal'],['ainotes','AI notes','spark']]],
@@ -2955,7 +3091,7 @@ function settingsModal(){
     <div class="modal" style="width:1120px;height:720px">
       <div class="mnav"><h3 class="h">Settings</h3>${nav}</div>
       <div class="mbody"><div class="mtop"><span><h2 class="h">${t}</h2><p>${s}</p></span>
-        <span class="x" data-a="closeSettings">${ic('x',15)}</span></div>
+        <span class="x" data-a="closeSettings" title="Close settings">${ic('x',15)}</span></div>
         <div class="mcont">${c}</div></div></div>`;
 }
 /* ══════════════════════════════════ overlays ══════════════════════════════════ */
@@ -2967,7 +3103,7 @@ function shareModal(){
       <span style="width:38px;height:38px;border-radius:11px;background:var(--tint);color:var(--brandInk);
         display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('link',18)}</span>
       <span><h2 class="h">Share this meeting</h2><p>${esc(m.title)} · ${m.day}</p></span>
-      <span class="x" data-a="closeShare">${ic('x',15)}</span></div>
+      <span class="x" data-a="closeShare" title="Close">${ic('x',15)}</span></div>
     <div class="mcont" style="gap:18px;padding:20px 24px 22px">
       <div><div class="ghd" style="margin-bottom:9px">Who can open it</div>
         <div style="display:flex;flex-direction:column;gap:9px">
@@ -3012,7 +3148,7 @@ function addPersonModal(){
     <div class="mtop"><span style="width:38px;height:38px;border-radius:11px;background:var(--tint);
       color:var(--brandInk);display:flex;align-items:center;justify-content:center;flex:0 0 auto">${ic('userplus',18)}</span>
       <span><h2 class="h">Add someone to this meeting</h2><p>${esc(m.title)}</p></span>
-      <span class="x" data-a="closeperson">${ic('x',15)}</span></div>
+      <span class="x" data-a="closeperson" title="Close">${ic('x',15)}</span></div>
     <div class="mcont" style="gap:14px">
       <div><div class="ghd" style="margin-bottom:7px">Name</div>
         <div class="inp"><input id="pname" placeholder="e.g. Rachel Levine" autofocus></div></div>
@@ -3198,8 +3334,8 @@ function taskPanel(){
   const t=task(S.tid);if(!t)return '';const m=meeting(t.mid);
   return `<div class="panel"><div class="ph">${ic('list',17)}<b>Task</b>
     <span style="margin-left:auto;display:flex;gap:4px">
-      <span class="tbtn" data-a="menu" data-p="task:${t.id}">${ic('dots',17)}</span>
-      <span class="tbtn" data-a="closepanel">${ic('x',17)}</span></span></div>
+      <span class="tbtn" data-a="menu" data-p="task:${t.id}" title="Task options">${ic('dots',17)}</span>
+      <span class="tbtn" data-a="closepanel" title="Close">${ic('x',17)}</span></span></div>
    <div class="pb2">
     <div><div style="font-family:Poppins;font-size:16px;font-weight:600;line-height:1.4"
         contenteditable="true">${esc(t.title)}</div>
@@ -3238,29 +3374,42 @@ function taskPanel(){
    tabs — or leaving and coming back — keeps it. */
 const MCHIPS=[['What did I commit to?','list'],['Summarise this call','file'],
               ['What was left unresolved?','alertc'],['Draft a recap email','send']];
-function meetingChat(m){
-  if(!m)return '';
-  const msgs=m.chat||[];
-  return `<div class="panel chat"><div class="ph">${ic('spark',17)}<b>Ask about this meeting</b>
+const FCHIPS=[['Summarise this project','file'],['What is still open?','alertc'],
+              ['Anything I should watch out for?','radar'],['Draft a status update','send']];
+/* One panel, two scopes. A meeting answers from its own transcript and notes; a
+   project answers across every call filed in it. Which one is on screen is
+   already in the route, so the scope is derived rather than stored — there is
+   no way for the panel and the page behind it to disagree. */
+const chatProj=()=>S.route==='folder';
+const chatHost=()=>chatProj()?folder(S.fid):meeting(S.mid);
+function chatPanel(){
+  const proj=chatProj(),host=chatHost();
+  if(!host)return '';
+  const name=proj?host.name:host.title;
+  const msgs=host.chat||[];
+  const n=proj?folderMeetings(host.id).length:0;
+  return `<div class="panel chat"><div class="ph">${ic('spark',17)}<b>${
+      proj?'Ask about this project':'Ask about this meeting'}</b>
     <span style="margin-left:auto;display:flex;gap:4px">
-      ${msgs.length?`<span class="tbtn" data-a="mclear" data-p="${m.id}" title="Clear this thread">${
+      ${msgs.length?`<span class="tbtn" data-a="mclear" title="Clear this thread">${
         ic('reset',17)}</span>`:''}
       <span class="tbtn" data-a="mchat" title="Close">${ic('x',17)}</span></span></div>
    <div class="pb2">
     ${msgs.length?msgs.map(x=>`<div class="msg ${x.r}">
         <span class="who">${x.r==='u'?db.user.initial:ic('spark',14,2)}</span>
         <span class="tx">${x.tx}</span></div>`).join('')
-      :`<div class="cempty">Ask anything about <b>${esc(m.title)}</b> — the assistant reads this
-        call's transcript and notes only, and answers from what was actually said.
-        <div class="cchips">${MCHIPS.map(([q,i])=>
+      :`<div class="cempty">Ask anything about <b>${esc(name)}</b> — the assistant reads ${
+        proj?`the ${n} call${n===1?'':'s'} filed in this project`
+            :"this call's transcript and notes"} only, and answers from what was actually said.
+        <div class="cchips">${(proj?FCHIPS:MCHIPS).map(([q,i])=>
           `<span data-a="mask" data-p="${esc(q)}">${ic(i,15)}${q}</span>`).join('')}</div></div>`}
     ${S.mtyping?`<div class="msg a"><span class="who">${ic('spark',14,2)}</span>
       <span class="tx typing"><i></i><i></i><i></i></span></div>`:''}
    </div>
    <div class="cfoot"><div class="comp"><div class="compbox">
-     <span class="ic" data-a="demo" data-p="dictate your question">${ic('mic',16)}</span>
-     <input placeholder="Ask about this meeting…" data-a="mask" id="mbox">
-     <span class="sendb" data-a="msend">${ic('send',15,2)}</span></div></div></div></div>`;
+     <span class="ic" data-a="demo" data-p="dictate your question" title="Dictate your question">${ic('mic',16)}</span>
+     <input placeholder="${proj?'Ask about this project…':'Ask about this meeting…'}" data-a="mask" id="mbox">
+     <span class="sendb" data-a="msend" title="Send">${ic('send',15,2)}</span></div></div></div></div>`;
 }
 /* Canned but not random: each answer is assembled from this meeting's own notes,
    tasks and transcript, so it stays true to whatever is on screen. */
@@ -3269,6 +3418,12 @@ function meetingAnswer(m,q){
   const ts=db.tasks.filter(t=>t.mid===m.id);
   const cite=` <span class="src" data-a="jump" data-p="${(m.transcript[0]||['00:00'])[0]}">${
     ic('users',13)}${esc(m.title)} · from the transcript</span>`;
+  const wo=mWatchOpen(m.id);
+  if(/watch ?out|conflict|discrepan|contradic|clash/.test(l))
+    return wo.length?`${wo.length} thing${wo.length>1?'s':''} to watch out for on this call:<br>${
+      wo.map(w=>`&nbsp;&nbsp;·&nbsp; <b>${WT[w.type].label}</b> — ${esc(w.title)}`).join('<br>')}`+
+      `<br>They are on the Watchouts tab, each with what it collides with.`
+      :'Nothing on this call contradicted an earlier decision or left a number unexplained.';
   if(/commit|task|action|owe|follow/.test(l))
     return ts.length?`You took ${ts.length} thing${ts.length>1?'s':''} away from this call:<br>${
       ts.map((t,i)=>`&nbsp;&nbsp;${i+1}.&nbsp; ${esc(t.title)} — <b>${esc(t.due)}</b>.`).join('<br>')}`+
@@ -3300,31 +3455,226 @@ function meetingAnswer(m,q){
   return `I can only answer from this call. Here is what it covered:<br><br>${
     esc(m.notes.summary||'No notes have been generated for it yet.')}${cite}`;
 }
-function askMeeting(q){
-  const m=meeting(S.mid);if(!m||!q.trim())return;
-  m.chat=m.chat||[];
-  m.chat.push({r:'u',tx:esc(q.trim())});
+/* The project answers the same questions, read across its calls rather than
+   inside one — which is the only reason to ask it here rather than in a meeting. */
+function folderAnswer(f,q){
+  const l=q.toLowerCase(),id=f.id;
+  const ms=folderMeetings(id),ts=folderTasks(id),wo=fWatchOpen(id);
+  const dec=folderLines(id,'decisions'),qs=folderLines(id,'questions');
+  const from=x=>` <span class="src" data-a="open" data-p="${x.mid}">${ic('users',13)}${esc(x.mt)}</span>`;
+  if(/watch ?out|conflict|discrepan|contradic|clash|risk/.test(l))
+    return wo.length?`${wo.length} open across this project:<br>${wo.map(w=>
+      `&nbsp;&nbsp;·&nbsp; <b>${WT[w.type].label}</b> — ${esc(w.title)} <i>(${
+        esc((meeting(w.mid)||{title:''}).title)})</i>`).join('<br>')}`
+      :'Nothing outstanding — no call in this project contradicts another.';
+  if(/task|action|owe|commit|follow|do/.test(l))
+    return ts.length?`${ts.length} task${ts.length>1?'s are':' is'} open across ${
+      ms.length} call${ms.length===1?'':'s'}:<br>${ts.map((t,i)=>
+      `&nbsp;&nbsp;${i+1}.&nbsp; ${esc(t.title)} — <b>${esc(t.due)}</b>`).join('<br>')}`
+      :'Nothing open from this project.';
+  if(/status|update|draft|email|write/.test(l))
+    return `Here is a status update you could send:<br><br>${esc(folderSummary(id))}`+
+      (ts.length?`<br><br>Open with us: ${ts.slice(0,3).map(t=>
+        esc(t.title.charAt(0).toLowerCase()+t.title.slice(1))).join('; ')}.`:'')+
+      (wo.length?`<br><br>One thing to flag: ${esc(wo[0].title.charAt(0).toLowerCase()+wo[0].title.slice(1))}.`:'');
+  if(/unresolved|open question|unanswered|unclear|still open/.test(l))
+    return qs.length?`${qs.length} question${qs.length>1?'s are':' is'} still open:<br>${
+      qs.map(x=>`&nbsp;&nbsp;·&nbsp; ${esc(x.tx)}${from(x)}`).join('<br>')}`
+      :'No questions are left hanging across these calls.';
+  if(/decide|decision|agree/.test(l))
+    return dec.length?`What has been agreed so far:<br>${dec.map(x=>
+      `&nbsp;&nbsp;·&nbsp; ${esc(x.tx)}${from(x)}`).join('<br>')}`
+      :'No decisions have been recorded in this project yet.';
+  if(/meeting|call|when|history/.test(l))
+    return ms.length?`${ms.length} call${ms.length===1?'':'s'} filed here:<br>${ms.map(x=>
+      `&nbsp;&nbsp;·&nbsp; <b>${esc(x.title)}</b> — ${esc(x.day)}, ${x.dur}`).join('<br>')}`
+      :'Nothing has been filed in this project yet.';
+  return `Across the ${ms.length} call${ms.length===1?'':'s'} in ${esc(f.name)}:<br><br>${
+    esc(folderSummary(id))}`+(wo.length?`<br><br>${wo.length} watchout${
+    wo.length>1?'s are':' is'} open — the first is ${esc(wo[0].title)}.`:'');
+}
+function askChat(q){
+  const proj=chatProj(),host=chatHost();
+  if(!host||!q.trim())return;
+  host.chat=host.chat||[];
+  host.chat.push({r:'u',tx:esc(q.trim())});
   S.mtyping=true;render();
   const el=document.querySelector('.panel.chat .pb2');if(el)el.scrollTop=el.scrollHeight;
   setTimeout(()=>{
     S.mtyping=false;
-    m.chat.push({r:'a',tx:meetingAnswer(m,q)});
+    host.chat.push({r:'a',tx:proj?folderAnswer(host,q):meetingAnswer(host,q)});
     render();
     const e2=document.querySelector('.panel.chat .pb2');if(e2)e2.scrollTop=e2.scrollHeight;
     const i=document.querySelector('#mbox');if(i)i.focus();
   },1100);
 }
 
+/* ── tooltips ──────────────────────────────────────────────────────────────
+   `title` stays the way these are authored — it is the obvious thing to write
+   and it survives if this ever renders somewhere else. But Chromium shows it
+   only on form controls, so after every render each one is rewritten into the
+   pseudo-element tooltip in the stylesheet. aria-label keeps the control named
+   for a screen reader now that the title is gone. */
+function tips(root){
+  if(!root)return;
+  root.querySelectorAll('[title]').forEach(el=>{
+    const t=el.getAttribute('title');
+    el.removeAttribute('title');
+    if(!t)return;
+    el.setAttribute('aria-label',t);
+    el.setAttribute('data-tt',t);
+  });
+}
+/* Showing it. The delay is what stops a mouse crossing a row of actions from
+   flashing four tooltips on its way past; the warm window is what stops the
+   delay from being felt again when the user is deliberately reading along a
+   row, because by then they have already waited once. */
+const TT={delay:340,warm:450};
+let TTEL=null,TTT=null,TTWARM=0;
+function tipHide(){
+  clearTimeout(TTT);TTT=null;
+  if(!TTEL)return;
+  TTEL=null;TTWARM=Date.now();
+  const t=$('#tip');if(t)t.className='';
+}
+function tipShow(el){
+  const t=$('#tip'),fr=$('#frame');
+  if(!t||!fr||!el.isConnected)return;
+  const txt=el.getAttribute('data-tt');if(!txt)return;
+  t.textContent=txt;t.className='on';
+  /* frame coordinates: the window mock is CSS-scaled when it does not fit, so
+     every measured pixel has to be divided back out */
+  const f=fr.getBoundingClientRect(),r=el.getBoundingClientRect();
+  const L=(r.left-f.left)/SCALE,T=(r.top-f.top)/SCALE;
+  const W=r.width/SCALE,H=r.height/SCALE;
+  const tw=t.offsetWidth,th=t.offsetHeight;
+  let y=T-th-8;
+  if(y<6)y=T+H+8;                                   /* no room above: go below */
+  const x=Math.max(6,Math.min(L+W/2-tw/2,FW()-tw-6));  /* and never off the sides */
+  t.style.left=Math.round(x)+'px';t.style.top=Math.round(y)+'px';
+}
+/* A control in a sidebar is a special case: if that sidebar is open, or is
+   about to open under the pointer, its real label is already on screen or a
+   few hundred milliseconds away. Showing a tooltip too would answer the same
+   question twice and flash it away again as the sidebar expands. Where peeking
+   cannot happen — a coarse pointer, or a zone the user has just collapsed and
+   disarmed — the tooltip is the only label there is, so it stays. */
+function tipMuted(el){
+  const z=pkZone(el);if(!z)return false;
+  const collapsed=z==='rail'?S.railmin:S.listmin;
+  return !collapsed||S.peek===z||(FINE&&PKARM[z]&&!pkBusy());
+}
+document.addEventListener('mouseover',e=>{
+  const el=e.target.closest&&e.target.closest('[data-tt]');
+  if(el===TTEL)return;
+  tipHide();
+  if(!el||tipMuted(el))return;
+  TTEL=el;
+  const wait=Date.now()-TTWARM<TT.warm?0:TT.delay;
+  TTT=setTimeout(()=>{if(TTEL===el)tipShow(el)},wait);
+});
+document.addEventListener('mouseout',e=>{
+  const el=e.target.closest&&e.target.closest('[data-tt]');
+  if(el&&el===TTEL&&!(e.relatedTarget&&el.contains(e.relatedTarget)))tipHide();
+});
+/* anything that moves the control out from under the tooltip retires it */
+document.addEventListener('mousedown',tipHide,true);
+document.addEventListener('scroll',tipHide,true);
+window.addEventListener('blur',tipHide);
+
+/* ── sidebar hover peek ───────────────────────────────────────────────────
+   Hover intent, roughly the classic hoverIntent test: sample the pointer every
+   100ms and open only once it has been in the strip long enough AND stopped
+   moving much between two samples. A fast diagonal across the rail never
+   produces two close-together samples, so it never opens; scanning slowly down
+   the icons does, which is exactly when the labels are wanted.
+
+   PKARM is the other half. After an explicit collapse — or after clicking
+   something in a peeked sidebar — the pointer is left sitting on the strip, and
+   re-opening under it would undo what the user just asked for. That zone stays
+   disarmed until the pointer leaves it. */
+const PEEK={open:350,close:420,tick:100,slop:9};
+const FINE=window.matchMedia&&window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+const PKARM={rail:true,list:true};
+let PKZONE=null,PKINT=null,PKCLOSE=null,PKMS=0,PKX=0,PKY=0,PKLX=0,PKLY=0,PKNEW=false;
+const railOpen=()=>!S.railmin||S.peek==='rail';
+const listOpen=()=>!S.listmin||S.peek==='list';
+document.addEventListener('mousemove',e=>{PKX=e.clientX;PKY=e.clientY},{passive:true});
+
+const pkBusy=()=>S.settings||S.share||S.addPerson||S.menu||BDRAG;
+function pkZone(t){
+  if(!t||!t.closest)return null;
+  if(t.closest('.rail'))return 'rail';
+  if(t.closest('.listcol'))return 'list';
+  return null;
+}
+function pkStop(){clearInterval(PKINT);PKINT=null;PKZONE=null;PKMS=0;}
+function pkOpen(z){
+  if(S.peek===z)return;
+  S.peek=z;PKNEW=true;render();PKNEW=false;
+}
+/* clears the peek and keeps it cleared until the pointer moves off the strip —
+   used when the user has just made a choice inside it, or just collapsed it */
+function pkDismiss(){
+  pkStop();clearTimeout(PKCLOSE);PKCLOSE=null;
+  PKARM.rail=false;PKARM.list=false;
+  if(S.peek)S.peek=null;
+}
+function pkEnter(z){
+  clearTimeout(PKCLOSE);PKCLOSE=null;
+  if(S.peek===z||PKZONE===z)return;
+  const eligible=FINE&&!pkBusy()&&PKARM[z]&&(z==='rail'?S.railmin:S.listmin);
+  if(!eligible){pkStop();return}
+  pkStop();PKZONE=z;PKLX=PKX;PKLY=PKY;
+  PKINT=setInterval(()=>{
+    PKMS+=PEEK.tick;
+    const moved=Math.abs(PKX-PKLX)+Math.abs(PKY-PKLY);
+    PKLX=PKX;PKLY=PKY;
+    if(PKMS>=PEEK.open&&moved<PEEK.slop){const z2=PKZONE;pkStop();pkOpen(z2);}
+  },PEEK.tick);
+}
+function pkLeave(){
+  pkStop();
+  if(!S.peek||PKCLOSE)return;
+  PKCLOSE=setTimeout(()=>{PKCLOSE=null;if(S.peek){S.peek=null;render()}},PEEK.close);
+}
+document.addEventListener('mouseover',e=>{
+  if(!FINE)return;
+  const z=pkZone(e.target);
+  if(z)pkEnter(z);
+  else{PKARM.rail=true;PKARM.list=true;pkLeave();}
+});
+/* leaving the window entirely counts as leaving the strip */
+document.addEventListener('mouseleave',()=>{PKARM.rail=true;PKARM.list=true;pkLeave()});
+/* keyboard parity: tabbing into a collapsed sidebar opens it at once — there is
+   no pointer to read intent from, and arriving by Tab is intent enough */
+document.addEventListener('focusin',e=>{
+  const z=pkZone(e.target);
+  if(z&&!pkBusy()&&(z==='rail'?S.railmin:S.listmin)&&S.peek!==z){pkStop();pkOpen(z)}
+});
+document.addEventListener('focusout',e=>{
+  if(!S.peek)return;
+  setTimeout(()=>{
+    const a=document.activeElement;
+    if(S.peek&&(!a||pkZone(a)!==S.peek)&&!document.querySelector('.rail:hover,.listcol:hover'))
+      {S.peek=null;render()}
+  },0);
+});
+
 /* ══════════════════════════════════ render ══════════════════════════════════ */
 function render(){
   document.documentElement.dataset.theme=db.settings.theme;
   document.documentElement.dataset.th=db.settings.th||'ocean';
+  /* one invariant rather than a clear-the-peek call at every place a modal can
+     open: nothing floats over the page while something else is on top of it */
+  if(S.settings||S.share||S.addPerson||S.menu)S.peek=null;
   let lc='',main='',aside='';
   if(S.route==='meetings'){lc=listMeetings();
     main=mhead('Meetings',meetingsState(),`<button class="btn ${db.meetings.length?'p':'s'} sm" data-a="record">${
       ic('rec',15)}Record meeting</button>`)+viewMeetings();}
   else if(S.route==='folder'){lc=listMeetings();
     if(S.wpanel&&S.wid)aside=watchPanel();
+    else if(S.mpanel)aside=chatPanel();
     const unf=S.fid==='',f=folder(S.fid);
     const nm=unf?'Unfiled':(f?f.name:'Folder');
     main=mhead('','','',
@@ -3335,9 +3685,8 @@ function render(){
   else if(S.route==='meeting'){const m=meeting(S.mid);lc=listMeetings();
     const mf=m?m.folder:'',mfo=folder(mf);
     main=mhead('','',
-      `<button class="btn ${S.mpanel?'p':'s'} sm" data-a="mchat">${ic('spark',15)}Ask AI</button>
-       <button class="btn s sm" data-a="share" data-p="${S.mid}">${ic('share',15)}Share</button>
-       <span class="tbtn" data-a="menu" data-p="meeting:${S.mid}">${ic('dots',18)}</span>`,
+      `<button class="btn s sm" data-a="share" data-p="${S.mid}">${ic('share',15)}Share</button>
+       <span class="tbtn" data-a="menu" data-p="meeting:${S.mid}" title="Meeting options">${ic('dots',18)}</span>`,
       `<span class="bk" data-a="go" data-p="meetings">${ic('back',15)}All meetings</span> ${ic('chev',13)}
        ${mfo&&mfo.parent?`<span class="bk" data-a="view" data-p="f:${mfo.parent}">${
          esc(folderName(mfo.parent))}</span> ${ic('chev',13)}`:''}
@@ -3345,7 +3694,7 @@ function render(){
          esc(mf===''?'Unfiled':folderName(mf))}</span> ${ic('chev',13)}
        <b>${esc(m?m.title:'')}</b>`)+viewMeeting();
     if(S.wpanel&&S.wid)aside=watchPanel();
-    else if(S.mpanel)aside=meetingChat(m);}
+    else if(S.mpanel)aside=chatPanel();}
   else if(S.route==='speech'){lc=listSpeech();
     main=mhead('Speech to Text',db.transcripts.filter(t=>t.when==='today').length+' today')+viewSpeech();}
   else if(S.route==='vocabulary'){lc=listVocab();
@@ -3363,11 +3712,21 @@ function render(){
     main=mhead(c?'':'AI Assistant','',c?`<button class="btn s sm" data-a="demo" data-p="share this conversation">${
       ic('share',15)}Share</button>`:'',c?`<span class="bk" data-a="newchat">AI Assistant</span> ${ic('chev',13)}
       <b>${esc(c.title)}</b>`:null)+viewAssistant();}
-  const cls=(S.railmin?'railmin ':'')+(S.listmin?'listmin ':'')+(S.mpanel?'mchat ':'')+(aside?'hasaside':'');
+  const pkR=S.peek==='rail',pkL=S.peek==='list';
+  const cls=[(S.railmin&&!pkR)?'railmin':'',(S.listmin&&!pkL)?'listmin':'',
+    pkR?'pkrail':'',pkL?'pklist':'',PKNEW?'pkin':'',
+    S.mpanel?'mchat':'',aside?'hasaside':''].filter(Boolean).join(' ');
   if(lc)lc=withFoot(lc);
+  /* the peeked sidebar leaves the flex flow, so a placeholder of exactly the
+     collapsed width keeps everything to its right where it was */
+  const gap=w=>`<div class="pkgap" style="flex-basis:${w}px"></div>`;
   $('#app').innerHTML=`<div class="shell">${topbar()}
-    <div class="app ${cls}">${rail()}${lc}<div class="main">${main}</div>${aside}</div>
+    <div class="app ${cls}" style="--railw:${S.railmin?72:260}px">
+      ${pkR?gap(72):''}${rail()}${pkL?gap(56):''}${lc}
+      <div class="main">${main}</div>${aside}</div>
     ${S.settings?settingsModal():''}${S.share?shareModal():''}${S.addPerson?addPersonModal():''}${menuEl()}</div>`;
+  tips($('#app'));
+  tipHide();
   renderBubble();
 }
 /* ── floating bubble ──────────────────────────────────────────────────────
@@ -3391,51 +3750,79 @@ function render(){
    the call has already cost something. Everything else waits to be asked for. */
 const BUBACTS=[['record','rec','Record a meeting'],['ask','spark','Ask the assistant'],
                ['more','dots','More']];
-/* bottom right, but clear of the action row that sits along the foot of a
-   meeting's notes — the bubble is draggable if the user wants it elsewhere */
-function bubHome(){return {x:FW()-88,y:FH()-152};}
+/* bottom right, but clear of the Ask dock that now runs along the foot of a
+   meeting or a project — and clear of the room the hover pill needs to grow
+   into. Draggable, if the user wants it elsewhere. */
+function bubHome(){return {x:FW()-88,y:FH()-196};}
 const bubMode=()=>S.rec?'meet':S.bub.rec?'dict':'idle';
+/* Which edge the control is anchored to. Everything that changes its width —
+   growing into a pill on hover, becoming the recording pill, collapsing back —
+   keeps this edge still, so the buttons stay under the cursor and the round
+   bubble comes back where the pill's end was rather than where its far side
+   happened to be. */
+const bubSide=()=>(S.bub.x+BW/2)>FW()/2?'right':'left';
 const fmtSecs=n=>{const h=Math.floor(n/3600),m=Math.floor(n/60)%60,x=n%60;
   return (h?h+':'+String(m).padStart(2,'0'):String(m).padStart(2,'0'))+':'+String(x).padStart(2,'0');};
 /* a fake input meter — deterministic in `secs` so it animates with the timer
    rather than on every render */
-const pmBars=(n,secs,live)=>Array.from({length:n},(_,i)=>`<i style="height:${
-  live?Math.max(3,Math.round(4+13*Math.abs(Math.sin(i*.85+secs*1.1))*Math.abs(Math.cos(i*.4+secs*.6)))):4}px"></i>`).join('');
+const pmBar=(i,secs)=>Math.max(3,Math.round(4+13*Math.abs(Math.sin(i*.85+secs*1.1))*Math.abs(Math.cos(i*.4+secs*.6))));
+const pmBars=(n,secs,live)=>Array.from({length:n},(_,i)=>
+  `<i style="height:${live?pmBar(i,secs):4}px"></i>`).join('');
 const clip=(t,n)=>t.length>n?esc(t.slice(0,n-1))+'…':esc(t);
 
+/* The pill is rebuilt only when its *shape* changes. A second passing is not a
+   shape change, and rebuilding for one is what made the pill blink: innerHTML
+   threw away the element under the cursor and put back a new one, once a
+   second, for as long as the recording ran. So the timer and the meter are
+   patched in place and everything else is compared against a signature. */
+let BSIG='',BW=60;
+function bubTick(){
+  const el=$('#bubble');if(!el)return;
+  const mode=bubMode();
+  const secs=mode==='meet'?S.rec.secs:mode==='dict'?S.bub.secs:0;
+  const t=el.querySelector('.ptime');if(t)t.textContent=fmtSecs(secs);
+  const m=el.querySelector('.pmeter');
+  if(m&&!m.classList.contains('off'))
+    for(let i=0;i<m.children.length;i++)m.children[i].style.height=pmBar(i,secs)+'px';
+}
 function renderBubble(){
   const el=$('#bubble');if(!el)return;
   const b=S.bub;
-  if(!db.settings.bubble){el.className='off';el.innerHTML='';return}
+  if(!db.settings.bubble){el.className='off';el.innerHTML='';BSIG='';return}
   if(b.x===null){const h=bubHome();b.x=h.x;b.y=h.y;}
   const mode=bubMode();
-  /* keep it inside the frame after a resize or a switch to fill mode; the
-     bottom margin leaves room for the label that sits under the core */
+  const open=mode==='meet'?mWatchOpen(S.rec.mid):[];
+  const sig=[mode,mode==='meet'&&S.rec.paused,S.wpeek,S.wopen,S.wsay,S.walert,
+             open.length,open.map(w=>w.id).join(',')].join('|');
+  const side=bubSide();
   b.y=Math.max(72,Math.min(b.y,FH()-96));
-  const cls=[mode];
-  if(mode==='meet'){
-    if(S.rec.paused)cls.push('paused');
-    /* the halo clears the moment the watchout is looked at */
-    if(S.walert&&!S.wopen&&!S.wsay)cls.push('alert');
-  }
-  /* the tray needs ~150px of headroom and the popover rather more, so both
-     drop below the pill near the top of the window */
-  const head=(S.wpeek||S.wopen||S.wsay)?424:mode==='idle'?226:120;
-  if(b.y<head)cls.push('flip');
-  el.className=cls.join(' ');
+  /* the popover is taller than the pill, so it drops below it near the top */
+  const head=(S.wpeek||S.wopen||S.wsay)?424:mode==='idle'?150:120;
+  /* the class list is what decides the width — idle is a fixed 60px box with an
+     absolutely positioned pill hanging off it — so it goes on before anything
+     measures, or the shape change is costed against the wrong number and the
+     anchored edge slides */
+  el.className=[mode,side==='left'?'lft':'',
+    mode==='meet'&&S.rec.paused?'paused':'',
+    mode==='meet'&&S.walert&&!S.wopen&&!S.wsay?'alert':'',
+    b.y<head?'flip':''].filter(Boolean).join(' ');
+  if(sig!==BSIG){
+    const w0=BW;
+    BSIG=sig;
+    el.innerHTML=mode==='meet'?pillMeet():mode==='dict'?pillDict():bubIdle(side);
+    tips(el);
+    BW=el.offsetWidth||60;
+    /* hold the anchored edge across the shape change */
+    if(side==='right')b.x+=w0-BW;
+  }else bubTick();
+  b.x=Math.max(8,Math.min(b.x,FW()-BW-12));
   el.style.left=b.x+'px';el.style.top=b.y+'px';
-  el.innerHTML=mode==='meet'?pillMeet():mode==='dict'?pillDict():bubIdle();
-  /* the shapes are different widths, so x can only be clamped once the shape
-     is in the document — this is why the pill never opens off the right edge */
-  const w=el.offsetWidth||60;
-  const nx=Math.max(8,Math.min(b.x,FW()-w-12));
-  if(nx!==b.x){b.x=nx;el.style.left=nx+'px'}
 }
-function bubIdle(){
-  return `<div class="btray">${BUBACTS.map(([k,i,l])=>
-      `<span data-a="bubact" data-p="${k}" title="${l}">${ic(i,17)}<span class="tip">${l}</span></span>`).join('')}</div>
-    <div class="bcore" data-a="bubtalk" title="Click to dictate">${ic('mic',22,2)}</div>
-    <div class="blabel">Click to dictate</div>`;
+function bubIdle(side){
+  const opts=`<div class="bopts">${BUBACTS.map(([k,i,l])=>
+    `<span class="hopt" data-a="bubact" data-p="${k}" title="${l}">${ic(i,17)}</span>`).join('')}</div>`;
+  const core=`<div class="bcore" data-a="bubtalk" title="Click to dictate">${ic('mic',22,2)}</div>`;
+  return `<div class="bhome">${side==='right'?opts+core:core+opts}</div>`;
 }
 function pillDict(){
   const b=S.bub;
@@ -3443,7 +3830,7 @@ function pillDict(){
     <span class="pmark">${ic('mic',17,2)}</span>
     <span class="pmeter live">${pmBars(11,b.secs,true)}</span>
     <span class="plabel">Listening</span>
-    <span class="psub">${fmtSecs(b.secs)}</span>
+    <span class="psub ptime">${fmtSecs(b.secs)}</span>
     <span class="pdiv"></span>
     <span class="pbtn stop nodrag" data-a="bubtalk" title="Stop and paste at your cursor">${ic('stop',14,2.2)}</span>
     </div>`;
@@ -3453,7 +3840,7 @@ function pillMeet(){
   if(S.wsay){
     return `${wpop()}<div class="pill saying">
       <span class="pmark">${ic('speak',17)}</span>
-      <span class="pstat"><i class="rdot"></i><b>${fmtSecs(r.secs)}</b></span>
+      <span class="pstat"><i class="rdot"></i><b class="ptime">${fmtSecs(r.secs)}</b></span>
       <span class="pdiv"></span>
       <span class="plabel">Speaking…</span>
       <span class="pbar"><i></i></span>
@@ -3461,7 +3848,7 @@ function pillMeet(){
   return `${(S.wpeek||S.wopen)?wpop():''}
     <div class="pill">
     <span class="pmark">${ic('spark',17)}</span>
-    <span class="pstat"><i class="rdot"></i><b>${fmtSecs(r.secs)}</b></span>
+    <span class="pstat"><i class="rdot"></i><b class="ptime">${fmtSecs(r.secs)}</b></span>
     ${r.paused?`<span class="psub">Paused</span>`
       :`<span class="pmeter live">${pmBars(9,r.secs,true)}</span>`}
     <span class="pdiv"></span>
@@ -3588,6 +3975,7 @@ function wFire(x){
     /* the peek retracts on its own — the badge keeps the count */
     setTimeout(()=>{if(S.wpeek===x.id){S.wpeek=null;S.walert=false;renderBubble()}},7200);}
   else if(conflict)S.walert=true;
+  const m=meeting(x.mid);if(m)m.woAck=false;
   render();
   /* a peek and a toast for the same watchout is two notifications for one
      event, so only the quiet ones announce themselves */
@@ -3780,7 +4168,9 @@ function resetDemo(hard){
   Object.assign(S,{route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:hard?'new':'c1',
     settings:false,share:false,menu:null,panel:false,q:'',tq:'',vq:'',taskFilter:'all',
     showDone:false,speakers:'All speakers',rec:null,rec2:null,busy:false,typing:false,addPerson:false,
-    wid:null,wpanel:false,wfilter:'all',wdone:false,wpeek:null,wopen:false,walert:false,wsay:null,wseen:[]});
+    wid:null,wpanel:false,wfilter:'all',wdone:false,wpeek:null,wopen:false,walert:false,wsay:null,wseen:[],
+    peek:null});
+  pkStop();
   if(hard)db.watchouts=[];
   render();
   toast(hard?`<b>Reset.</b> You are now looking at a brand-new install.`:`<b>Sample data restored.</b>`);
@@ -3798,10 +4188,13 @@ document.addEventListener('click',e=>{
   switch(a){
   case 'noop':return;
   case 'demo':stop();demo(p);return;
-  case 'go':stop();S.route=p;S.q='';S.panel=false;S.menu=null;S.mpanel=false;S.fid=null;S.wpanel=false;
+  case 'go':stop();pkDismiss();S.route=p;S.q='';S.panel=false;S.menu=null;S.mpanel=false;S.fid=null;S.wpanel=false;
     S.view=p==='tasks'?'all':p==='speech'?'today':p==='vocabulary'?'all':'all';render();return;
-  case 'view':{stop();S.view=p;S.q='';S.menu=null;S.mpanel=false;
-    if(S.route==='tasks')S.panel=false;
+  case 'view':{stop();S.view=p;S.q='';S.menu=null;S.mpanel=false;pkDismiss();
+    /* Tasks, Speech and Vocabulary filter their own list in place — only the
+       meetings family reads a view as somewhere to go. */
+    if(S.route==='tasks'){S.panel=false;render();return}
+    if(isSpeech(S.route)){render();return}
     if(p.startsWith('f:')){
       /* a folder has its own page: sub-folders, rolled-up notes and its meetings */
       const fid=p.slice(2);const f=folder(fid);
@@ -3855,12 +4248,22 @@ document.addEventListener('click',e=>{
     S.menu=null;render();
     toast(`<b>${esc(f.name)}</b> deleted. ${n?`${n} meeting${n>1?'s':''} now Unfiled`
       :'It was empty'} — no notes were removed.`,3400,'warn');return;}
-  case 'range':stop();S.range=p;render();return;
-  case 'railmin':stop();S.railmin=!S.railmin;render();return;
-  case 'listmin':stop();S.listmin=!S.listmin;render();return;
-  case 'expandlist':if(!S.listmin)return;stop();S.listmin=false;render();
+  case 'range':stop();S.range=p;pkDismiss();render();return;
+  /* Collapsing leaves the pointer sitting on the strip that would re-open it,
+     so the zone is disarmed until the pointer moves off. Expanding is the
+     ordinary toggle. */
+  case 'railmin':stop();S.railmin=!S.railmin;pkDismiss();render();return;
+  case 'listmin':stop();S.listmin=!S.listmin;pkDismiss();render();return;
+  /* pinning turns a peek into the real thing, which is the whole point of
+     showing the control while peeked */
+  case 'railpin':stop();S.railmin=false;S.peek=null;pkStop();render();
+    toast(`${ic('panelL',15)}<span>Sidebar pinned open.</span>`,2200);return;
+  case 'listpin':stop();S.listmin=false;S.peek=null;pkStop();render();
+    toast(`${ic('panelL',15)}<span>List pinned open.</span>`,2200);return;
+  case 'expandlist':if(!S.listmin&&S.peek!=='list')return;stop();
+    S.listmin=false;S.peek=null;pkStop();render();
     setTimeout(()=>{const i=document.querySelector('.srch input');if(i)i.focus()},60);return;
-  case 'open':stop();S.route='meeting';S.mid=p;S.tab=(S.rec&&S.rec.mid===p)?'mynotes':'notes';
+  case 'open':stop();pkDismiss();S.route='meeting';S.mid=p;S.tab=(S.rec&&S.rec.mid===p)?'mynotes':'notes';
     S.menu=null;S.tq='';S.speakers='All speakers';render();return;
   case 'tab':stop();S.tab=p;if(p!=='watch')S.wpanel=false;render();return;
   case 'record':stop();startRecording();return;
@@ -3885,6 +4288,9 @@ document.addEventListener('click',e=>{
   case 'delmeeting':{stop();db.meetings=db.meetings.filter(m=>m.id!==p);
     db.tasks=db.tasks.filter(t=>t.mid!==p);S.menu=null;S.route='meetings';render();
     toast('Meeting moved to <b>Recently deleted</b>. 30 days to restore.');return;}
+  case 'ackWatch':{stop();const m=meeting(p);if(m)m.woAck=true;render();
+    toast(`${ic('radar',15)}<span>Hidden. The Watchouts tab still has ${
+      mWatchOpen(p).length} open.</span>`,2800,'info');return;}
   case 'ackNotes':stop();meeting(p).ackd=true;render();return;
   case 'menu':{stop();S.settings=false;const r=el.getBoundingClientRect();const fr=$('#frame').getBoundingClientRect();
     S.menuXY={x:(r.left-fr.left)/SCALE-140,y:(r.bottom-fr.top)/SCALE+6};
@@ -4068,7 +4474,7 @@ document.addEventListener('click',e=>{
   case 'deltx':stop();db.transcripts=db.transcripts.filter(t=>t.id!==p);render();toast('Transcript deleted.');return;
   case 'delterm':stop();db.vocab=db.vocab.filter(v=>v.t!==p);render();toast(`“${esc(p)}” removed from your vocabulary.`);return;
   case 'focusterm':stop();{const i=document.querySelector('[data-a="addterm"]');if(i)i.focus();}return;
-  case 'convo':stop();S.cid=p;render();return;
+  case 'convo':stop();S.cid=p;pkDismiss();render();return;
   case 'newchat':stop();S.cid='new';render();return;
   case 'ask':{stop();if(el.classList.contains('chip')){askAssistant(p);return}
     const i=document.querySelector('#askbox');if(i)i.focus();return;}
@@ -4087,14 +4493,14 @@ document.addEventListener('click',e=>{
     return;
   case 'mask':{stop();
     /* a suggestion chip carries its question in data-p; the input does not */
-    if(p){askMeeting(p);return}
+    if(p){askChat(p);return}
     const i=document.querySelector('#mbox');
-    if(i&&i.value.trim()){const q=i.value;i.value='';askMeeting(q)}
+    if(i&&i.value.trim()){const q=i.value;i.value='';askChat(q)}
     else if(i)i.focus();
     return;}
   case 'msend':{stop();const i=document.querySelector('#mbox');
-    if(i&&i.value.trim()){const q=i.value;i.value='';askMeeting(q)}return;}
-  case 'mclear':{stop();const m=meeting(p);if(m)m.chat=[];render();
+    if(i&&i.value.trim()){const q=i.value;i.value='';askChat(q)}return;}
+  case 'mclear':{stop();const h=chatHost();if(h)h.chat=[];render();
     toast('Thread cleared.');return;}
   /* ── attendees ──────────────────────────────────────────────────────── */
   case 'delperson':{stop();const [mid,ix]=p.split('|');const m=meeting(mid);
@@ -4143,12 +4549,13 @@ document.addEventListener('keydown',e=>{
       db.vocab.unshift({t:el.value.trim(),h:'—',n:0,s:'you'});el.value='';render();
       toast('Term added. It applies to dictation and meetings.');return;}
     if(a==='ask'&&el.value.trim()){const q=el.value;el.value='';askAssistant(q);return;}
-    if(a==='mask'&&el.value.trim()){const q=el.value;el.value='';askMeeting(q);return;}
+    if(a==='mask'&&el.value.trim()){const q=el.value;el.value='';askChat(q);return;}
     if(a==='key'){db.settings.anthropicKey=el.value;render();return;}
   }
   if(e.key==='Enter'&&S.addPerson&&(e.target.id==='pname'||e.target.id==='pmail')){
     const b=document.querySelector('[data-a="saveperson"]');if(b)b.click();}
   if(e.key==='Escape'){
+    if(S.peek){pkDismiss();render();return}
     if(S.addPerson){S.addPerson=false;render();return}
     if(S.menu){S.menu=null;render();return}
     if(S.share){S.share=false;render();return}
@@ -4226,6 +4633,7 @@ function fit(){
   const wantList=w<LIST_AT,wantRail=w<RAIL_AT;
   if(wantList!==AUTO.list){AUTO.list=wantList;S.listmin=wantList;ch=true}
   if(wantRail!==AUTO.rail){AUTO.rail=wantRail;S.railmin=wantRail;ch=true}
+  if(ch&&S.peek){pkStop();S.peek=null;}
   if(ch&&BOOTED)render();
   else if(BOOTED)renderBubble();
 }
