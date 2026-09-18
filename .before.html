@@ -6,11 +6,7 @@
 <title>AIT-Scribe — Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
-<!-- Sentient (Fontshare, variable 200-700 + italics) carries the headings;
-     Onest (Google Fonts, variable 100-900) carries body text and UI chrome. -->
-<link href="https://api.fontshare.com/v2/css?f[]=sentient@1,2&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════ tokens ══════════════════════════════ */
 /* Two axes. `data-th` on <html> picks the THEME (its own nine-step brand ramp and
@@ -33,12 +29,6 @@
    Status colours (danger / warn / ok / info) and the shadows are shared across
    themes so a red always reads as a red, and live in the two blocks below. */
 :root{
-  /* Two typefaces. Sentient (a serif) is the DISPLAY face: page titles, card and
-     row titles, section headings, big stats. Onest (a grotesque) is the TEXT face:
-     body copy plus all UI chrome — buttons, tabs, chips, badges, micro-labels,
-     table headers — where a serif at 11px would only add noise. */
-  --f-head:'Sentient',Georgia,'Times New Roman',serif;
-  --f-body:'Onest','Liberation Sans',Arial,sans-serif;
   --danger:#D92D20; --dangerOn:#FFFFFF; --dangerInk:#B42318; --dangerTint:#FEF3F1; --dangerLine:#FADBD5;
   --warn:#DD9000; --warnInk:#8A5300; --warnTint:#FFF8E8; --warnLine:#F6E2BC;
   --ok:#0A7548; --okInk:#07603B; --okTint:#ECFAF3; --okLine:#C8E9D7;
@@ -192,10 +182,10 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{font-family:var(--f-body);background:var(--backdrop);color:var(--ink);
+body{font-family:Inter,'Liberation Sans',Arial,sans-serif;background:var(--backdrop);color:var(--ink);
   -webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;
   overflow:hidden;transition:background .25s}
-.h{font-family:var(--f-head)}
+.h{font-family:Poppins,sans-serif}
 svg{display:block;flex:0 0 auto}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input{font:inherit;color:inherit;background:none;border:0;outline:0}
@@ -218,7 +208,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .topbar{height:64px;flex:0 0 auto;display:flex;align-items:center;gap:16px;
   padding:0 16px 0 20px;background:var(--surf);border-bottom:1px solid var(--line);z-index:6}
 .topbar .ttl{display:flex;align-items:baseline;gap:11px;min-width:0}
-.topbar h1{font-family:var(--f-head);font-size:22px;font-weight:600;
+.topbar h1{font-family:Poppins,sans-serif;font-size:22px;font-weight:600;
   letter-spacing:-.015em;white-space:nowrap}
 .topbar .state{font-size:13.5px;color:var(--sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar .r{margin-left:auto;display:flex;align-items:center;gap:6px;flex:0 0 auto}
@@ -238,7 +228,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 /* collapse / expand control, shared by both sidebars */
 .colbtn{display:flex;align-items:center;gap:14px;height:38px;padding:0 12px;border-radius:10px;
   color:var(--sec);cursor:pointer;flex:0 0 auto}
-.colbtn b{font-size:13px;font-weight:500;font-family:var(--f-body);white-space:nowrap}
+.colbtn b{font-size:13px;font-weight:500;font-family:Inter,sans-serif;white-space:nowrap}
 .colbtn:hover{background:var(--sunk);color:var(--ink2)}
 .lights{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding-right:4px}
 .lights i{width:12px;height:12px;border-radius:50%;display:flex;align-items:center;
@@ -249,11 +239,11 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 [data-theme="dark"] .lights .r{background:#E0443E}[data-theme="dark"] .lights .y{background:#DEA123}
 [data-theme="dark"] .lights .g{background:#1AAB29}
 .tbtn:hover{background:var(--sunk)}
-.slab{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.1em;
+.slab{font-family:Poppins,sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ter);padding:4px 12px 10px;white-space:nowrap}
 .nav{display:flex;flex-direction:column;gap:6px}
 .nav a{display:flex;align-items:center;gap:14px;height:40px;padding:0 12px;border-radius:10px;
-  font-family:var(--f-body);font-size:14px;font-weight:500;color:var(--ink2);
+  font-family:Poppins,sans-serif;font-size:14px;font-weight:500;color:var(--ink2);
   text-decoration:none;cursor:pointer;white-space:nowrap}
 .nav a:hover{background:var(--sunk)}
 .nav a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
@@ -271,14 +261,14 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .acct .top{display:flex;align-items:center;gap:10px;min-width:0;width:100%}
 .acct .who{min-width:0;flex:1}
 .avat{width:28px;height:28px;border-radius:50%;background:var(--tint);color:var(--brandInk);
-  display:flex;align-items:center;justify-content:center;font-family:var(--f-body);
+  display:flex;align-items:center;justify-content:center;font-family:Poppins,sans-serif;
   font-size:12px;font-weight:600;flex:0 0 auto}
 .acct .avat{width:32px;height:32px;background:var(--line);color:var(--ink2);font-size:13px}
 .acct .nm{font-size:13px;font-weight:600;line-height:1.25;display:block;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
 .acct .pl{font-size:11.5px;color:var(--sec);display:block}
 .upg{display:flex;align-items:center;gap:6px;white-space:nowrap;flex:0 0 auto;
-  font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--brandInk);
+  font-family:Poppins,sans-serif;font-size:12px;font-weight:600;color:var(--brandInk);
   border:1px solid var(--line2);border-radius:8px;padding:6px 10px;background:var(--surf)}
 .upg:hover{border-color:var(--brand);background:var(--tint2)}
 
@@ -287,7 +277,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   display:flex;flex-direction:column;overflow:hidden;transition:width .18s,flex-basis .18s}
 /* collapsed: a narrow strip of icons rather than nothing at all */
 .app.listmin .listcol{width:56px;flex:0 0 56px}
-.app.listmin .listcol .lbl,.app.listmin .listcol .n,.app.listmin .listcol .npill,
+.app.listmin .listcol .lbl,.app.listmin .listcol .n,.app.listmin .listcol .pill,
 .app.listmin .listcol .slabel,.app.listmin .listcol .note,.app.listmin .listcol input,
 .app.listmin .listcol .convrow,.app.listmin .listcol .emptylist,
 .app.listmin .listcol .lhead b,.app.listmin .listcol .colbtn b{display:none}
@@ -302,8 +292,8 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .app.listmin .listcol .colbtn{justify-content:center;padding:0;width:36px;margin:0 auto}
 .lfoot{padding:6px 8px 10px;flex:0 0 auto}
 .lhead{height:64px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--line);flex:0 0 auto}
-.lhead b{font-family:var(--f-head);font-size:15px;font-weight:600}
-.lhead .act{margin-left:auto;display:flex;align-items:center;gap:5px;font-family:var(--f-body);
+.lhead b{font-family:Poppins,sans-serif;font-size:15px;font-weight:600}
+.lhead .act{margin-left:auto;display:flex;align-items:center;gap:5px;font-family:Poppins,sans-serif;
   font-size:12.5px;font-weight:600;color:var(--brandInk)}
 .srch{display:flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--line2);
   border-radius:8px;padding:8px 11px;margin:16px 16px 0;flex:0 0 auto}
@@ -314,29 +304,20 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .views{display:flex;flex-direction:column;gap:2px}
 .views a{display:flex;align-items:center;gap:12px;min-height:34px;padding:6px 10px;border-radius:8px;
   font-size:13.5px;color:var(--ink2);cursor:pointer}
-/* nothing dropped into the right-hand slot may set the row's height */
-.views a>*{flex:0 0 auto}
-.views a .lbl{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .views a:hover{background:var(--sunk)}
 .views a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
 .views a .ic{color:var(--sec)}
 .views a.on .ic{color:var(--brandInk)}
 .views a .n{margin-left:auto;font-size:12px;color:var(--sec)}
 .views a.on .n{color:var(--brandInk);font-weight:700}
-/* NB: this is deliberately NOT called .pill — that name belongs to the floating
-   recording pill (height:52px), and sharing it made every view with a red count
-   inherit that height. Sized off its own line-box so it never stretches the row. */
-.views a .npill{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;
-  justify-content:center;height:18px;min-width:18px;padding:0 6px;box-sizing:border-box;
-  font-size:11px;font-weight:700;line-height:1;color:var(--dangerOn);
-  background:var(--danger);border-radius:9px}
-.views a.on .npill{color:var(--dangerOn);background:var(--danger)}
-.slabel{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.1em;
+.views a .pill{margin-left:auto;font-size:11px;font-weight:700;color:var(--dangerOn);background:var(--danger);
+  border-radius:10px;padding:1px 7px}
+.slabel{font-family:Poppins,sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ter);padding:18px 10px 8px}
 .note{margin-top:14px;padding:11px 12px;border:1px dashed var(--line2);border-radius:10px;
   font-size:12px;color:var(--sec);line-height:1.45}
 .emptylist{padding:28px 20px;text-align:center;font-size:12.5px;color:var(--sec);line-height:1.5}
-.emptylist b{display:block;color:var(--ink2);font-size:13.5px;font-family:var(--f-head);
+.emptylist b{display:block;color:var(--ink2);font-size:13.5px;font-family:Poppins,sans-serif;
   font-weight:600;margin-bottom:6px}
 .convrow{display:block;padding:11px 12px;border-radius:9px;cursor:pointer}
 .convrow:hover{background:var(--sunk)}
@@ -355,11 +336,11 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .crumb b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .crumb .bk{cursor:pointer;display:flex;align-items:center;gap:6px}
 .crumb .bk:hover{color:var(--brandInk)}
-.crumb b{color:var(--ink);font-weight:600;font-family:var(--f-head);font-size:15px}
+.crumb b{color:var(--ink);font-weight:600;font-family:Poppins,sans-serif;font-size:15px}
 .body{flex:1;--bp:24px;padding:var(--bp);overflow-y:auto;display:flex;flex-direction:column}
 
 /* ══════════════════════════════ buttons ══════════════════════════════ */
-.btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--f-body);
+.btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;font-family:Poppins,sans-serif;
   font-size:13px;font-weight:600;border-radius:9px;padding:8px 15px;border:1px solid transparent;
   white-space:nowrap;cursor:pointer}
 .btn.p{background:var(--brandFill);color:var(--brandOn);border-color:rgba(0,0,0,.07);
@@ -374,7 +355,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .btn.sm{font-size:12.5px;padding:6px 12px}
 .btn.dis{background:var(--sunk);color:var(--ter);border-color:var(--line);cursor:not-allowed}
 .btn .dot{width:8px;height:8px;border-radius:50%;background:var(--brand)}
-.link{font-family:var(--f-body);font-size:12.5px;font-weight:600;color:var(--brandInk);cursor:pointer}
+.link{font-family:Poppins,sans-serif;font-size:12.5px;font-weight:600;color:var(--brandInk);cursor:pointer}
 .link:hover{text-decoration:underline}
 
 /* ══════════════════════════════ generic ══════════════════════════════ */
@@ -382,7 +363,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .empty .ico{width:60px;height:60px;border-radius:50%;background:var(--tint2);display:flex;
   align-items:center;justify-content:center;color:var(--brand);margin-bottom:18px}
-.empty h2{font-family:var(--f-head);font-size:20px;font-weight:600;margin-bottom:8px}
+.empty h2{font-family:Poppins,sans-serif;font-size:20px;font-weight:600;margin-bottom:8px}
 .empty p{font-size:14px;color:var(--sec);line-height:1.6;max-width:470px}
 .notice{display:flex;align-items:center;gap:11px;border-radius:12px;padding:12px 14px;
   font-size:13.5px;line-height:1.45;flex-wrap:wrap}
@@ -396,7 +377,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .notice.dg .ic{color:var(--dangerInk)}
 .kbd{flex:0 0 auto;font-size:12px;font-weight:700;background:var(--surf);border:1px solid var(--line2);
   border-bottom-width:2px;border-radius:6px;padding:2px 7px;color:var(--ink);display:inline-block}
-.ghd{display:flex;align-items:center;gap:8px;font-family:var(--f-body);font-size:11.5px;
+.ghd{display:flex;align-items:center;gap:8px;font-family:Poppins,sans-serif;font-size:11.5px;
   font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec);margin:0 2px 10px}
 .ghd.dg{color:var(--dangerInk)}
 .ghd .n{color:var(--ter);font-weight:500;letter-spacing:0;text-transform:none;font-size:12px}
@@ -425,7 +406,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .rdo{width:18px;height:18px;border-radius:50%;border:1.8px solid var(--line2);flex:0 0 auto;cursor:pointer}
 .rdo.on{border:5px solid var(--brand)}
 .pri{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
-  border-radius:6px;padding:2px 8px;font-family:var(--f-body);background:var(--sunk);color:var(--sec)}
+  border-radius:6px;padding:2px 8px;font-family:Poppins,sans-serif;background:var(--sunk);color:var(--sec)}
 .pri.hi{background:var(--dangerTint);color:var(--dangerInk)}
 .pri.md{background:var(--warnTint);color:var(--warnInk)}
 .pri.ok{background:var(--okTint);color:var(--okInk)}
@@ -444,11 +425,11 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .mrow{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer}
 .mrow+.mrow{border-top:1px solid var(--line)}
 .mrow:hover{background:var(--sunk)}
-.mrow .t{font-family:var(--f-head);font-size:14px;font-weight:600;display:block}
+.mrow .t{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;display:block}
 .mrow .t .wdot{margin-left:9px;vertical-align:1px}
 .mrow .s{font-size:12.5px;color:var(--sec);display:block;margin-top:3px}
 .mrow .rt{text-align:right;white-space:nowrap;flex:0 0 auto;min-width:118px}
-.mrow .rt .tg{font-size:12px;font-weight:600;font-family:var(--f-body);display:block}
+.mrow .rt .tg{font-size:12px;font-weight:600;font-family:Poppins,sans-serif;display:block}
 .mrow .rt .mt{font-size:12px;color:var(--sec);display:block;margin-top:4px}
 .mrow>span:first-child{flex:1;min-width:0}
 .mrow .macts{display:flex;gap:4px;flex:0 0 auto;opacity:0;pointer-events:none}
@@ -460,9 +441,9 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 /* `live` doubles as a modifier on .meter and .holdbtn, so this stays scoped to
    the hosts that use it as a pill rather than becoming a bare .live rule */
 .mrow .live,.dchips .live{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
-  color:var(--dangerOn);background:var(--danger);border-radius:20px;padding:2px 9px;font-family:var(--f-body)}
+  color:var(--dangerOn);background:var(--danger);border-radius:20px;padding:2px 9px;font-family:Poppins,sans-serif}
 .setuphd{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
-.setuphd b{font-family:var(--f-head);font-size:14px}
+.setuphd b{font-family:Poppins,sans-serif;font-size:14px}
 .setuphd .step{font-size:12px;font-weight:600;color:var(--brandInk);background:var(--tint);
   padding:2px 9px;border-radius:20px}
 .setuphd .x{margin-left:auto;color:var(--sec);cursor:pointer}
@@ -470,30 +451,30 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .setuprow+.setuprow{border-top:1px solid var(--line)}
 .setuprow .si{width:34px;height:34px;border-radius:10px;background:var(--tint);color:var(--brandInk);
   display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-.setuprow .t{font-family:var(--f-head);font-size:14px;font-weight:600;display:block}
+.setuprow .t{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;display:block}
 .setuprow .s{font-size:12.5px;color:var(--sec);display:block;margin-top:3px;line-height:1.45;max-width:620px}
 .setuprow .a{margin-left:auto;flex:0 0 auto}
 
 /* ══════════════════════════════ meeting detail ══════════════════════════════ */
 .titleblk{margin-bottom:16px}
-.titleblk h1{font-family:var(--f-head);font-size:26px;font-weight:600;letter-spacing:-.015em}
+.titleblk h1{font-family:Poppins,sans-serif;font-size:26px;font-weight:600;letter-spacing:-.015em}
 .titleblk h1 .edit{opacity:0;color:var(--sec);display:inline-flex;vertical-align:2px;margin-left:8px;
   pointer-events:none}
 .titleblk:hover h1 .edit{opacity:1}
 .metarow{display:flex;align-items:center;gap:10px;margin-top:9px;font-size:13px;color:var(--sec);flex-wrap:wrap}
 .metarow .fchipx{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);
   border-radius:8px;padding:4px 10px;font-size:12.5px;color:var(--ink2);font-weight:600;
-  font-family:var(--f-body);cursor:pointer}
+  font-family:Poppins,sans-serif;cursor:pointer}
 .metarow .fchipx:hover{border-color:var(--brand)}
 .metarow .sp{width:3px;height:3px;border-radius:50%;background:var(--ter)}
 .faces{display:flex;align-items:center}
 .faces i{width:24px;height:24px;border-radius:50%;border:2px solid var(--surf);margin-left:-7px;
   font-style:normal;font-size:10.5px;font-weight:700;color:#FFFFFF;display:flex;align-items:center;
-  justify-content:center;font-family:var(--f-body)}
+  justify-content:center;font-family:Poppins,sans-serif}
 .faces i:first-child{margin-left:0}
 .addp{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--line2);border-radius:20px;
   padding:4px 11px 4px 9px;font-size:12.5px;color:var(--sec);cursor:pointer;
-  font-family:var(--f-body);font-weight:600}
+  font-family:Poppins,sans-serif;font-weight:600}
 .addp:hover{border-color:var(--brand);color:var(--brandInk);border-style:solid}
 .recbar{display:flex;align-items:center;gap:12px;background:var(--dangerTint);
   border:1px solid var(--dangerLine);border-radius:12px;padding:12px 16px}
@@ -502,8 +483,8 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   box-shadow:0 0 0 4px var(--dangerLine);animation:pulse 1.6s infinite}
 .recbar.pause .rdot{background:var(--warnInk);animation:none;box-shadow:0 0 0 4px var(--warnLine)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-.recbar b{font-family:var(--f-head);font-size:14px;font-weight:600}
-.recbar .t{font-family:var(--f-body);font-size:15px;font-weight:700;color:var(--dangerInk);
+.recbar b{font-family:Poppins,sans-serif;font-size:14px;font-weight:600}
+.recbar .t{font-family:Poppins,sans-serif;font-size:15px;font-weight:700;color:var(--dangerInk);
   font-variant-numeric:tabular-nums}
 .recbar.pause .t{color:var(--warnInk)}
 .recbar .s{font-size:12.5px;color:var(--sec);min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -512,7 +493,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tabs a{flex:0 0 auto;white-space:nowrap}
-.tabs a{display:flex;align-items:center;gap:8px;padding-bottom:11px;font-family:var(--f-body);
+.tabs a{display:flex;align-items:center;gap:8px;padding-bottom:11px;font-family:Poppins,sans-serif;
   font-size:14px;font-weight:600;color:var(--sec);border-bottom:2px solid transparent;
   margin-bottom:-1px;cursor:pointer}
 .tabs a:hover{color:var(--ink)}
@@ -525,7 +506,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .tabs a .cnt.hot{background:var(--dangerTint);color:var(--dangerInk)}
 .tabs a.on .cnt.hot{background:var(--danger);color:var(--dangerOn)}
 .sec{margin-bottom:18px}
-.sec h3{font-family:var(--f-head);font-size:14px;font-weight:600;margin-bottom:9px;
+.sec h3{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;margin-bottom:9px;
   display:flex;align-items:center;gap:8px}
 .sec h3 .ic{color:var(--brandInk)}
 .sec p{font-size:13.5px;line-height:1.65;color:var(--ink2)}
@@ -533,7 +514,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .bul li{display:flex;gap:10px;font-size:13.5px;line-height:1.55;color:var(--ink2)}
 .bul li .dot{width:5px;height:5px;border-radius:50%;background:var(--brand);flex:0 0 auto;margin-top:8px}
 .jump{font-size:12px;color:var(--brandInk);white-space:nowrap;margin-left:auto;flex:0 0 auto;
-  font-family:var(--f-body);font-weight:600;cursor:pointer}
+  font-family:Poppins,sans-serif;font-weight:600;cursor:pointer}
 .jump:hover{text-decoration:underline}
 .notebox{border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-height:150px}
 .notebox:focus-within{border-color:var(--brand)}
@@ -548,13 +529,13 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .trs .tm{font-size:12px;color:var(--sec);font-variant-numeric:tabular-nums;width:44px;
   flex:0 0 auto;padding-top:2px;cursor:pointer}
 .trs .tm:hover{color:var(--brandInk)}
-.trs .spk{font-family:var(--f-head);font-size:13px;font-weight:600;display:block;margin-bottom:3px}
+.trs .spk{font-family:Poppins,sans-serif;font-size:13px;font-weight:600;display:block;margin-bottom:3px}
 .trs .tx{font-size:13.5px;line-height:1.6;color:var(--ink2)}
 .trs .tx mark{background:var(--tint);color:var(--brandInk);border-radius:3px}
 /* self-contained, but listed per host to match how .live is handled above */
 .trs .badge,.dchips .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
   color:var(--brandInk);background:var(--tint);border-radius:14px;padding:2px 9px;margin-top:7px;
-  font-family:var(--f-body)}
+  font-family:Poppins,sans-serif}
 .player{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;
   padding:12px 16px;margin-top:16px;flex:0 0 auto}
 .player .pb{width:36px;height:36px;border-radius:50%;background:var(--brandFill);color:var(--brandOn);
@@ -566,7 +547,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 
 /* ══════════════════════════════ speech ══════════════════════════════ */
 .holdbtn{display:flex;align-items:center;gap:10px;background:var(--brandFill);color:var(--brandOn);
-  border-radius:12px;padding:12px 18px;font-family:var(--f-body);font-size:14px;
+  border-radius:12px;padding:12px 18px;font-family:Poppins,sans-serif;font-size:14px;
   font-weight:600;flex:0 0 auto;cursor:pointer;user-select:none}
 .holdbtn:hover{filter:brightness(1.08)}
 .holdbtn.live{background:var(--danger);color:var(--dangerOn);filter:none}
@@ -588,7 +569,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .acts span.dg:hover{border-color:var(--danger);color:var(--dangerInk)}
 .metrics{display:flex;align-items:center;gap:22px;font-size:13px;color:var(--sec);
   margin-top:16px;padding:0 2px;flex-wrap:wrap}
-.metrics b{color:var(--ink);font-family:var(--f-body);font-weight:600}
+.metrics b{color:var(--ink);font-family:Poppins,sans-serif;font-weight:600}
 .metrics .sp{width:1px;height:14px;background:var(--line2)}
 
 /* ══════════════════════════════ tasks ══════════════════════════════ */
@@ -643,7 +624,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
    with its avatar outermost — no margin-left:auto needed */
 .msg.u{flex-direction:row-reverse}
 .msg .who{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;
-  justify-content:center;font-family:var(--f-body);font-size:12px;font-weight:600}
+  justify-content:center;font-family:Poppins,sans-serif;font-size:12px;font-weight:600}
 .msg.u .who{background:var(--tint);color:var(--brandInk)}
 .msg.a .who{background:var(--ink);color:var(--surf)}
 .msg .tx{font-size:13.5px;line-height:1.6;color:var(--ink2);padding:10px 14px;border-radius:15px;
@@ -669,8 +650,8 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   max-width:calc(100% - 28px);max-height:calc(100% - 28px);overflow:hidden;display:flex}
 .mnav{width:236px;flex:0 0 auto;background:var(--rail);border-right:1px solid var(--line);
   padding:18px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
-.mnav h3{font-family:var(--f-head);font-size:16px;font-weight:600;padding:2px 10px 14px}
-.mnav .gl{font-family:var(--f-body);font-size:10.5px;font-weight:600;letter-spacing:.1em;
+.mnav h3{font-family:Poppins,sans-serif;font-size:16px;font-weight:600;padding:2px 10px 14px}
+.mnav .gl{font-family:Poppins,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ter);padding:14px 10px 6px}
 .mnav a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:8px;
   color:var(--ink2);font-size:13px;cursor:pointer}
@@ -680,7 +661,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .mnav a.on .ic{color:var(--brandInk)}
 .mbody{flex:1;display:flex;flex-direction:column;min-width:0}
 .mtop{display:flex;align-items:flex-start;gap:12px;padding:20px 22px 16px;border-bottom:1px solid var(--line)}
-.mtop h2{font-family:var(--f-head);font-size:17px;font-weight:600}
+.mtop h2{font-family:Poppins,sans-serif;font-size:17px;font-weight:600}
 .mtop p{font-size:12.5px;color:var(--sec);margin-top:3px}
 .mtop .x{margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);
   display:flex;align-items:center;justify-content:center;color:var(--sec);flex:0 0 auto;cursor:pointer}
@@ -691,11 +672,11 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   border-bottom:1px solid var(--line)}
 .sghd .si{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;
   justify-content:center;flex:0 0 auto;background:var(--tint);color:var(--brandInk)}
-.sghd b{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:block}
+.sghd b{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;display:block}
 .sghd span{font-size:12px;color:var(--sec);display:block;margin-top:1px}
 .srow{display:flex;align-items:center;gap:14px;padding:13px 16px}
 .srow+.srow{border-top:1px solid var(--line)}
-.srow .t{font-size:13.5px;font-weight:600;display:block;font-family:var(--f-head)}
+.srow .t{font-size:13.5px;font-weight:600;display:block;font-family:Poppins,sans-serif}
 .srow .s{font-size:12px;color:var(--sec);display:block;margin-top:3px;line-height:1.45;max-width:600px}
 .srow .a{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:9px}
 .menu{position:absolute;z-index:22;background:var(--surf);border:1px solid var(--line2);
@@ -709,14 +690,14 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .menu a.dg .ic{color:var(--dangerInk)}
 .menu a .k{margin-left:auto;font-size:11.5px;color:var(--sec)}
 .menu hr{border:0;border-top:1px solid var(--line);margin:5px 8px}
-.menu .mh{font-size:11px;font-family:var(--f-body);font-weight:600;letter-spacing:.08em;
+.menu .mh{font-size:11px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ter);padding:8px 10px 4px}
 .menu .fn{font-size:11.5px;color:var(--sec);padding:2px 10px 8px;line-height:1.45}
 .panel{width:400px;flex:0 0 400px;border-left:1px solid var(--line);background:var(--surf);
   display:flex;flex-direction:column}
 .panel .ph{display:flex;align-items:center;gap:10px;height:64px;padding:0 20px;
   border-bottom:1px solid var(--line);flex:0 0 auto}
-.panel .ph b{font-family:var(--f-head);font-size:14px;font-weight:600}
+.panel .ph b{font-family:Poppins,sans-serif;font-size:14px;font-weight:600}
 .panel .pb2{padding:20px;display:flex;flex-direction:column;gap:18px;overflow-y:auto}
 .frow{display:flex;align-items:center;gap:12px;font-size:13px}
 .frow .lb{width:88px;flex:0 0 auto;color:var(--sec)}
@@ -726,24 +707,24 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
 .toast{background:var(--ink);color:var(--surf);font-size:13px;padding:10px 16px;border-radius:10px;
   box-shadow:var(--shadow2);animation:tin .22s;max-width:520px;text-align:center}
-.toast b{font-family:var(--f-head);font-weight:600}
+.toast b{font-family:Poppins,sans-serif;font-weight:600}
 @keyframes tin{from{opacity:0;transform:translateY(8px)}}
 
 /* ══════════════════════════════ vocab / insights ══════════════════════════════ */
 .vtable{width:100%;border-collapse:collapse}
-.vtable th{text-align:left;font-family:var(--f-body);font-size:11.5px;font-weight:600;
+.vtable th{text-align:left;font-family:Poppins,sans-serif;font-size:11.5px;font-weight:600;
   letter-spacing:.07em;text-transform:uppercase;color:var(--sec);padding:11px 16px;
   border-bottom:1px solid var(--line)}
 .vtable td{padding:13px 16px;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
 .vtable tr:last-child td{border-bottom:0}
 .vtable tr:hover td{background:var(--sunk)}
-.vtable td.tm{font-family:var(--f-body);font-weight:600;color:var(--ink)}
+.vtable td.tm{font-family:Poppins,sans-serif;font-weight:600;color:var(--ink)}
 .pillx{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
-  border-radius:6px;padding:2px 8px;font-family:var(--f-body);background:var(--sunk);color:var(--sec)}
+  border-radius:6px;padding:2px 8px;font-family:Poppins,sans-serif;background:var(--sunk);color:var(--sec)}
 .pillx.ai{background:var(--tint);color:var(--brandInk)}
 .stat{border:1px solid var(--line);border-radius:14px;padding:18px;flex:1;min-width:0}
 .stat .lb{font-size:12.5px;color:var(--sec)}
-.stat .big{font-family:var(--f-head);font-size:30px;font-weight:600;letter-spacing:-.02em;
+.stat .big{font-family:Poppins,sans-serif;font-size:30px;font-weight:600;letter-spacing:-.02em;
   margin-top:8px;line-height:1}
 .stat .dl{font-size:12px;color:var(--sec);margin-top:8px;display:flex;align-items:center;gap:6px}
 .chart{display:flex;align-items:flex-end;gap:14px;height:148px;position:relative;padding-top:6px}
@@ -763,25 +744,25 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .hbar .vv{width:38px;text-align:right;font-size:12.5px;color:var(--sec);flex:0 0 auto}
 .ttip{position:absolute;background:var(--ink);color:var(--surf);font-size:11.5px;padding:6px 9px;
   border-radius:7px;white-space:nowrap;z-index:3;opacity:0;transition:opacity .12s;pointer-events:none}
-.ttip b{display:block;font-size:12.5px;font-family:var(--f-body);font-weight:600}
+.ttip b{display:block;font-size:12.5px;font-family:Poppins,sans-serif;font-weight:600}
 .opt{display:flex;gap:13px;border:1px solid var(--line2);border-radius:12px;padding:14px 16px;
   flex:1;cursor:pointer}
 .opt.on{border-color:var(--brand);background:var(--tint2)}
-.opt .t{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:block}
+.opt .t{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;display:block}
 .opt .s{font-size:12.5px;color:var(--sec);display:block;margin-top:5px;line-height:1.5}
 .opt ul{list-style:none;margin-top:9px;display:flex;flex-direction:column;gap:5px}
 .opt li{display:flex;gap:7px;font-size:12px;color:var(--ink2);align-items:flex-start;line-height:1.4}
 .step{display:flex;gap:13px;padding:14px 16px}
 .step+.step{border-top:1px solid var(--line)}
 .step .num{width:24px;height:24px;border-radius:50%;background:var(--tint);color:var(--brandInk);
-  font-family:var(--f-body);font-size:12px;font-weight:700;display:flex;align-items:center;
+  font-family:Poppins,sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;
   justify-content:center;flex:0 0 auto;margin-top:1px}
 .step .num.done{background:var(--ok);color:#FFFFFF}
 .step .num.wait{background:var(--sunk);color:var(--ter)}
-.step .t{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:block}
+.step .t{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;display:block}
 .step .s{font-size:12.5px;color:var(--sec);display:block;margin-top:4px;line-height:1.5;max-width:640px}
 .step .a{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:9px}
-.keycap{font-family:var(--f-body);font-size:13px;font-weight:700;background:var(--sunk);
+.keycap{font-family:Poppins,sans-serif;font-size:13px;font-weight:700;background:var(--sunk);
   border:1px solid var(--line2);border-bottom-width:2px;border-radius:7px;padding:5px 11px;color:var(--ink)}
 .tips{display:flex;flex-direction:column;gap:9px;padding:14px 16px}
 .tips div{display:flex;gap:10px;font-size:12.5px;color:var(--ink2);line-height:1.45}
@@ -861,7 +842,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .thcard .prev i{flex:1}
 .thcard .prev i.a{flex:0 0 22%}
 .thcard .prev i.b{flex:0 0 14%}
-.thcard .nm{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:flex;
+.thcard .nm{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;display:flex;
   align-items:center;gap:7px}
 .thcard .nm .tick{margin-left:auto;width:18px;height:18px;border-radius:50%;background:var(--brand);
   color:var(--brandOn);display:none;align-items:center;justify-content:center;flex:0 0 auto}
@@ -870,7 +851,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .thcard .dots{display:flex;gap:5px}
 .thcard .dots i{width:15px;height:15px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(128,128,128,.38)}
 .thcard .modes{display:flex;gap:5px;margin-left:auto;font-size:10.5px;color:var(--ter);
-  font-family:var(--f-body);font-weight:600;letter-spacing:.04em}
+  font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.04em}
 
 /* ══════════════════════════════ toast variants ══════════════════════════════ */
 .toast{display:flex;align-items:center;justify-content:center;gap:9px}
@@ -897,10 +878,10 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .osn.dg .ai{background:var(--danger);color:var(--dangerOn)}
 .osn.ok .ai{background:var(--ok);color:#FFF}
 .osn .bd{flex:1;min-width:0}
-.osn .ap{font-size:10.5px;font-family:var(--f-body);font-weight:600;letter-spacing:.07em;
+.osn .ap{font-size:10.5px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.07em;
   text-transform:uppercase;color:var(--ter);display:flex;align-items:center;gap:6px}
 .osn .ap .w{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;font-size:11px}
-.osn .ti{display:block;font-family:var(--f-head);font-size:13.5px;font-weight:600;margin-top:4px;line-height:1.35}
+.osn .ti{display:block;font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;margin-top:4px;line-height:1.35}
 .osn .bo{display:block;font-size:12.5px;color:var(--sec);line-height:1.45;margin-top:3px}
 .osn .ac{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
 .osn .x{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;
@@ -919,7 +900,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 
 /* the type chip, used in rows, panels, the pill popover and the rollup */
 .wchip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;
-  font-family:var(--f-body);border-radius:7px;padding:3px 9px;
+  font-family:Poppins,sans-serif;border-radius:7px;padding:3px 9px;
   background:var(--wcT);color:var(--wcI);border:1px solid var(--wcL);white-space:nowrap;flex:0 0 auto}
 .wchip .ic{flex:0 0 auto}
 .wchip.plain{background:var(--sunk);color:var(--sec);border-color:var(--line)}
@@ -940,7 +921,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   border:1px solid var(--wcL);display:flex;align-items:center;justify-content:center;
   flex:0 0 auto;margin-top:1px}
 .wrow .wmain{flex:1 1 190px;min-width:0}
-.wrow .wt{font-family:var(--f-head);font-size:13.5px;font-weight:600;line-height:1.4;
+.wrow .wt{font-family:Poppins,sans-serif;font-size:13.5px;font-weight:600;line-height:1.4;
   color:var(--ink);display:block}
 .wrow .ws{font-size:12.5px;color:var(--sec);line-height:1.5;margin-top:5px;display:block}
 .wrow .ws b{color:var(--ink2);font-weight:600}
@@ -971,23 +952,23 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   border-radius:12px;overflow:hidden;background:var(--surf)}
 .wcmp>div{padding:14px 15px;min-width:0}
 .wcmp>div+div{border-left:1px solid var(--line2);background:var(--rail)}
-.wcmp .hd{display:flex;align-items:center;gap:7px;font-family:var(--f-body);font-size:11px;
+.wcmp .hd{display:flex;align-items:center;gap:7px;font-family:Poppins,sans-serif;font-size:11px;
   font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--sec);margin-bottom:9px}
 .wcmp .hd .ic{color:var(--ter)}
 .wcmp .q{font-size:13px;line-height:1.6;color:var(--ink2);font-style:italic}
 .wcmp .who{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12px;color:var(--sec);
   flex-wrap:wrap}
-.wcmp .who b{font-family:var(--f-body);font-weight:600;color:var(--ink2);font-size:12.5px}
-.wcmp .lk{font-family:var(--f-body);font-size:11.5px;font-weight:600;color:var(--brandInk);
+.wcmp .who b{font-family:Poppins,sans-serif;font-weight:600;color:var(--ink2);font-size:12.5px}
+.wcmp .lk{font-family:Poppins,sans-serif;font-size:11.5px;font-weight:600;color:var(--brandInk);
   cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:9px}
 .wcmp .lk:hover{text-decoration:underline}
 .wrel{display:flex;align-items:center;gap:9px;margin:0;padding:9px 2px;font-size:11.5px;
-  font-family:var(--f-body);font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
   color:var(--wcI)}
 .wrel:before,.wrel:after{content:'';height:1px;background:var(--wcL);flex:1}
 /* the wording the assistant would say out loud */
 .wsay{border:1px dashed var(--line2);border-radius:12px;padding:13px 15px;background:var(--sunk)}
-.wsay .hd{display:flex;align-items:center;gap:8px;font-family:var(--f-body);font-size:12px;
+.wsay .hd{display:flex;align-items:center;gap:8px;font-family:Poppins,sans-serif;font-size:12px;
   font-weight:600;color:var(--ink2);margin-bottom:8px}
 .wsay .hd .ic{color:var(--brandInk)}
 .wsay p{font-size:13px;line-height:1.6;color:var(--ink2);font-style:italic}
@@ -1004,20 +985,20 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .wband .bh .bi{width:30px;height:30px;border-radius:9px;background:var(--tint);color:var(--brandInk);
   display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .wband.hot .bh .bi{background:var(--wcfLine);color:var(--wcfInk)}
-.wband .bh b{font-family:var(--f-head);font-size:14px;font-weight:600}
+.wband .bh b{font-family:Poppins,sans-serif;font-size:14px;font-weight:600}
 .wband .bh .s{font-size:12.5px;color:var(--sec)}
 .wband .bh .r{margin-left:auto;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .wband .bf{padding:11px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--sec);
   display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-radius:0 0 13px 13px}
 /* stat counts, e.g. 2 conflicts · 1 discrepancy */
 .wstat{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
-  font-family:var(--f-body);color:var(--wcI)}
+  font-family:Poppins,sans-serif;color:var(--wcI)}
 .wstat i{width:7px;height:7px;border-radius:50%;background:var(--wc);font-style:normal;flex:0 0 auto}
 
 /* meeting rows and list rows get a quiet marker so a conflict is findable
    without opening the meeting */
 .wdot{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
-  font-family:var(--f-body);border-radius:20px;padding:1px 8px 1px 6px;
+  font-family:Poppins,sans-serif;border-radius:20px;padding:1px 8px 1px 6px;
   background:var(--wcT);color:var(--wcI);border:1px solid var(--wcL)}
 .wdot .ic{flex:0 0 auto}
 
@@ -1054,7 +1035,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
    read as loose next to the bordered cards it sits beside */
 .sidebox{border:1px solid var(--line);border-radius:14px;background:var(--surf)}
 .sidebox .sbh{display:flex;align-items:center;gap:9px;padding:13px 16px;
-  border-bottom:1px solid var(--line);font-family:var(--f-head);font-size:14px;font-weight:600}
+  border-bottom:1px solid var(--line);font-family:Poppins,sans-serif;font-size:14px;font-weight:600}
 .sidebox .sbh>.ic{color:var(--brandInk);flex:0 0 auto}
 .sidebox .sbh .n{margin-left:2px;font-weight:500;color:var(--ter);font-size:12.5px}
 .sidebox .sbh .jump{margin-left:auto}
@@ -1134,7 +1115,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
    contributing to the scroll width of whatever region the control sits in,
    which is what a hidden pseudo-element was quietly doing before. */
 #tip{position:absolute;z-index:60;pointer-events:none;max-width:250px;
-  background:var(--ink);color:var(--surf);font-family:var(--f-body);font-size:11.5px;
+  background:var(--ink);color:var(--surf);font-family:Poppins,sans-serif;font-size:11.5px;
   font-weight:500;line-height:1.45;padding:5px 10px;border-radius:8px;text-align:center;
   box-shadow:0 8px 22px rgba(0,0,0,.22);opacity:0;transform:translateY(3px);
   transition:opacity .12s,transform .12s;left:0;top:0;visibility:hidden}
@@ -1213,9 +1194,9 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   animation:pdot 1.7s ease-in-out infinite}
 @keyframes pdot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(217,45,32,.55)}
   55%{opacity:.55;box-shadow:0 0 0 5px rgba(217,45,32,0)}}
-.pill .pstat b{font-family:var(--f-body);font-size:15px;font-weight:600;letter-spacing:.01em;
+.pill .pstat b{font-family:Poppins,sans-serif;font-size:15px;font-weight:600;letter-spacing:.01em;
   font-variant-numeric:tabular-nums;color:var(--pillInk)}
-.pill .plabel{font-family:var(--f-body);font-size:13px;font-weight:600;color:var(--pillInk);
+.pill .plabel{font-family:Poppins,sans-serif;font-size:13px;font-weight:600;color:var(--pillInk);
   white-space:nowrap;flex:0 0 auto}
 .pill .psub{font-size:12px;color:var(--pillSec);white-space:nowrap;flex:0 0 auto}
 /* paused: the timer stops and the red drops out entirely, so a glance at the
@@ -1234,7 +1215,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .pbtn.stop{background:var(--danger);color:#fff}
 .pbtn.stop:hover{background:var(--danger);filter:brightness(1.1)}
 .pbtn .b{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;
-  padding:0 5px;font-style:normal;font-family:var(--f-body);font-size:11px;font-weight:700;
+  padding:0 5px;font-style:normal;font-family:Poppins,sans-serif;font-size:11px;font-weight:700;
   display:flex;align-items:center;justify-content:center;
   background:var(--warn);color:#241500;border:2px solid var(--pill)}
 .pbtn .b.hot{background:var(--danger);color:#fff}
@@ -1273,7 +1254,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .wpop .wsy b{color:var(--ink2);font-weight:600}
 .wpop .wfoot{display:flex;gap:7px;padding:13px 14px 14px;flex-wrap:wrap}
 .wpop .wfoot .btn{flex:1 1 auto;justify-content:center}
-.wpop .more{border-top:1px solid var(--line);padding:10px 15px;font-family:var(--f-body);
+.wpop .more{border-top:1px solid var(--line);padding:10px 15px;font-family:Poppins,sans-serif;
   font-size:12.5px;font-weight:600;color:var(--brandInk);cursor:pointer;display:flex;
   align-items:center;gap:7px}
 .wpop .more:hover{background:var(--sunk)}
@@ -1286,7 +1267,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .wlist .wl:hover{filter:brightness(.985)}
 .wlist .wl .wi{width:22px;height:22px;border-radius:7px;background:var(--surf);color:var(--wcI);
   display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:1px}
-.wlist .wl .l1{font-family:var(--f-body);font-size:12.5px;font-weight:600;color:var(--wcI);
+.wlist .wl .l1{font-family:Poppins,sans-serif;font-size:12.5px;font-weight:600;color:var(--wcI);
   display:block}
 .wlist .wl .l2{font-size:12px;color:var(--ink2);display:block;margin-top:3px;line-height:1.45;
   overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
@@ -1318,7 +1299,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .fhead .fi{width:44px;height:44px;border-radius:13px;background:var(--tint);color:var(--brandInk);
   display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .fhead .ft{min-width:0;flex:1}
-.fhead h1{font-family:var(--f-head);font-size:24px;font-weight:600;letter-spacing:-.015em;
+.fhead h1{font-family:Poppins,sans-serif;font-size:24px;font-weight:600;letter-spacing:-.015em;
   display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .fhead h1 .edit{opacity:0;color:var(--sec);display:inline-flex;pointer-events:none}
 .fhead:hover h1 .edit{opacity:1}
@@ -1332,7 +1313,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
 .fcard .top{display:flex;align-items:center;gap:10px}
 .fcard .top .fi{width:32px;height:32px;border-radius:10px;background:var(--tint2);color:var(--brandInk);
   display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-.fcard .nm{font-family:var(--f-head);font-size:14px;font-weight:600;flex:1;min-width:0;
+.fcard .nm{font-family:Poppins,sans-serif;font-size:14px;font-weight:600;flex:1;min-width:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fcard .fm{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;
   justify-content:center;color:var(--ter);flex:0 0 auto;opacity:0;pointer-events:none}
@@ -1342,7 +1323,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .fcard .mt{font-size:12px;color:var(--ter);display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   margin-top:auto}
-.fcard .mt b{color:var(--ink2);font-family:var(--f-body);font-weight:600}
+.fcard .mt b{color:var(--ink2);font-family:Poppins,sans-serif;font-weight:600}
 .fcard.add{border-style:dashed;align-items:center;justify-content:center;text-align:center;
   color:var(--sec);min-height:118px}
 .fcard.add:hover{color:var(--brandInk)}
@@ -1351,20 +1332,20 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
    need a source chip per line, since each line came from a different call */
 .rollgrid{display:grid;grid-template-columns:1fr 340px;gap:26px;align-items:start}
 .bul li .from{font-size:11.5px;color:var(--ter);white-space:nowrap;margin-left:auto;flex:0 0 auto;
-  cursor:pointer;font-family:var(--f-body);font-weight:600}
+  cursor:pointer;font-family:Poppins,sans-serif;font-weight:600}
 .bul li .from:hover{color:var(--brandInk);text-decoration:underline}
 #frame.w2 .rollgrid{grid-template-columns:1fr}
 
 /* ══════════════════════════════ attendees ══════════════════════════════ */
 .attx{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);
-  font-family:var(--f-body);font-weight:600;cursor:pointer;border-radius:7px;padding:3px 7px;
+  font-family:Poppins,sans-serif;font-weight:600;cursor:pointer;border-radius:7px;padding:3px 7px;
   margin-left:2px}
 .attx:hover{background:var(--sunk);color:var(--brandInk)}
 .faces i.more{background:var(--sunk)!important;color:var(--sec);font-size:10px}
 .prow{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:8px}
 .prow:hover{background:var(--sunk)}
 .prow .av{width:26px;height:26px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;
-  justify-content:center;font-size:10.5px;font-weight:700;color:#FFF;font-family:var(--f-body)}
+  justify-content:center;font-size:10.5px;font-weight:700;color:#FFF;font-family:Poppins,sans-serif}
 .prow .nm{flex:1;min-width:0;font-size:13px;color:var(--ink2)}
 .prow .nm span{display:block;font-size:11px;color:var(--ter);margin-top:1px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
@@ -1373,7 +1354,7 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   transition:opacity .12s}
 .prow:hover .rm{opacity:1}
 .prow .rm:hover{background:var(--dangerTint);color:var(--dangerInk)}
-.prow .me{font-size:11px;color:var(--ter);font-family:var(--f-body);font-weight:600;flex:0 0 auto}
+.prow .me{font-size:11px;color:var(--ter);font-family:Poppins,sans-serif;font-weight:600;flex:0 0 auto}
 
 /* ══════════════════════════════ meeting assistant panel ══════════════════════════════ */
 /* Shares .panel with the task details panel, so only the chat body differs. */
@@ -1937,7 +1918,7 @@ function colbtn(k){
 const v=(on,icon,label,right,act,par)=>`<a class="${on?'on':''}" data-a="${act}" data-p="${par}" title="${
   esc(label)}">${ic(icon,16)}<span class="lbl">${label}</span>${right||''}</a>`;
 const cnt=n=>`<span class="n">${n}</span>`;
-const pill=n=>`<span class="npill">${n}</span>`;
+const pill=n=>`<span class="pill">${n}</span>`;
 
 /* ══════════════════════════════════ list columns ══════════════════════════════════ */
 /* A folder row and, when expanded, its sub-folder rows beneath it. The twisty
@@ -2514,7 +2495,7 @@ function watchPanel(){
       <span class="tbtn" data-a="wclose" title="Close">${ic('x',17)}</span></span></div>
    <div class="pb2">
     <div>
-      <div style="font-family:var(--f-head);font-size:16px;font-weight:600;line-height:1.42">${esc(w.title)}</div>
+      <div style="font-family:Poppins;font-size:16px;font-weight:600;line-height:1.42">${esc(w.title)}</div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <span class="wchip">${ic(t.icon,12)}${t.label}</span>
         ${settled?`<span class="pri ${w.status==='resolved'?'ok':''}">${
@@ -2633,7 +2614,7 @@ function viewSpeech(){
         <span><span class="statusline"><span class="d" style="background:var(--danger)"></span>
           Recording · MacBook Air Microphone · release <span class="kbd">${db.settings.hotkey}</span> to paste</span>
           <span class="sub">On device · audio never leaves your Mac</span></span>
-        <span style="margin-left:auto;font-family:var(--f-body);font-size:15px;font-weight:600;color:var(--dangerInk)">
+        <span style="margin-left:auto;font-family:Poppins;font-size:15px;font-weight:600;color:var(--dangerInk)">
           0:${String(secs).padStart(2,'0')}</span></div>
       <div style="margin-top:18px">${meterBars(78,true,secs)}</div></div>`
     :`<div class="card" style="padding:20px;margin-bottom:18px">
@@ -3356,7 +3337,7 @@ function taskPanel(){
       <span class="tbtn" data-a="menu" data-p="task:${t.id}" title="Task options">${ic('dots',17)}</span>
       <span class="tbtn" data-a="closepanel" title="Close">${ic('x',17)}</span></span></div>
    <div class="pb2">
-    <div><div style="font-family:var(--f-head);font-size:16px;font-weight:600;line-height:1.4"
+    <div><div style="font-family:Poppins;font-size:16px;font-weight:600;line-height:1.4"
         contenteditable="true">${esc(t.title)}</div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         ${t.pri?`<span class="pri ${t.pri}">${ic('flag',12)}${t.pri==='hi'?'High':'Medium'}</span>`:''}
@@ -3894,7 +3875,7 @@ function wpop(){
       </div></div>`;}
   if(S.wopen){
     return `<div class="wpop"><div class="wcard">
-      <div class="ph2">${ic('radar',16)}<b style="font-family:var(--f-head);font-size:13.5px">Watchouts</b>
+      <div class="ph2">${ic('radar',16)}<b style="font-family:Poppins,sans-serif;font-size:13.5px">Watchouts</b>
         <span class="age">${open.length} open</span></div>
       <div style="padding:9px 15px 12px;display:flex;gap:12px;flex-wrap:wrap">${
         wCounts(open).map(([t,n])=>`<span class="wstat w-${t}"><i></i>${n} ${
