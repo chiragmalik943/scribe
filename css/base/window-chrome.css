@@ -1,0 +1,191 @@
+/* App shell: window frame, title bar, sidebar rail, list column, and main content area. */
+
+/* ══════════════════════════════ window frame ══════════════════════════════ */
+#frame{position:relative;width:1440px;height:900px;background:var(--surf);border-radius:var(--r4);overflow:hidden;
+  box-shadow:0 40px 100px rgba(40,20,8,.26),0 0 0 1px rgba(40,20,8,.07);
+  transform-origin:center center;transition:background .25s}
+/* the mock window gives up its frame and fills the viewport once the browser
+   gets too small to show it comfortably at 1440×900 */
+#frame.fill{width:100%;height:100%;border-radius:0;box-shadow:none;transform:none!important}
+#app{height:100%}
+.shell{display:flex;flex-direction:column;height:100%;position:relative;overflow:hidden}
+.app{display:flex;flex:1;min-height:0;position:relative}
+
+/* ══════════════════════════════ window title bar ══════════════════════════════ */
+.topbar{height:56px;flex:0 0 auto;display:flex;align-items:center;gap:var(--s4);
+  padding:0 var(--s3) 0 var(--s5);background:var(--surf);border-bottom:1px solid var(--line);z-index:6}
+.topbar .ttl{display:flex;align-items:baseline;gap:10px;min-width:0}
+.topbar h1{font-family:var(--f-head);font-size:19px;font-weight:600;
+  letter-spacing:-.012em;white-space:nowrap;line-height:1.2}
+.topbar .state{font-size:12.5px;color:var(--sec);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.topbar .r{margin-left:auto;display:flex;align-items:center;gap:var(--s1);flex:0 0 auto}
+
+/* ══════════════════════════════ rail (sidebar 1) ══════════════════════════════ */
+/* --sbT is the one curve every panel in this app opens and closes on: a fast
+   start that settles rather than eases out symmetrically, which is what makes
+   a sliding panel read as weight arriving rather than as a fade in width. */
+:root{--sbT:.26s cubic-bezier(.32,.72,0,1)}
+.rail{width:248px;flex:0 0 248px;background:var(--rail);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;padding:var(--s3) var(--s3) var(--s2);overflow:hidden;
+  transition:width var(--sbT),flex-basis var(--sbT),padding var(--sbT),background .25s}
+.app.railmin .rail{width:72px;flex:0 0 72px;padding:14px 8px}
+.app.railmin .rail .lbl,.app.railmin .rail .slab,.app.railmin .rail .acct .who,
+.app.railmin .rail .upg,.app.railmin .subnav,.app.railmin .rail .colbtn b{display:none}
+.app.railmin .nav a{justify-content:center;padding:0;width:44px;height:44px;margin:0 auto}
+.app.railmin .rail .colbtn{justify-content:center;padding:0;width:44px;height:40px;margin:0 auto}
+.app.railmin .acct{border:0;background:transparent;padding:0;justify-content:center;box-shadow:none}
+.app.railmin .acct .top{justify-content:center}
+.app.railmin .avat{width:34px;height:34px;font-size:13px}
+/* Collapse / expand, shared by both sidebars. It used to carry the word
+   "Collapse" in both, so the bottom of the window said it twice for a control
+   whose icon already shows which way the panel folds. Icon only now, named by
+   the tooltip. */
+.colbtn{display:flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:var(--r2);color:var(--ter);cursor:pointer;flex:0 0 auto;
+  transition:background var(--tr),color var(--tr)}
+.colbtn b{display:none}
+.colbtn:hover{background:var(--sunk);color:var(--ink2)}
+.lights{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding-right:4px}
+.lights i{width:12px;height:12px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;color:rgba(0,0,0,.5)}
+.lights i svg{opacity:0;width:9px;height:9px}
+.lights:hover i svg{opacity:1}
+.lights .r{background:#FF5F57}.lights .y{background:#FEBC2E}.lights .g{background:#28C840}
+[data-theme="dark"] .lights .r{background:#E0443E}[data-theme="dark"] .lights .y{background:#DEA123}
+[data-theme="dark"] .lights .g{background:#1AAB29}
+.tbtn:hover{background:var(--sunk)}
+.slab{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter);padding:0 10px var(--s2);white-space:nowrap}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:11px;height:36px;padding:0 10px;border-radius:var(--r2);
+  font-family:var(--f-body);font-size:13.5px;font-weight:500;color:var(--ink2);
+  text-decoration:none;cursor:pointer;white-space:nowrap;
+  transition:background var(--tr),color var(--tr)}
+.nav a:hover{background:var(--sunk)}
+.nav a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
+.nav a .ic{color:var(--ter)}
+.nav a.on .ic{color:var(--brandInk)}
+/* a sub-nav is one indent and a hairline, not a bracket */
+.subnav{display:flex;flex-direction:column;gap:1px;margin:1px 0 var(--s1) 21px;
+  border-left:1px solid var(--line);padding-left:10px}
+.subnav a{display:flex;align-items:center;gap:9px;height:30px;padding:0 8px;border-radius:var(--r1);
+  font-size:12.5px;color:var(--sec);cursor:pointer;transition:background var(--tr),color var(--tr)}
+.subnav a:hover{background:var(--sunk);color:var(--ink2)}
+.subnav a.on{background:var(--tint2);color:var(--brandInk);font-weight:600}
+.subnav a .ic{color:var(--ter)}
+.subnav a.on .ic{color:var(--brandInk)}
+.spacer{flex:1}
+/* The account block was a bordered card floating on the rail — a container
+   around something that is already at the edge of the screen. */
+.acct{display:flex;align-items:center;padding:var(--s2) var(--s2);border-radius:var(--r2);
+  border:0;background:transparent;overflow:hidden;flex:0 0 auto;cursor:pointer;
+  transition:background var(--tr)}
+.acct:hover{background:var(--sunk)}
+.acct .top{display:flex;align-items:center;gap:10px;min-width:0;width:100%}
+.acct .who{min-width:0;flex:1}
+.avat{width:28px;height:28px;border-radius:50%;background:var(--tint);color:var(--brandInk);
+  display:flex;align-items:center;justify-content:center;font-family:var(--f-body);
+  font-size:12px;font-weight:600;flex:0 0 auto}
+.acct .avat{width:30px;height:30px;background:var(--line2);color:var(--ink2);font-size:12px}
+.acct .nm{font-size:12.5px;font-weight:600;line-height:1.3;display:block;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.acct .pl{font-size:11.5px;color:var(--ter);display:block;line-height:1.35}
+.upg{display:flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto;
+  font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--brandInk);
+  border:0;border-radius:var(--r1);padding:4px 7px;background:transparent}
+.upg:hover{background:var(--tint2)}
+
+/* ══════════════════════════════ list column (sidebar 2) ══════════════════════════════ */
+.listcol{width:272px;flex:0 0 272px;background:var(--surf);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:width var(--sbT),flex-basis var(--sbT)}
+/* collapsed: a narrow strip of icons rather than nothing at all */
+.app.listmin .listcol{width:56px;flex:0 0 56px}
+.app.listmin .listcol .lbl,.app.listmin .listcol .n,.app.listmin .listcol .npill,
+.app.listmin .listcol .slabel,.app.listmin .listcol .note,.app.listmin .listcol input,
+.app.listmin .listcol .convrow,.app.listmin .listcol .emptylist,
+.app.listmin .listcol .lhead b,.app.listmin .listcol .colbtn b{display:none}
+.app.listmin .srch{width:36px;height:36px;padding:0;margin:12px auto 0;justify-content:center;
+  border-radius:var(--r2);cursor:pointer}
+.app.listmin .srch:hover{border-color:var(--brand);color:var(--brandInk)}
+.app.listmin .lbody{padding:10px 10px 8px;align-items:center}
+.app.listmin .views{width:100%;align-items:center}
+.app.listmin .views a{width:36px;height:36px;min-height:36px;padding:0;justify-content:center;border-radius:var(--r2)}
+.app.listmin .lhead{padding:0;justify-content:center}
+.app.listmin .lhead .act{margin-left:0}
+.app.listmin .listcol .colbtn{justify-content:center;padding:0;width:36px;margin:0 auto}
+.lfoot{padding:var(--s1) var(--s3) var(--s2);flex:0 0 auto;display:flex}
+.lhead{height:56px;display:flex;align-items:center;padding:0 var(--s4);
+  border-bottom:1px solid var(--line);flex:0 0 auto}
+.lhead b{font-family:var(--f-head);font-size:14px;font-weight:600}
+.lhead .act{margin-left:auto;display:flex;align-items:center;gap:5px;font-family:var(--f-body);
+  font-size:12px;font-weight:600;color:var(--brandInk)}
+/* the search field is a filled well rather than an outlined box — one less
+   line in a column that already has a border on both sides of it */
+.srch{display:flex;align-items:center;gap:var(--s2);background:var(--sunk);
+  border:1px solid transparent;border-radius:var(--r2);height:34px;padding:0 10px;
+  margin:var(--s4) var(--s3) 0;flex:0 0 auto;
+  transition:background var(--tr),border-color var(--tr),box-shadow var(--tr)}
+.srch .ic{color:var(--ter);flex:0 0 auto}
+.srch:focus-within{background:var(--surf);border-color:var(--brand);box-shadow:0 0 0 3px var(--ring)}
+.srch input{font-size:13px;width:100%}
+.srch input::placeholder{color:var(--ter)}
+.lbody{padding:var(--s3);display:flex;flex-direction:column;gap:1px;overflow-y:auto;flex:1}
+.views{display:flex;flex-direction:column;gap:1px}
+.views a{display:flex;align-items:center;gap:10px;min-height:32px;padding:5px 9px;
+  border-radius:var(--r2);font-size:13px;color:var(--ink2);cursor:pointer;
+  transition:background var(--tr),color var(--tr)}
+/* nothing dropped into the right-hand slot may set the row's height */
+.views a>*{flex:0 0 auto}
+.views a .lbl{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.views a:hover{background:var(--sunk)}
+.views a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
+.views a .ic{color:var(--ter)}
+.views a.on .ic{color:var(--brandInk)}
+.views a .n{margin-left:auto;font-size:11.5px;color:var(--ter);font-variant-numeric:tabular-nums}
+.views a.on .n{color:var(--brandInk);font-weight:600}
+/* NB: this is deliberately NOT called .pill — that name belongs to the floating
+   recording pill (height:52px), and sharing it made every view with a red count
+   inherit that height. Sized off its own line-box so it never stretches the row. */
+.views a .npill{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;
+  justify-content:center;height:18px;min-width:18px;padding:0 6px;box-sizing:border-box;
+  font-size:11px;font-weight:600;line-height:1;color:var(--dangerOn);
+  background:var(--danger);border-radius:var(--rF)}
+.views a.on .npill{color:var(--dangerOn);background:var(--danger)}
+.slabel{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter);padding:var(--s5) 9px var(--s2)}
+/* an aside, not a boxed callout — the dashed border made a footnote look like
+   an input waiting to be filled in */
+.note{margin:var(--s4) 9px 0;padding:0;border:0;font-size:11.5px;color:var(--ter);line-height:1.5}
+.emptylist{padding:28px 14px;text-align:center;font-size:12px;color:var(--ter);line-height:1.55}
+.emptylist b{display:block;color:var(--ink2);font-size:13px;font-family:var(--f-head);
+  font-weight:600;margin-bottom:5px}
+.convrow{display:block;padding:9px 10px;border-radius:var(--r2);cursor:pointer;
+  transition:background var(--tr)}
+.convrow:hover{background:var(--sunk)}
+.convrow.on{background:var(--tint)}
+.convrow .t{font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.4;display:block}
+.convrow.on .t{color:var(--brandInk)}
+.convrow .d{font-size:11.5px;color:var(--sec);margin-top:3px;display:block}
+.convrow.on .d{color:var(--brandInk)}
+
+/* ══════════════════════════════ main ══════════════════════════════ */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--surf)}
+.tbtn{width:30px;height:30px;border-radius:var(--r2);display:flex;align-items:center;
+  justify-content:center;color:var(--ter);position:relative;flex:0 0 auto;cursor:pointer;
+  transition:background var(--tr),color var(--tr)}
+.tbtn:hover{background:var(--sunk);color:var(--ink2)}
+.tbtn.hasbadge:after{content:'';position:absolute;top:5px;right:5px;width:6px;height:6px;
+  border-radius:50%;background:var(--danger);box-shadow:0 0 0 2px var(--surf)}
+/* the trail reads as one path: quiet steps, one solid destination */
+.crumb{display:flex;align-items:center;gap:var(--s1);font-size:12.5px;color:var(--ter);min-width:0}
+.crumb>.ic{color:var(--ter);opacity:.7}
+.crumb b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crumb .bk{cursor:pointer;display:flex;align-items:center;gap:5px;padding:3px 6px;
+  border-radius:var(--r1);color:var(--sec);transition:background var(--tr),color var(--tr)}
+.crumb .bk:hover{color:var(--ink2);background:var(--sunk)}
+.crumb b{color:var(--ink);font-weight:600;font-family:var(--f-head);font-size:14px;
+  padding-left:2px}
+.body{flex:1;--bp:28px;padding:var(--bp);overflow-y:auto;display:flex;flex-direction:column}
+

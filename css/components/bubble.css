@@ -1,0 +1,164 @@
+/* Floating recording bubble widget. */
+
+/* ══════════════════════════════ floating bubble ══════════════════════════════ */
+/* Lives in the frame, not in #app, so a re-render never interrupts a drag or a
+   hover. z-index sits below .scrim (20) on purpose: an open modal covers it.
+
+   Three shapes, one container, because they are three states of one object and
+   the user should see it change rather than see it swapped:
+
+     idle        a 60px round core with a hover tray — dictate, record, ask, more
+     dictating   a short capsule: meter, label, stop. Nothing to configure.
+     recording   a pill: mark, timer, meter, pause, stop, and a watchouts badge
+
+   #bubble is sized by its content and positioned from its top-left, so the
+   width changes as the shape does; renderBubble() re-clamps x afterwards using
+   the measured width, which is why the pill never opens off-screen. */
+#bubble{position:absolute;z-index:18;width:max-content;user-select:none}
+#bubble.off{display:none}
+#bubble.drag .bcore,#bubble.drag .pill{cursor:grabbing}
+#bubble.drag .bcore{transform:scale(1.05)}
+
+/* ── idle: a circle that becomes a pill under the cursor ─────────────────
+   The idle bubble and the recording pill are the same object, so the idle one
+   grows into the same shape rather than sprouting a separate floating tray.
+   Dictation is what the bubble is for, so the mic keeps the full 60px height
+   and its brand fill and caps the pill; the three secondary actions are
+   smaller, sit in the dark body, and are named by the shared tooltip.
+
+   #bubble stays 60px in this mode and .bhome is pinned to whichever edge the
+   bubble is nearest, so the expansion runs inward — the mic never moves out
+   from under the cursor that opened it, and the pill never grows off-screen. */
+#bubble.idle{width:60px;height:60px}
+.bhome{position:absolute;bottom:0;right:0;display:flex;align-items:center;
+  border-radius:var(--rF);background:transparent;box-shadow:none;
+  transition:background .2s,box-shadow .2s,padding .22s cubic-bezier(.2,.9,.3,1)}
+#bubble.idle.lft .bhome{right:auto;left:0}
+#bubble.idle:hover .bhome{background:var(--pill);box-shadow:var(--pillShadow);padding-left:15px}
+#bubble.idle.lft:hover .bhome{padding-left:0;padding-right:15px}
+/* Collapsed, the options have no width and simply sit under the core at zero
+   opacity — rather than inside an overflow:hidden wrapper, which would also
+   have clipped their tooltips off the top of the pill. */
+.bopts{display:flex;align-items:center;gap:9px;width:0;opacity:0;pointer-events:none;
+  transition:width .24s cubic-bezier(.2,.9,.3,1),margin .24s cubic-bezier(.2,.9,.3,1),opacity .16s}
+#bubble.idle:hover .bopts{width:132px;margin-right:9px;opacity:1;pointer-events:auto}
+#bubble.idle.lft:hover .bopts{margin-right:0;margin-left:9px}
+.hopt{width:38px;height:38px;border-radius:50%;background:var(--pillWell);color:var(--pillInk);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer;
+  transition:background .13s,transform .11s}
+.hopt:hover{background:rgba(255,255,255,.20);transform:translateY(-1px)}
+.bcore{width:60px;height:60px;border-radius:50%;background:var(--brandFill);color:var(--brandOn);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  box-shadow:0 10px 26px rgba(0,0,0,.26),0 0 0 1px rgba(0,0,0,.06);cursor:grab;
+  transition:background .16s,box-shadow .2s}
+.bcore:hover{background:var(--brandFillHov)}
+/* inside the pill the core is an end cap, so it drops the standalone shadow */
+#bubble.idle:hover .bcore{box-shadow:0 0 0 1px rgba(0,0,0,.10)}
+
+/* ── the pill: dictating and recording ─────────────────────────────────────
+   One dark chrome surface in both modes, because a recording control that
+   restyles itself per theme stops being recognisable. Everything inside is
+   36px tall so the pill reads as a single object rather than a toolbar. */
+.pill{display:flex;align-items:center;gap:9px;height:52px;padding:0 9px 0 8px;
+  border-radius:var(--rF);background:var(--pill);color:var(--pillInk);box-shadow:var(--pillShadow);
+  cursor:grab;position:relative;
+  animation:pgrow .22s cubic-bezier(.2,.9,.3,1)}
+@keyframes pgrow{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.pill .pmark{width:36px;height:36px;border-radius:50%;background:var(--pillWell);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;color:var(--pillInk)}
+.pill .pdiv{width:1px;height:22px;background:var(--pillLine);flex:0 0 auto}
+.pill .pstat{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding-left:1px}
+.pill .pstat .rdot{width:9px;height:9px;border-radius:50%;background:var(--danger);flex:0 0 auto;
+  animation:pdot 1.7s ease-in-out infinite}
+@keyframes pdot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(217,45,32,.55)}
+  55%{opacity:.55;box-shadow:0 0 0 5px rgba(217,45,32,0)}}
+.pill .pstat b{font-family:var(--f-body);font-size:15px;font-weight:600;letter-spacing:.01em;
+  font-variant-numeric:tabular-nums;color:var(--pillInk)}
+.pill .plabel{font-family:var(--f-body);font-size:13px;font-weight:600;color:var(--pillInk);
+  white-space:nowrap;flex:0 0 auto}
+.pill .psub{font-size:12px;color:var(--pillSec);white-space:nowrap;flex:0 0 auto}
+/* paused: the timer stops and the red drops out entirely, so a glance at the
+   pill can never mistake paused for recording */
+#bubble.paused .pill .pstat .rdot{background:var(--warn);animation:none}
+#bubble.paused .pill .pstat b{color:var(--pillSec)}
+.pmeter{display:flex;align-items:center;gap:2.5px;height:20px;flex:0 0 auto}
+.pmeter i{width:2.5px;border-radius:2px;background:var(--pillInk);opacity:.5;
+  transition:height .14s linear}
+.pmeter.live i{background:#4ADE80;opacity:.95}
+#bubble.paused .pmeter i{background:var(--pillInk);opacity:.28}
+.pbtn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:var(--pillInk);background:var(--pillWell);flex:0 0 auto;cursor:pointer;position:relative;
+  transition:background .13s,transform .11s}
+.pbtn:hover{background:rgba(255,255,255,.19);transform:translateY(-1px)}
+.pbtn.stop{background:var(--danger);color:#fff}
+.pbtn.stop:hover{background:var(--danger);filter:brightness(1.1)}
+.pbtn .b{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:var(--rF);
+  padding:0 5px;font-style:normal;font-family:var(--f-body);font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--warn);color:#241500;border:2px solid var(--pill)}
+.pbtn .b.hot{background:var(--danger);color:#fff}
+.pbtn.on{background:var(--pillInk);color:var(--pill)}
+/* the alert ring. Only a conflict turns it on, and it clears the moment the
+   watchout is looked at, so a permanent red halo is impossible. */
+#bubble.alert .pill{box-shadow:var(--pillShadow),0 0 0 1.5px var(--danger),0 0 0 7px var(--dangerTint);
+  animation:phalo 2.4s ease-in-out infinite}
+@keyframes phalo{0%,100%{box-shadow:var(--pillShadow),0 0 0 1.5px var(--danger),0 0 0 5px var(--dangerTint)}
+  50%{box-shadow:var(--pillShadow),0 0 0 1.5px var(--danger),0 0 0 10px var(--dangerTint)}}
+/* speaking: the pill hands the room over and shows how long it will take */
+.pill.saying{padding-right:14px}
+.pill .pbar{width:104px;height:4px;border-radius:2px;background:var(--pillWell);overflow:hidden;flex:0 0 auto}
+.pill .pbar i{display:block;height:100%;border-radius:2px;background:#4ADE80;
+  animation:pfill 3.1s linear forwards}
+@keyframes pfill{from{width:6%}to{width:100%}}
+
+/* ── the watchout popover ──────────────────────────────────────────────────
+   Anchored to the pill's right edge — the badge is what opens it — and it
+   flips to below the pill near the top of the window, like the tray. */
+.wpop{position:absolute;right:0;bottom:100%;padding-bottom:14px;width:326px;
+  transform-origin:88% 100%;animation:wpin .17s cubic-bezier(.2,.9,.3,1)}
+#bubble.flip .wpop{bottom:auto;top:100%;padding-bottom:0;padding-top:14px;transform-origin:88% 0}
+@keyframes wpin{from{opacity:0;transform:translateY(8px) scale(.95)}to{opacity:1;transform:none}}
+.wpop .wcard{background:var(--surf);border:1px solid var(--line);border-radius:var(--r4);
+  box-shadow:var(--shadow);overflow:hidden}
+/* the little tail that ties the card to the badge */
+.wpop:after{content:'';position:absolute;right:25px;bottom:9px;width:12px;height:12px;
+  background:var(--surf);border-right:1px solid var(--line2);border-bottom:1px solid var(--line2);
+  transform:rotate(45deg);border-bottom-right-radius:3px}
+#bubble.flip .wpop:after{bottom:auto;top:9px;transform:rotate(225deg)}
+.wpop .ph2{display:flex;align-items:center;gap:9px;padding:12px 14px 0}
+.wpop .ph2 .age{margin-left:auto;font-size:11.5px;color:var(--ter);white-space:nowrap}
+.wpop .wtx{padding:10px 15px 0;font-size:13.5px;line-height:1.55;color:var(--ink)}
+.wpop .wsy{padding:9px 15px 0;font-size:12.5px;line-height:1.55;color:var(--sec)}
+.wpop .wsy b{color:var(--ink2);font-weight:600}
+.wpop .wfoot{display:flex;gap:7px;padding:13px 14px 14px;flex-wrap:wrap}
+.wpop .wfoot .btn{flex:1 1 auto;justify-content:center}
+.wpop .more{border-top:1px solid var(--line);padding:10px 15px;font-family:var(--f-body);
+  font-size:12.5px;font-weight:600;color:var(--brandInk);cursor:pointer;display:flex;
+  align-items:center;gap:7px}
+.wpop .more:hover{background:var(--sunk)}
+.wpop .more .n{margin-left:auto;color:var(--ter);font-weight:500}
+/* the expanded list: one tappable line per watchout, colour-railed by type */
+.wlist{max-height:224px;overflow-y:auto}
+.wlist .wl{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;cursor:pointer;
+  border-left:3px solid var(--wc);background:var(--wcT)}
+.wlist .wl+.wl{border-top:1px solid var(--surf)}
+.wlist .wl:hover{filter:brightness(.985)}
+.wlist .wl .wi{width:22px;height:22px;border-radius:var(--r1);background:var(--surf);color:var(--wcI);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:1px}
+.wlist .wl .l1{font-family:var(--f-body);font-size:12.5px;font-weight:600;color:var(--wcI);
+  display:block}
+.wlist .wl .l2{font-size:12px;color:var(--ink2);display:block;margin-top:3px;line-height:1.45;
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.wlist .wl .age{font-size:11px;color:var(--sec);white-space:nowrap;flex:0 0 auto;margin-top:2px}
+[data-theme="dark"] .wlist .wl:hover{filter:brightness(1.14)}
+
+.wpop .pbar{width:auto;height:5px;border-radius:3px;background:var(--meterOff);overflow:hidden}
+.wpop .pbar i{display:block;height:100%;border-radius:3px;background:var(--brand);
+  animation:pfill 3.1s linear forwards}
+
+/* a narrow window shrinks the pill rather than letting it run off the edge */
+#frame.w1 .pill{height:46px;gap:7px}
+#frame.w1 .pill .pmark{display:none}
+#frame.w1 .pill .pbtn{width:32px;height:32px}
+#frame.w1 .wpop{width:274px}
+

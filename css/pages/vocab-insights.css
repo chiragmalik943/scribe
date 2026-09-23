@@ -1,0 +1,77 @@
+/* Vocabulary and insights panels. */
+
+/* ══════════════════════════════ vocab / insights ══════════════════════════════ */
+.vtable{width:100%;border-collapse:collapse}
+.vtable th{text-align:left;font-family:var(--f-body);font-size:11px;font-weight:600;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--ter);padding:0 var(--s3) var(--s2);
+  border-bottom:1px solid var(--line)}
+.vtable td{padding:12px var(--s3);border-bottom:1px solid var(--hair);font-size:13.5px;color:var(--ink2)}
+.vtable tr:last-child td{border-bottom:0}
+.vtable tr:hover td{background:var(--sunk)}
+.vtable td:first-child,.vtable th:first-child{padding-left:2px}
+.vtable td.tm{font-family:var(--f-body);font-weight:600;color:var(--ink)}
+.pillx{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;
+  border-radius:var(--r1);padding:1px 6px;font-family:var(--f-body);background:transparent;
+  color:var(--ter)}
+.pillx.ai{background:var(--tint2);color:var(--brandInk)}
+/* A stat is a number. It does not need a box round it — the label above and
+   the whitespace beside it are enough, and four boxed numbers in a row read
+   as four things to act on. */
+.stat{border:0;border-radius:0;padding:0;flex:1;min-width:0}
+.stat .lb{font-size:12px;color:var(--ter)}
+.stat .big{font-family:var(--f-head);font-size:29px;font-weight:600;letter-spacing:-.025em;
+  margin-top:var(--s1);line-height:1.05;font-variant-numeric:tabular-nums}
+.stat .dl{font-size:12px;color:var(--sec);margin-top:var(--s2);display:flex;align-items:center;
+  gap:5px;line-height:1.45}
+.stat .dl .ic{color:var(--ter);flex:0 0 auto}
+/* Charts: bars in a muted brand step so the page does not turn into a block
+   of saturated colour, with the axis as one hairline instead of a grid. */
+.chart{display:flex;align-items:flex-end;gap:var(--s2);height:132px;position:relative;padding-top:var(--s2)}
+.chart .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  height:100%;position:relative;cursor:default}
+.chart .bar{width:100%;max-width:26px;background:var(--o300);border-radius:var(--r1) var(--r1) 0 0;
+  transition:height .3s,background var(--tr)}
+.chart .col:hover .bar{background:var(--brand)}
+.chart .bar.mute{background:var(--meterOff);opacity:.5}
+.chart .col:hover .ttip{opacity:1}
+.gridl{position:absolute;left:0;right:0;border-top:1px solid var(--hair);font-size:11px;color:var(--ter)}
+.gridl span{position:absolute;left:-32px;top:-8px;font-variant-numeric:tabular-nums}
+.xax{display:flex;gap:var(--s2);margin-top:var(--s2);border-top:1px solid var(--line);padding-top:var(--s2)}
+.xax span{flex:1;text-align:center;font-size:11px;color:var(--ter)}
+.hbar{display:flex;align-items:center;gap:var(--s3);padding:6px 0}
+.hbar .lb{width:104px;flex:0 0 auto;font-size:12.5px;color:var(--ink2)}
+.hbar .tr{flex:1;height:8px;background:var(--sunk);border-radius:var(--rF);overflow:hidden}
+.hbar .tr i{display:block;height:8px;background:var(--o300);border-radius:var(--rF);transition:width .3s}
+.hbar:hover .tr i{background:var(--brand)}
+.hbar .vv{width:34px;text-align:right;font-size:12px;color:var(--ter);flex:0 0 auto;
+  font-variant-numeric:tabular-nums}
+.ttip{position:absolute;background:var(--ink);color:var(--surf);font-size:11px;padding:5px var(--s2);
+  border-radius:var(--r1);white-space:nowrap;z-index:3;opacity:0;transition:opacity var(--tr);
+  pointer-events:none}
+.ttip b{display:block;font-size:12px;font-family:var(--f-body);font-weight:600}
+.opt{display:flex;gap:var(--s3);border:1px solid var(--line);border-radius:var(--r3);
+  padding:13px var(--s4);flex:1;cursor:pointer;
+  transition:border-color var(--tr),background var(--tr)}
+.opt:hover{background:var(--sunk)}
+.opt.on{border-color:var(--brand);background:var(--tint2)}
+.opt .t{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:block}
+.opt .s{font-size:12.5px;color:var(--sec);display:block;margin-top:4px;line-height:1.55}
+.opt ul{list-style:none;margin-top:var(--s2);display:flex;flex-direction:column;gap:var(--s1)}
+.opt li{display:flex;gap:6px;font-size:12px;color:var(--sec);align-items:flex-start;line-height:1.45}
+.step{display:flex;gap:var(--s3);padding:13px 0}
+.step+.step{border-top:1px solid var(--hair)}
+.step .num{width:22px;height:22px;border-radius:50%;background:var(--sunk);color:var(--sec);
+  font-family:var(--f-body);font-size:11.5px;font-weight:600;display:flex;align-items:center;
+  justify-content:center;flex:0 0 auto;margin-top:1px}
+.step .num.done{background:var(--okTint);color:var(--okInk)}
+.step .num.wait{background:transparent;color:var(--ter);box-shadow:inset 0 0 0 1px var(--line)}
+.step .t{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:block;line-height:1.4}
+.step .s{font-size:12.5px;color:var(--sec);display:block;margin-top:3px;line-height:1.55;max-width:560px}
+.step .a{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:var(--s2);padding-left:var(--s4)}
+.keycap{font-family:var(--f-body);font-size:12.5px;font-weight:600;background:var(--sunk);
+  border:1px solid var(--line);border-radius:var(--r1);padding:4px 10px;color:var(--ink2)}
+.tips{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3) 0 0}
+.tips div{display:flex;gap:var(--s2);font-size:12.5px;color:var(--sec);line-height:1.5}
+.tips div .ic{color:var(--ter);flex:0 0 auto;margin-top:2px}
+.hint{font-size:12.5px;color:var(--ter);line-height:1.5}
+.dim{color:var(--sec)}

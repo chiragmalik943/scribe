@@ -1,0 +1,142 @@
+/* Watchouts (flagged issues) panel. */
+
+/* ══════════════════════════════ watchouts ══════════════════════════════ */
+/* Type is the only signal that varies, so every watchout surface reads its
+   colours off one `.w-<type>` class rather than repeating three rulesets.
+   --wc is the accent, --wcT the tinted well, --wcL its border, --wcI the ink
+   that stays legible on the tint in both modes. */
+.w-conflict{--wc:var(--wcf);--wcI:var(--wcfInk);--wcT:var(--wcfTint);--wcL:var(--wcfLine)}
+.w-discrepancy{--wc:var(--wdc);--wcI:var(--wdcInk);--wcT:var(--wdcTint);--wcL:var(--wdcLine)}
+.w-clarification{--wc:var(--wcl);--wcI:var(--wclInk);--wcT:var(--wclTint);--wcL:var(--wclLine)}
+
+/* the type chip, used in rows, panels, the pill popover and the rollup */
+.wchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  font-family:var(--f-body);border-radius:var(--r1);padding:2px 7px;letter-spacing:.01em;
+  background:var(--wcT);color:var(--wcI);border:0;white-space:nowrap;flex:0 0 auto;line-height:1.55}
+.wchip .ic{flex:0 0 auto}
+.wchip.plain{background:var(--sunk);color:var(--ter)}
+.wchip.brand{background:var(--tint);color:var(--brandInk)}
+
+/* one row per watchout. The icon well carries the type colour, the title is the
+   assistant's own sentence, and the sub-line is always the same shape:
+   what was said here, then what it collides with. */
+/* One watchout. The type used to be said four times over — a coloured rail on
+   the left, a tinted-and-outlined icon well, a coloured chip and a coloured
+   count in the header above. A 4px dot carries it now, and the row is a row. */
+.wrow{display:flex;align-items:flex-start;gap:var(--s3);padding:13px 10px;cursor:pointer;
+  position:relative;flex-wrap:wrap;border-radius:var(--r2);transition:background var(--tr)}
+.card>.wrow+.wrow{border-top:1px solid var(--hair)}
+.wrow:hover{background:var(--sunk)}
+.wrow.wsel{background:var(--tint2)}
+.wrow:before{display:none}
+.wrow .wi{width:26px;height:26px;border-radius:var(--r1);background:var(--wcT);color:var(--wcI);
+  border:0;display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:1px}
+.wrow .wmain{flex:1 1 190px;min-width:0}
+.wrow .wt{font-family:var(--f-head);font-size:13.5px;font-weight:600;line-height:1.45;
+  color:var(--ink);display:block}
+.wrow .ws{font-size:12.5px;color:var(--sec);line-height:1.55;margin-top:4px;display:block}
+.wrow .ws b{color:var(--ink2);font-weight:600}
+.wrow .wm{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;color:var(--sec);
+  flex-wrap:wrap}
+.wrow .wm .ic{color:var(--line2)}
+.wrow .wm .wsr{display:inline-flex;align-items:center;gap:5px}
+.wrow .wr{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:var(--s2);
+  margin-left:auto}
+.wrow .wr .age{font-size:11.5px;color:var(--sec);white-space:nowrap;line-height:1.3}
+.wrow .wacts{display:flex;gap:1px;opacity:0;pointer-events:none;flex:0 0 auto;
+  transition:opacity var(--tr)}
+.wrow:hover .wacts,.wrow.wsel .wacts{opacity:1;pointer-events:auto}
+.wrow .wacts span{width:28px;height:28px;border-radius:var(--r2);display:flex;align-items:center;
+  justify-content:center;color:var(--ter);background:transparent;border:0;
+  transition:background var(--tr),color var(--tr)}
+.wrow .wacts span:hover{background:var(--tint2);color:var(--brandInk)}
+.wrow .wacts span.gd:hover{background:var(--okTint);color:var(--okInk)}
+/* a settled watchout stays readable but stops competing for attention */
+.wrow.done{opacity:.62}
+.wrow.done .wi{background:var(--sunk);color:var(--ter);border-color:var(--line)}
+.wrow.done:before{display:none}
+.wrow.done .wt{color:var(--ink2)}
+.wlistcard .wrow:first-child:before{border-radius:var(--r4) 0 0 0}
+.wlistcard .wrow:last-child:before{border-radius:0 0 0 13px}
+
+/* the compare block: what was said now, and what it collides with. Two columns
+   wherever the container has room, stacked below that, with the relation
+   sitting in the gap so the pair reads as one statement either way. */
+.wcmp{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);
+  border-radius:var(--r3);overflow:hidden;background:var(--surf)}
+.wcmp>div{padding:13px var(--s4);min-width:0}
+.wcmp>div+div{border-left:1px solid var(--hair);background:var(--sunk)}
+.wcmp .hd{display:flex;align-items:center;gap:6px;font-family:var(--f-body);font-size:11px;
+  font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--sec);
+  margin-bottom:var(--s2)}
+.wcmp .hd .ic{color:var(--sec)}
+.wcmp .q{font-size:13px;line-height:1.65;color:var(--ink2);font-style:italic}
+.wcmp .who{display:flex;align-items:center;gap:6px;margin-top:var(--s2);font-size:11.5px;
+  color:var(--sec);flex-wrap:wrap}
+.wcmp .who b{font-family:var(--f-body);font-weight:600;color:var(--ink2);font-size:12px}
+.wcmp .lk{font-family:var(--f-body);font-size:11.5px;font-weight:600;color:var(--brandInk);
+  cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:var(--s2)}
+.wcmp .lk:hover{text-decoration:underline}
+.wrel{display:flex;align-items:center;gap:var(--s2);margin:0;padding:var(--s2) 2px;font-size:11px;
+  font-family:var(--f-body);font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ter)}
+.wrel:before,.wrel:after{content:'';height:1px;background:var(--hair);flex:1}
+/* the wording the assistant would say out loud */
+.wsay{border:0;border-radius:var(--r3);padding:13px var(--s4);background:var(--sunk)}
+.wsay .hd{display:flex;align-items:center;gap:7px;font-family:var(--f-body);font-size:11px;
+  font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ter);
+  margin-bottom:var(--s2)}
+.wsay .hd .ic{color:var(--ter)}
+.wsay p{font-size:13px;line-height:1.65;color:var(--ink2);font-style:italic}
+.wsay .a{display:flex;gap:var(--s2);margin-top:var(--s3);flex-wrap:wrap}
+
+/* The band a project leads with. It said it was restrained and then filled
+   itself with the conflict tint whenever a conflict existed, so the first
+   thing a project page did was turn pink. It is a heading with evidence under
+   it: one surface, one hairline, and the counts as small dotted labels. */
+.wband{border:1px solid var(--line);border-radius:var(--r4);background:var(--surf);
+  margin-bottom:var(--s7);flex:0 0 auto;overflow:hidden}
+.wband.hot{border-color:var(--line)}
+.wband .bh{display:flex;align-items:center;gap:var(--s3);padding:13px var(--s4);
+  border-bottom:1px solid var(--hair);flex-wrap:wrap;background:transparent}
+.wband.hot .bh{background:transparent;border-bottom-color:var(--hair)}
+.wband .bh .bi{width:28px;height:28px;border-radius:var(--r1);background:var(--sunk);
+  color:var(--ter);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.wband.hot .bh .bi{background:var(--wcfTint);color:var(--wcfInk)}
+.wband .bh b{font-family:var(--f-head);font-size:13.5px;font-weight:600}
+.wband .bh .s{font-size:12px;color:var(--ter);display:block;margin-top:1px}
+.wband .bh .r{margin-left:auto;display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.wband .wrow{border-radius:0;padding-left:var(--s4);padding-right:var(--s4)}
+.wband .wrow+.wrow{border-top:1px solid var(--hair)}
+.wband .bf{padding:10px var(--s4);border-top:1px solid var(--hair);font-size:12px;
+  color:var(--ter);display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;
+  background:transparent}
+/* stat counts, e.g. 2 conflicts · 1 discrepancy. The number is the message;
+   the dot is the only colour. */
+.wstat{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:500;
+  font-family:var(--f-body);color:var(--sec)}
+.wstat b{font-weight:600;color:var(--ink2)}
+.wstat i{width:5px;height:5px;border-radius:50%;background:var(--wc);font-style:normal;flex:0 0 auto}
+
+/* meeting rows and list rows get a quiet marker so a conflict is findable
+   without opening the meeting */
+.wdot{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+  font-family:var(--f-body);border-radius:var(--rF);padding:0 7px 0 5px;
+  background:var(--wcT);color:var(--wcI);border:0;line-height:1.7;vertical-align:1px}
+.wdot .ic{flex:0 0 auto}
+
+.wscroll{flex:1;min-height:0;overflow-y:auto}
+.wfoot2{display:flex;align-items:center;gap:var(--s2);font-size:12px;color:var(--ter);
+  padding:var(--s4) 2px 2px;flex-wrap:wrap;line-height:1.5}
+.wfoot2 .ic{color:var(--ter)}
+
+#frame.w2 .wcmp{grid-template-columns:1fr}
+#frame.w2 .wcmp>div+div{border-left:0;border-top:1px solid var(--line2)}
+/* the watchout panel needs the extra width to keep the pair side by side */
+.panel.wo{width:492px;flex:0 0 492px}
+#frame.w3 .panel.wo{position:absolute;right:0;top:0;bottom:0;width:min(430px,86%);
+  flex-basis:auto;z-index:15;box-shadow:var(--shadow)}
+#frame.w2 .panel.wo{width:min(370px,92%)}
+#frame.w2 .panel.wo .wcmp{grid-template-columns:1fr}
+#frame.w2 .panel.wo .wcmp>div+div{border-left:0;border-top:1px solid var(--line2)}
+

@@ -1,0 +1,35 @@
+/* Button styles. */
+
+/* ══════════════════════════════ buttons ══════════════════════════════ */
+.btn{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-family:var(--f-body);font-size:13px;font-weight:600;line-height:1;letter-spacing:-.005em;
+  border-radius:var(--r2);height:32px;padding:0 13px;border:1px solid transparent;
+  white-space:nowrap;cursor:pointer;
+  transition:background var(--tr),border-color var(--tr),color var(--tr),box-shadow var(--tr)}
+.btn:active{transform:translateY(.5px)}
+.btn.p{background:var(--brandFill);color:var(--brandOn);box-shadow:var(--e1)}
+.btn.p:hover{background:var(--brandFillHov)}
+.btn.p:active{box-shadow:none}
+.btn.s{background:var(--surf);color:var(--ink2);border-color:var(--line2)}
+.btn.s:hover{background:var(--sunk);border-color:var(--line2);color:var(--ink)}
+/* quiet: a control that is available but is not asking to be used. This is
+   what most toolbar actions became — export, copy, filter, help. */
+.btn.q{background:transparent;color:var(--sec);border-color:transparent;padding:0 10px}
+.btn.q:hover{background:var(--sunk);color:var(--ink2)}
+.btn.t{background:transparent;color:var(--brandInk);padding:0 9px}
+.btn.t:hover{background:var(--tint2)}
+.btn.d{background:var(--danger);color:var(--dangerOn)}
+.btn.d:hover{filter:brightness(1.06)}
+.btn.sm{font-size:12px;height:28px;padding:0 11px;gap:5px}
+.btn.ico{padding:0;width:32px}
+.btn.sm.ico{width:28px}
+.btn.dis,.btn[aria-disabled="true"]{background:var(--sunk);color:var(--ter);
+  border-color:transparent;cursor:not-allowed;box-shadow:none}
+.btn.dis:active{transform:none}
+.btn .dot{width:7px;height:7px;border-radius:50%;background:var(--brand)}
+/* inline-flex because every one of these ends in a chevron, and an svg is a
+   block box — as plain inline text the glyph wrapped onto its own line */
+.link{display:inline-flex;align-items:center;gap:4px;font-family:var(--f-body);font-size:12px;
+  font-weight:600;color:var(--brandInk);cursor:pointer}
+.link:hover{text-decoration:underline}
+

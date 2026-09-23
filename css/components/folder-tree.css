@@ -1,0 +1,51 @@
+/* Sidebar folder tree and the theme picker. */
+
+/* ══════════════════════════════ folder tree ══════════════════════════════ */
+/* One level of nesting only: a top folder may hold sub-folders, a sub-folder
+   may not. The twisty is its own hit target inside the row so clicking it
+   expands without also navigating. */
+.views a .tw{width:16px;height:16px;margin-right:-4px;display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;border-radius:var(--r1);cursor:pointer}
+.views a .tw svg{transition:transform .14s}
+.views a .tw.o svg{transform:rotate(90deg)}
+.views a .tw:hover{background:var(--line);color:var(--ink2)}
+.views a .tw.sp{pointer-events:none}
+.views a.sub{padding-left:32px;font-size:13px}
+.views a.sub:before{content:'';position:absolute;left:19px;top:0;bottom:0;width:1px;background:var(--line2)}
+.views a.sub{position:relative}
+.views a .fm{width:22px;height:22px;border-radius:var(--r1);display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;opacity:0;pointer-events:none;margin-left:auto}
+.views a:hover .fm{opacity:1;pointer-events:auto}
+.views a .fm:hover{background:var(--line);color:var(--ink2)}
+.views a .fm+.n{margin-left:6px}
+.app.listmin .views a .tw,.app.listmin .views a .fm{display:none}
+/* Collapsed, every row is the same folder glyph with no label, so eleven of
+   them said nothing. Top level only; the rest are one hover away. */
+.app.listmin .views a.sub{display:none}
+
+/* ══════════════════════════════ theme picker ══════════════════════════════ */
+/* Swatches are literal hex, not tokens — each card has to show its own palette
+   while a different theme is the one actually applied. */
+.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--s3);
+  padding:0}
+.thcard{border:1px solid var(--line);border-radius:var(--r4);padding:var(--s3);cursor:pointer;
+  background:var(--surf);display:flex;flex-direction:column;gap:var(--s2);position:relative;
+  transition:border-color var(--tr),box-shadow var(--tr)}
+.thcard:hover{border-color:var(--line2)}
+.thcard.on{border-color:var(--brand);box-shadow:0 0 0 3px var(--ring)}
+.thcard .prev{height:48px;border-radius:var(--r2);overflow:hidden;display:flex;flex:0 0 auto;
+  box-shadow:inset 0 0 0 1px rgba(128,128,128,.18)}
+.thcard .prev i{flex:1}
+.thcard .prev i.a{flex:0 0 22%}
+.thcard .prev i.b{flex:0 0 14%}
+.thcard .nm{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:flex;
+  align-items:center;gap:7px}
+.thcard .nm .tick{margin-left:auto;width:18px;height:18px;border-radius:50%;background:var(--brand);
+  color:var(--brandOn);display:none;align-items:center;justify-content:center;flex:0 0 auto}
+.thcard.on .nm .tick{display:flex}
+.thcard .ds{font-size:11.5px;color:var(--sec);line-height:1.45;flex:1}
+.thcard .dots{display:flex;gap:5px}
+.thcard .dots i{width:15px;height:15px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(128,128,128,.38)}
+.thcard .modes{display:flex;gap:5px;margin-left:auto;font-size:10.5px;color:var(--ter);
+  font-family:var(--f-body);font-weight:600;letter-spacing:.04em}
+

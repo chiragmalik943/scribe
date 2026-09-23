@@ -1,0 +1,203 @@
+/* Folder/data palette and the meetings home screen. */
+
+/* ══════════════════════════════ folder & data palette ══════════════════════════════
+   One palette, six slots, and every place that needs to tell one thing from
+   another reads it: a folder's icon, the tag on a meeting row, an event in the
+   calendar, a series in the insights charts. --fcI is the ink (and the fill for
+   solid marks), --fcT the tint it sits on. Each slot is hand-tuned for dark
+   mode rather than inverted, the same way the themes are.
+
+   The rule this palette follows: colour identifies, it does not decorate. A
+   slot is always tied to a folder, so the same green means "Projects" on the
+   home page, in the sidebar, on a meeting row and in the calendar.
+
+   The six are the system's brand and accents — indigo, purple, success green,
+   orange, error rose, cyan — each pulled to the weight that clears 4.5:1 on
+   the surface it prints on, since these carry text and 11px labels, not just
+   fills. */
+.fc-1{--fcI:#525298;--fcT:#EEEEFF}
+.fc-2{--fcI:#A03BB0;--fcT:#FAECFC}
+.fc-3{--fcI:#0A7856;--fcT:#E6F7F0}
+.fc-4{--fcI:#A84F00;--fcT:#FFF0DF}
+.fc-5{--fcI:#C22843;--fcT:#FFECEF}
+.fc-6{--fcI:#0A757D;--fcT:#E0F8FA}
+[data-theme="dark"] .fc-1{--fcI:#9797D4;--fcT:#2A2A46}
+[data-theme="dark"] .fc-2{--fcI:#D98BE4;--fcT:#3A1F40}
+[data-theme="dark"] .fc-3{--fcI:#4FD3A2;--fcT:#123328}
+[data-theme="dark"] .fc-4{--fcI:#FFA542;--fcT:#3A2410}
+[data-theme="dark"] .fc-5{--fcI:#FF8496;--fcT:#3B1C23}
+[data-theme="dark"] .fc-6{--fcI:#3FE0EA;--fcT:#0E3438}
+
+/* the folder glyph, wherever it appears at tile size */
+.fwell{display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  background:var(--fcT);color:var(--fcI);border-radius:var(--r3)}
+
+/* a folder row in the list column keeps its colour on the glyph only — the row
+   itself still selects with the brand tint like every other row in that column */
+.views a.fdr>.ic{color:var(--fcI)}
+.views a.fdr.on>.ic{color:var(--fcI)}
+
+/* ══════════════════════════════ meetings home ══════════════════════════════
+   The home screen has no list column: the folders ARE the navigation, so a
+   second copy of them down the left would be the same list twice. Three
+   blocks — folders, what is coming up, what was just recorded. */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));
+  gap:var(--s3);margin-bottom:var(--s8)}
+.fcd{border:1px solid var(--line);border-radius:var(--r4);padding:var(--s4);cursor:pointer;
+  background:var(--surf);display:flex;flex-direction:column;gap:var(--s3);min-height:132px;
+  transition:border-color var(--tr),box-shadow var(--tr),transform var(--tr)}
+.fcd:hover{border-color:var(--line2);box-shadow:var(--e2);transform:translateY(-1px)}
+.fcd .top{display:flex;align-items:center;gap:var(--s3)}
+.fcd .fi{width:36px;height:36px}
+.fcd .nm{font-family:var(--f-head);font-size:14.5px;font-weight:600;flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.01em}
+.fcd .fm{width:26px;height:26px;border-radius:var(--r1);display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;opacity:0;pointer-events:none;
+  transition:opacity var(--tr),background var(--tr)}
+.fcd:hover .fm{opacity:1;pointer-events:auto}
+.fcd .fm:hover{background:var(--sunk);color:var(--ink2)}
+.fcd .subs{display:flex;gap:5px;flex-wrap:wrap;min-height:0}
+.fcd .subs span{font-size:11px;font-weight:500;color:var(--sec);background:var(--sunk);
+  border-radius:var(--r1);padding:2px 7px;line-height:1.5;white-space:nowrap}
+.fcd .subs span.plain{background:transparent;padding:2px 0;color:var(--ter)}
+/* a folder with no sub-folders has room to say what it is instead */
+.fcd .ds{font-size:12.5px;color:var(--sec);line-height:1.55;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fcd .mt{font-size:11.5px;color:var(--ter);display:flex;align-items:center;gap:6px;
+  flex-wrap:wrap;margin-top:auto}
+.fcd .mt b{color:var(--ink2);font-family:var(--f-body);font-weight:600}
+.fcd .mt .dotc{width:5px;height:5px;border-radius:50%;background:var(--fcI);flex:0 0 auto}
+.fcd.add{border-style:dashed;align-items:center;justify-content:center;text-align:center;
+  color:var(--ter);background:transparent;gap:var(--s2);min-height:132px}
+.fcd.add:hover{color:var(--brandInk);border-color:var(--brand);background:var(--tint2);
+  box-shadow:none;transform:none}
+.fcd.add .nm{flex:0 0 auto;font-family:var(--f-body);font-size:12.5px;font-weight:500;
+  text-align:center;white-space:normal}
+/* ── folders, grid view ──────────────────────────────────────────────────
+   The default. A tile here is an entry point, not a summary — glyph, name,
+   one line of counts — small enough that three or four sit in a row even
+   inside the narrower of the home page's two columns. The fuller card (a
+   description, sub-folder chips) still exists inside a folder's own page,
+   where a grid of sub-folders has the width to spare. */
+.fgridsm{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:var(--s3)}
+.fcdsm{border:1px solid var(--line);border-radius:var(--r3);padding:var(--s3) var(--s3) 11px;
+  cursor:pointer;background:var(--surf);display:flex;flex-direction:column;gap:9px;min-width:0;
+  transition:border-color var(--tr),box-shadow var(--tr),transform var(--tr)}
+.fcdsm:hover{border-color:var(--line2);box-shadow:var(--e2);transform:translateY(-1px)}
+.fcdsm .top{display:flex;align-items:center;justify-content:space-between}
+.fcdsm .fwell{width:30px;height:30px}
+.fcdsm .fm{width:22px;height:22px;border-radius:var(--r1);display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;opacity:0;pointer-events:none;
+  transition:opacity var(--tr),background var(--tr)}
+.fcdsm:hover .fm{opacity:1;pointer-events:auto}
+.fcdsm .fm:hover{background:var(--sunk);color:var(--ink2)}
+.fcdsm .nm{font-family:var(--f-head);font-size:13px;font-weight:600;letter-spacing:-.006em;
+  line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fcdsm .mt{font-size:11px;color:var(--ter);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.fcdsm .mt b{color:var(--ink2);font-family:var(--f-body);font-weight:600}
+.fcdsm .mt .dotc{width:3px;height:3px;border-radius:50%;background:var(--line2);flex:0 0 auto}
+
+/* the grid/list switch on the Folders panel — a two-cell segmented control,
+   matching scale with the other header actions beside it */
+.viewseg{display:inline-flex;align-items:center;background:var(--sunk);border-radius:var(--r2);
+  padding:2px;gap:2px;flex:0 0 auto}
+.viewseg span{width:24px;height:22px;border-radius:calc(var(--r2) - 2px);display:flex;
+  align-items:center;justify-content:center;color:var(--ter);cursor:pointer;
+  transition:background var(--tr),color var(--tr),box-shadow var(--tr)}
+.viewseg span:hover{color:var(--ink2)}
+.viewseg span.on{background:var(--surf);color:var(--brandInk);box-shadow:var(--e1)}
+
+/* Two columns: the folders on the left, and everything time-shaped — what was
+   just recorded, what is coming — stacked on the right at the width the
+   Upcoming panel already occupied. */
+.homegrid{display:grid;grid-template-columns:minmax(0,1fr) 400px;
+  gap:var(--s5);align-items:start}
+.homegrid>div,.homegrid>.pnl{min-width:0}
+.homecol{display:flex;flex-direction:column;gap:var(--s5);min-width:0}
+/* ── a folder row ──────────────────────────────────────────────────────
+   Twelve top-level folders with eighty-odd children between them is a list,
+   not a grid of cards: a card gives every folder identical weight, and twelve
+   identical cards are harder to scan than twelve rows. */
+.flist{display:flex;flex-direction:column;margin:0 -10px}
+.frow{display:flex;align-items:center;gap:var(--s3);padding:10px;border-radius:var(--r2);
+  cursor:pointer;transition:background var(--tr)}
+.frow+.frow{border-top:1px solid var(--hair)}
+.flist+.flist{border-top:1px solid var(--hair)}
+.frow:hover{background:var(--sunk)}
+.frow .fi{width:32px;height:32px;border-radius:var(--r2);background:var(--fcT);color:var(--fcI);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.frow.unf .fi{background:var(--sunk);color:var(--ter)}
+.frow .bd{flex:1 1 auto;min-width:0}
+.frow .nm{font-family:var(--f-head);font-size:14px;font-weight:600;display:block;
+  line-height:1.35;letter-spacing:-.008em}
+.frow .s{font-size:11.5px;color:var(--sec);display:block;margin-top:3px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow .mt{flex:0 0 auto;display:flex;align-items:center;gap:7px;font-size:11.5px;
+  color:var(--ter);white-space:nowrap}
+.frow .mt b{font-family:var(--f-body);font-weight:600;color:var(--ink2)}
+.frow .mt .sp2{width:3px;height:3px;border-radius:50%;background:var(--line2);flex:0 0 auto}
+.frow .ct{flex:0 0 auto;font-size:11.5px;font-weight:600;color:var(--ink2);
+  font-variant-numeric:tabular-nums}
+.frow>.ic{color:var(--ter);flex:0 0 auto;opacity:.5}
+.frow:hover>.ic{opacity:1;color:var(--ink2)}
+
+/* ── the project brief ────────────────────────────────────────────────── */
+.brief{margin:var(--s5) 0 var(--s7)}
+.bsec.lead .flead{margin:0}
+/* One column, like the rest of a detail page: three sub-headings stacked with
+   the same rhythm as the sections below them, instead of a row of boxes that
+   made "Who's doing what" compete for attention with "Where things stand". */
+.bgrid{display:flex;flex-direction:column;gap:var(--s6);
+  margin-top:var(--s5);padding-top:var(--s5);border-top:1px solid var(--hair)}
+.bsec{min-width:0}
+/* "Where things stand" is a section of the document and takes the document's
+   heading; the three columns under it are sub-headings and stay small — but
+   sentence case, because a page of uppercase labels is what made this read as
+   a form rather than as a brief. */
+.bsec.lead h4{font-family:var(--f-head);font-size:18px;font-weight:600;letter-spacing:-.014em;
+  text-transform:none;color:var(--ink);margin-bottom:var(--s4);line-height:1.25}
+.bsec h4{font-family:var(--f-body);font-size:12.5px;font-weight:600;letter-spacing:-.002em;
+  text-transform:none;color:var(--sec);margin-bottom:var(--s3)}
+.blist{list-style:none;display:flex;flex-direction:column;gap:10px}
+.blist li{display:flex;gap:9px;font-size:12.5px;line-height:1.55;color:var(--ink2)}
+.blist li>i{width:5px;height:5px;border-radius:50%;flex:0 0 auto;margin-top:7px;
+  background:var(--line2);font-style:normal}
+.blist.bad li>i{background:var(--warn)}
+.blist.fix li>i{background:var(--ok)}
+.blist.who li>i.av{width:22px;height:22px;border-radius:50%;margin-top:0;color:#FFFFFF;
+  display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;
+  font-family:var(--f-body)}
+.blist.who li>span{color:var(--sec);font-size:12px;line-height:1.5}
+.blist.who li>span b{display:block;font-family:var(--f-body);font-size:12.5px;font-weight:600;
+  color:var(--ink);margin-bottom:2px}
+/* a heading with somewhere to go on the end of it */
+.ghd .go{margin-left:auto;font-family:var(--f-body);font-size:11.5px;font-weight:600;
+  letter-spacing:0;text-transform:none;color:var(--brandInk);cursor:pointer;
+  display:inline-flex;align-items:center;gap:3px}
+.ghd .go:hover{text-decoration:underline}
+
+/* what is coming up. A time, a colour rule that says which folder it belongs
+   to, and the line itself — deliberately the same rhythm as a meeting row so
+   the two columns on the home page scan together. */
+.uplist{display:flex;flex-direction:column;margin:0 -10px}
+.pnl .uplist,.pnl .list{margin-bottom:0}
+.upday{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter);padding:var(--s4) 10px var(--s1)}
+.uplist>.upday:first-child{padding-top:0}
+.uprow{display:flex;align-items:stretch;gap:var(--s3);padding:9px 10px;border-radius:var(--r2);
+  cursor:pointer;transition:background var(--tr)}
+.uprow:hover{background:var(--sunk)}
+.uprow .tmc{flex:0 0 auto;width:54px;font-size:12.5px;font-weight:600;color:var(--ink2);
+  font-variant-numeric:tabular-nums;line-height:1.35;padding-top:1px}
+.uprow .tmc span{display:block;font-weight:500;font-size:11px;color:var(--ter)}
+.uprow .rule{width:3px;border-radius:2px;background:var(--fcI);flex:0 0 auto;opacity:.9}
+.uprow .bd{flex:1;min-width:0;padding-top:1px}
+.uprow .t{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:block;
+  line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uprow .s{font-size:11.5px;color:var(--sec);display:block;margin-top:3px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.uprow .go{flex:0 0 auto;align-self:center;opacity:0;color:var(--ter);
+  transition:opacity var(--tr)}
+.uprow:hover .go{opacity:1}
+

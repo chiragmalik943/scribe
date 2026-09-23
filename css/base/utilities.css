@@ -1,0 +1,107 @@
+/* Section panel, filter chip row, scroll containment, threaded colour swatches, and misc responsive tweaks. */
+
+/* ══════════════════════════════ section panel ══════════════════════════════
+   A hairline, a radius and a header strip. Used where unlike sections sit
+   beside each other — a list of calls next to a schedule, two charts next to
+   each other — because there the only thing saying where one ends and the next
+   begins is the gap, and a gap reads as alignment rather than as a boundary. */
+.pnl{border:1px solid var(--line);border-radius:var(--r4);background:var(--surf);
+  display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.pnl>.ph{display:flex;align-items:center;gap:var(--s2);padding:12px var(--s4);
+  border-bottom:1px solid var(--hair);flex:0 0 auto}
+.pnl>.ph .t{font-family:var(--f-head);font-size:15px;font-weight:600;letter-spacing:-.01em;
+  color:var(--ink);white-space:nowrap}
+.pnl>.ph .n{font-family:var(--f-body);font-size:11px;font-weight:600;color:var(--sec);
+  background:var(--sunk);border-radius:var(--rF);padding:2px 8px;line-height:1.5}
+/* flex so a header can carry more than one action (e.g. a view toggle next
+   to "New folder") without them fighting for the same inline box */
+.pnl>.ph .go{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:var(--s3)}
+.pnl>.ph .go>span{font-family:var(--f-body);font-size:11.5px;font-weight:600;
+  color:var(--brandInk);cursor:pointer;display:inline-flex;align-items:center;gap:4px;
+  white-space:nowrap}
+.pnl>.ph .go>span:hover{text-decoration:underline}
+.pnl>.pb{padding:var(--s3) var(--s4) var(--s4);min-width:0}
+/* a list already carries its own 10px hover overhang, so it sits tighter */
+.pnl>.pb.rows{padding:var(--s2) var(--s4) var(--s3)}
+.pnl .statrow{margin-bottom:0}
+/* a task row's hover well reaches 10px past its text, the same as everywhere
+   else; inside a panel that overhang sits in the panel's own padding */
+.pnl .trk{margin:0 -10px}
+/* in a 300px column the due date already carries the urgency, so a priority
+   chip beside it is the same signal twice */
+.pnl .trk .pri{display:none}
+/* an empty-state line for a section that has nothing in it. Base case for a
+   plain .sec; .pnl gets tighter padding since the panel already frames it. */
+.sbe{padding-top:2px;font-size:12.5px;color:var(--ter);line-height:1.6}
+.pnl .sbe{padding:var(--s4) 0 var(--s2)}
+.pnl .ghd:last-child,.pnl .hbar:last-child{margin-bottom:0}
+.g2.pnls{gap:var(--s4)}
+/* a .list or .bul used inside a .sec already gets its bottom spacing from
+   the section itself (margin-bottom, or the hairline before the next one),
+   so the list's own trailing margin would just double it up */
+.sec .list{margin-bottom:0}
+/* "view all N" — sits right under the capped rows, same hover well and same
+   -10px overhang as the rows above it, so it reads as one more row rather
+   than a separate control bolted underneath */
+.secmore{display:flex;align-items:center;gap:5px;font-family:var(--f-body);font-size:12px;
+  font-weight:600;color:var(--brandInk);cursor:pointer;padding:9px 10px;margin:0 -10px;
+  border-radius:var(--r2);transition:background var(--tr)}
+.secmore:hover{background:var(--sunk)}
+.secmore .ic{transition:transform var(--tr)}
+.secmore.open .ic{transform:rotate(180deg)}
+
+/* ══════════════════════════════ filter chip row ══════════════════════════════
+   The scope that used to live in the list column. On Speech, Vocabulary and
+   Insights the list column now names the *section*, and the range is a row of
+   chips directly above the thing it filters — which is where the eye already
+   is when it wants to change it. */
+.chiprow{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;flex:0 0 auto;
+  margin:0 0 var(--s5)}
+.chiprow .r{margin-left:auto;display:flex;align-items:center;gap:var(--s3)}
+
+/* ══════════════════════════════ scroll containment ══════════════════════════════
+   `overflow-y:auto` on a box whose overflow-x is `visible` computes overflow-x
+   to `auto` — which is why AI notes and Watchouts both carried a horizontal
+   scrollbar they had no content for. Naming the axis stops it. */
+.notesgrid,.wscroll,.calbody{overflow-x:hidden}
+.notesgrid>div,.wscroll>div{min-width:0}
+/* Rows in this app carry a hover well that reaches 10px past the text column
+   (`.list`, `.uplist`, `.pnl .trk` all sit at margin:0 -10px). Inside
+   `.body` that overhang lands in the page's own 28px padding and costs
+   nothing. A scroll container between the two has no padding of its own, so
+   the overhang became overflow — which is the width the scrollbar was for.
+   Giving the container the same 10px back as padding, and taking it off again
+   as margin, keeps every column exactly where it was and leaves the wells
+   room to sit in. */
+.notesgrid,.wscroll,.rollgrid{padding-left:10px;padding-right:10px;
+  margin-left:-10px;margin-right:-10px}
+.sec p,.bul li>span,.wrow .wt,.wrow .ws,.wcmp .q,.fcd .ds{overflow-wrap:break-word}
+
+/* ══════════════════════════════ colour, threaded ══════════════════════════════ */
+/* the folder a call was filed into: neutral text, one coloured dot. Enough to
+   group a list of calls by eye without printing four accent colours of type. */
+.mrow .rt .tg{display:inline-flex;align-items:center;gap:5px;justify-content:flex-end;
+  color:var(--sec)}
+.mrow .rt .tg i{width:6px;height:6px;border-radius:50%;background:var(--fcI);flex:0 0 auto}
+/* the stat's own colour rides on the delta glyph under the number, not on the
+   number — three 29px figures in three colours is a chart, not a stat row */
+.stat.fcs .dl .ic{color:var(--fcI)}
+.chart .bar{background:var(--fcI)}
+.chart .bar{opacity:.55}
+.chart .col:hover .bar{background:var(--fcI);opacity:1}
+.chart .bar.mute{background:var(--meterOff);opacity:.5}
+.hbar .tr i{background:var(--fcI);opacity:.62}
+.hbar:hover .tr i{background:var(--fcI);opacity:1}
+.pillx.you{background:var(--okTint);color:var(--okInk)}
+.trk .due.wn{color:var(--warnInk);font-weight:600}
+.acct .avat{background:var(--fcT);color:var(--fcI)}
+
+/* ══════════════════════════════ new responsive ══════════════════════════════ */
+#frame.w2 .homegrid{grid-template-columns:minmax(0,1fr);gap:var(--s5)}
+#frame.w2 .fgrid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+#frame.w1 .fgrid{grid-template-columns:1fr}
+#frame.w1 .fcd{min-height:0}
+#frame.w1 .frow .mt{display:none}
+#frame.w1 .fgridsm{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+
+.hidden{display:none!important}

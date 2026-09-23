@@ -1,0 +1,131 @@
+/* Tab action bar, sidebar hover-peek, panel open/close motion, and tooltips. */
+
+/* ══════════════════════════════ tab action bar ══════════════════════════════ */
+/* Every tab used to keep its controls somewhere different — the transcript in a
+   toolbar above, AI notes in a footer below, watchouts in both. One bar
+   directly under the tabs, always: what the tab is filtered or scoped by on the
+   left, what it can do on the right. The eye learns one place. */
+.actbar{display:flex;align-items:center;gap:var(--s2) var(--s3);flex-wrap:wrap;
+  margin:0 0 var(--s5);flex:0 0 auto;min-height:30px}
+.actbar .l{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;
+  font-size:12px;color:var(--ter);line-height:1.5}
+.actbar .l>.ic{color:var(--ter);flex:0 0 auto}
+.actbar .r{margin-left:auto;display:flex;align-items:center;gap:var(--s1);flex-wrap:wrap;
+  flex:0 1 auto;min-width:0;justify-content:flex-end}
+/* a filter row is its own thing and needs to breathe away from the tabs */
+.actbar.filters{gap:var(--s1);margin-bottom:var(--s4)}
+#frame.w2 .actbar .r{margin-left:0}
+
+/* The side column is a labelled list, not a second card competing with the
+   notes beside it. It keeps a left hairline so the two columns still read as
+   two columns once the border is gone. */
+
+/* the Ask AI dock. A full-width composer at the foot of the page rather than a
+   button in the corner, because asking about what is on screen is the most
+   common thing to do with it. Clicking it opens the panel, which has the real
+   input — this one is the door. */
+.compbox.dock{cursor:pointer;gap:12px}
+.compbox.dock .ph{flex:1;font-size:13.5px;color:var(--ter);min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.compbox.dock:hover{border-color:var(--brand)}
+.compbox.dock>.ic{color:var(--brandInk)}
+/* The folder page scrolls as one column, so its dock sticks to the foot of it.
+   The page drops its own bottom padding and the dock supplies it instead —
+   pulling the dock out over the padding with negative margins would make the
+   page scroll sideways by exactly that much. */
+.body.docked{padding-bottom:0}
+/* The fade used to still be half-transparent where the composer sits, so the
+   list row behind it showed through the field. It is opaque by the time it
+   reaches the box, and the gap above it is taller so a row is either clearly
+   above the dock or clearly behind it. */
+.comp.stick{position:sticky;bottom:0;z-index:6;margin-top:var(--s6);
+  padding:var(--s7) 0 var(--bp);
+  background:linear-gradient(to bottom,transparent,var(--surf) 62%,var(--surf))}
+.compbox.dock{background:var(--surf)}
+
+/* ══════════════════════════════ sidebar hover peek ══════════════════════════════ */
+/* A collapsed sidebar opens under the pointer and closes again when it leaves.
+   Two decisions carry most of the usability here:
+
+   It overlays, it does not push. If the peek widened the sidebar in flow, the
+   whole page would slide sideways under a cursor that is on its way somewhere —
+   the thing being reached for moves away. So the strip keeps its place in the
+   layout (.pkgap) and the full sidebar floats above it.
+
+   It opens on dwell, not on entry. The pointer has to be inside the strip for
+   ~350ms *and* have slowed down; a fast sweep across on the way to the main
+   column never triggers it. Closing waits ~420ms so a small overshoot does not
+   snatch it away. (Timings follow NN/g's guidance for hover-revealed content:
+   300–500ms to open once the pointer settles, ~500ms of grace before hiding.) */
+.pkgap{flex:0 0 auto;pointer-events:none;align-self:stretch}
+.app.pkrail .rail,.app.pklist .listcol{position:absolute;top:0;bottom:0;z-index:16;
+  /* sideways rather than the app's usual downward shadow — this panel's free
+     edge is its right one, and it has to read as floating over the page */
+  box-shadow:20px 0 44px -14px rgba(16,24,38,.30),1px 0 0 var(--line2)}
+[data-theme="dark"] .app.pkrail .rail,[data-theme="dark"] .app.pklist .listcol{
+  box-shadow:22px 0 48px -12px rgba(0,0,0,.62),1px 0 0 var(--line2)}
+.app.pkrail .rail{left:0}
+.app.pklist .listcol{left:var(--railw,72px)}
+/* only the render that opens the peek animates — the sidebar re-renders on
+   every keystroke in its search box, and replaying a slide each time is worse
+   than not animating at all */
+.app.pkin.pkrail .rail,.app.pkin.pklist .listcol{animation:pkslide .17s cubic-bezier(.2,.9,.3,1)}
+@keyframes pkslide{from{opacity:.4;transform:translateX(-12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .app.pkin.pkrail .rail,.app.pkin.pklist .listcol{animation:none}}
+/* the collapse control becomes a pin while the sidebar is only being peeked */
+.colbtn.pin{color:var(--brandInk)}
+.colbtn.pin:hover{background:var(--tint2)}
+
+/* ══════════════════════════════ panel motion ══════════════════════════════
+   Two things move when a panel opens: the panel itself slides in from the edge
+   it is anchored to, and both left sidebars fold to their icon rails to make
+   room. The fold is a width transition on .rail / .listcol — but render()
+   replaces the whole shell, so the element that transition applies to is
+   created fresh at its final width every time and has nothing to travel from.
+   animateBars() gives it one: it measures both sidebars before the swap and,
+   if the new one comes back a different width, pins it to the old value for a
+   frame before letting go. Same mechanism as a FLIP, one axis.
+
+   Only the render that OPENS a panel animates it. The panel re-renders on every
+   keystroke in its composer, and replaying a slide each time is worse than not
+   animating at all — the same reason the hover peek carries its own .pkin. */
+@keyframes asideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.panel.asin{animation:asideIn .26s cubic-bezier(.32,.72,0,1) both}
+/* the contents of a sidebar that just changed width cross into place rather
+   than appearing at full strength halfway through the slide */
+@keyframes sbIn{from{opacity:0}to{opacity:1}}
+.rail.sbin>*,.listcol.sbin>*{animation:sbIn .2s ease-out both}
+@media (prefers-reduced-motion:reduce){
+  .panel.asin,.rail.sbin>*,.listcol.sbin>*{animation:none}
+  .rail,.listcol{transition:background .25s}}
+
+/* ══════════════════════════════ tooltips ══════════════════════════════ */
+/* Chromium will not render a native `title` tooltip on a span or a div the way
+   Safari does, so every icon-only control in here was silently unlabelled. One
+   pseudo-element replaces the lot: render() rewrites every `title` in the app
+   into `data-tt` (plus an aria-label), and this draws it. `width:max-content`
+   is the part that matters — an absolutely positioned box inside a 30px button
+   otherwise shrinks to the longest word and spills its text out both sides.
+
+   The delay is deliberate. These sit on hover-revealed row actions, and without
+   it a mouse crossing a card flashes four tooltips on its way past. */
+/* There is exactly one tooltip in the document and it lives at the top of the
+   frame, not inside the control it describes.
+
+   A pseudo-element cannot escape an ancestor's overflow, and almost every
+   place an icon button appears in here is inside something that clips: a
+   collapsed sidebar, a scrolling list, a card with rounded corners. It also
+   cannot escape a stacking context, so a tooltip on a sidebar could end up
+   painted under the main column. Both problems disappear once the tooltip is a
+   sibling of #app positioned in frame coordinates — and as a bonus it stops
+   contributing to the scroll width of whatever region the control sits in,
+   which is what a hidden pseudo-element was quietly doing before. */
+#tip{position:absolute;z-index:60;pointer-events:none;max-width:250px;
+  background:var(--ink);color:var(--surf);font-family:var(--f-body);font-size:11.5px;
+  font-weight:500;line-height:1.45;padding:5px 10px;border-radius:var(--r2);text-align:center;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);opacity:0;transform:translateY(3px);
+  transition:opacity .12s,transform .12s;left:0;top:0;visibility:hidden}
+#tip.on{opacity:1;transform:none;visibility:visible}
+@media (prefers-reduced-motion:reduce){#tip{transition:none;transform:none}}
+

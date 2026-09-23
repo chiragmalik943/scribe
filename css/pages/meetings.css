@@ -1,0 +1,234 @@
+/* Meetings list and meeting detail view. */
+
+/* ══════════════════════════════ meetings ══════════════════════════════ */
+/* `.list` is the pattern that replaced most of the cards in this app. A day
+   of meetings, a group of tasks, a folder's contents — each was a bordered box
+   with hairlines inside it, so a page of four groups drew four boxes and
+   twenty lines. Here the heading does the grouping and the rows are just rows,
+   with a hover well that reaches slightly past the text column. */
+.list{display:flex;flex-direction:column;margin:0 -10px var(--s7)}
+.list:last-child{margin-bottom:0}
+.list>*{border-radius:0}
+.list>*+*{border-top:1px solid var(--hair)}
+.body>*,.list>*,.wscroll>*{flex:0 0 auto}
+/* the two that do want the leftover room */
+.body>.empty,.body>.notesgrid,.body>.wscroll,.body>.rollgrid{flex:1 1 auto}
+.body>div[style*="overflow-y:auto"]{flex:1 1 auto;min-height:0}
+.mrow{display:flex;align-items:center;gap:var(--s3);padding:11px 10px;cursor:pointer;
+  transition:background var(--tr)}
+.card>.mrow+.mrow{border-top:1px solid var(--hair)}
+.mrow:hover{background:var(--sunk)}
+.mrow:active{background:var(--tint2)}
+.mrow .t{font-family:var(--f-head);font-size:14px;font-weight:600;display:block;
+  line-height:1.35;letter-spacing:-.005em}
+.mrow .t .wdot{margin-left:var(--s2);vertical-align:1px}
+.mrow .s{font-size:12px;color:var(--sec);display:block;margin-top:2px;line-height:1.4;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow .rt{text-align:right;white-space:nowrap;flex:0 0 auto;min-width:104px}
+/* the folder a call was filed into used to be printed in that folder's own
+   colour, so a list of eight calls carried four accent colours that meant
+   nothing but taxonomy */
+.mrow .rt .tg{font-size:11.5px;font-weight:500;font-family:var(--f-body);display:block;
+  color:var(--ter)}
+.mrow .rt .mt{font-size:12px;color:var(--sec);display:block;margin-top:3px;
+  font-variant-numeric:tabular-nums}
+.mrow>span:first-child{flex:1;min-width:0}
+.mrow .macts{display:flex;gap:1px;flex:0 0 auto;opacity:0;pointer-events:none;
+  transition:opacity var(--tr)}
+.mrow:hover .macts{opacity:1;pointer-events:auto}
+/* Row actions were outlined buttons, which put three more boxes on every row
+   the moment the pointer landed on it. They are icon wells now. */
+.mrow .macts span{width:28px;height:28px;border-radius:var(--r2);display:flex;
+  align-items:center;justify-content:center;color:var(--ter);background:transparent;
+  border:0;transition:background var(--tr),color var(--tr)}
+.mrow .macts span:hover{background:var(--tint2);color:var(--brandInk)}
+.mrow .macts span.dg:hover{background:var(--dangerTint);color:var(--dangerInk)}
+/* `live` doubles as a modifier on .meter and .holdbtn, so this stays scoped to
+   the hosts that use it as a pill rather than becoming a bare .live rule */
+.mrow .live,.dchips .live{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  color:var(--dangerOn);background:var(--danger);border-radius:var(--rF);padding:2px 8px;
+  font-family:var(--f-body)}
+.setuphd{display:flex;align-items:center;gap:var(--s2);padding:12px var(--s4) 10px}
+.setuphd b{font-family:var(--f-head);font-size:14px;font-weight:600}
+.setuphd .step{font-size:11.5px;font-weight:500;color:var(--ter);background:transparent;
+  padding:0;border-radius:0}
+.setuphd .x{margin-left:auto;color:var(--ter);cursor:pointer;width:26px;height:26px;
+  border-radius:var(--r1);display:flex;align-items:center;justify-content:center;
+  transition:background var(--tr),color var(--tr)}
+.setuphd .x:hover{background:var(--sunk);color:var(--ink2)}
+.setuprow{display:flex;align-items:center;gap:var(--s3);padding:11px var(--s4)}
+.setuprow+.setuprow{border-top:1px solid var(--hair)}
+/* the icon well is a marker, not a badge: neutral unless the step is the one
+   that still needs doing */
+.setuprow .si{width:30px;height:30px;border-radius:var(--r2);background:var(--sunk);
+  color:var(--ter);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.setuprow .t{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:block;line-height:1.4}
+.setuprow .s{font-size:12.5px;color:var(--sec);display:block;margin-top:2px;line-height:1.5;max-width:560px}
+.setuprow .a{margin-left:auto;flex:0 0 auto;padding-left:var(--s3)}
+
+/* ══════════════════════════════ meeting detail ══════════════════════════════ */
+.titleblk{margin-bottom:var(--s6)}
+.titleblk h1{font-family:var(--f-head);font-size:28px;font-weight:600;letter-spacing:-.021em;
+  line-height:1.18}
+.titleblk h1 .edit{opacity:0;color:var(--sec);display:inline-flex;vertical-align:2px;margin-left:8px;
+  pointer-events:none}
+.titleblk:hover h1 .edit{opacity:1}
+/* ── the fact line ──────────────────────────────────────────────────────
+   Four unrelated facts — who, when, how long, where filed — used to run
+   together as one grey sentence at a single weight. Each is its own unit now,
+   with the VALUE in ink and its label and glyph quiet, so the line can be read
+   by jumping between the dark words rather than left to right. */
+.metarow{display:flex;align-items:center;gap:var(--s3);margin-top:13px;font-size:12.5px;
+  color:var(--sec);flex-wrap:wrap}
+.metarow .mi{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.metarow .mi>b{font-family:var(--f-body);font-weight:600;color:var(--ink2)}
+.metarow .mi>.ic{color:var(--ter);flex:0 0 auto}
+.metarow .mi.people{gap:9px;cursor:pointer;border-radius:var(--r1);padding:3px 8px;
+  margin-left:-8px;transition:background var(--tr)}
+.metarow .mi.people:hover{background:var(--sunk)}
+/* the folder chip lost its outline: it sits in a row of plain metadata and an
+   outline made it read as the one thing on the line worth clicking */
+/* the folder chip keeps no outline — it sits in a row of plain metadata and a
+   border made it read as the one thing on the line worth clicking. What marks
+   it instead is the folder's own colour, the same mark a meeting row carries */
+.metarow .fchipx{display:inline-flex;align-items:center;gap:7px;border:0;
+  border-radius:var(--r1);padding:3px 8px;font-size:12.5px;color:var(--sec);font-weight:500;
+  font-family:var(--f-body);cursor:pointer;
+  transition:background var(--tr),color var(--tr)}
+.metarow .fchipx:hover{background:var(--sunk);color:var(--ink2)}
+.metarow .fchipx .fd{width:7px;height:7px;border-radius:2px;background:var(--fcI);flex:0 0 auto}
+.metarow .fchipx>.ic{color:var(--ter)}
+.metarow .sp{width:3px;height:3px;border-radius:50%;background:var(--line2);flex:0 0 auto}
+.faces{display:flex;align-items:center}
+.faces i{width:24px;height:24px;border-radius:50%;border:2px solid var(--surf);margin-left:-7px;
+  font-style:normal;font-size:10.5px;font-weight:700;color:#FFFFFF;display:flex;align-items:center;
+  justify-content:center;font-family:var(--f-body)}
+.faces i:first-child{margin-left:0}
+.addp{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--line2);border-radius:var(--rF);
+  padding:4px 11px 4px 9px;font-size:12.5px;color:var(--sec);cursor:pointer;
+  font-family:var(--f-body);font-weight:600}
+.addp:hover{border-color:var(--brand);color:var(--brandInk);border-style:solid}
+.recbar{display:flex;align-items:center;gap:var(--s3);background:var(--dangerTint);
+  border:0;border-radius:var(--r3);padding:11px var(--s4)}
+.recbar.pause{background:var(--warnTint)}
+.recbar .rdot{width:10px;height:10px;border-radius:50%;background:var(--danger);flex:0 0 auto;
+  box-shadow:0 0 0 4px var(--dangerLine);animation:pulse 1.6s infinite}
+.recbar.pause .rdot{background:var(--warnInk);animation:none;box-shadow:0 0 0 4px var(--warnLine)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.recbar b{font-family:var(--f-head);font-size:13.5px;font-weight:600}
+.recbar .t{font-family:var(--f-body);font-size:14px;font-weight:600;color:var(--dangerInk);
+  font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.recbar.pause .t{color:var(--warnInk)}
+.recbar .s{font-size:12.5px;color:var(--sec);min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.recbar .a{margin-left:auto;display:flex;gap:8px;flex:0 0 auto}
+.tabs{display:flex;gap:var(--s6);border-bottom:1px solid var(--line);margin:0 0 var(--s5);
+  flex:0 0 auto;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{flex:0 0 auto;white-space:nowrap}
+.tabs a{display:flex;align-items:center;gap:7px;padding-bottom:10px;font-family:var(--f-body);
+  font-size:13.5px;font-weight:500;color:var(--sec);border-bottom:2px solid transparent;
+  margin-bottom:-1px;cursor:pointer;transition:color var(--tr),border-color var(--tr)}
+.tabs a .ic{color:var(--ter)}
+.tabs a:hover{color:var(--ink)}
+.tabs a.on{color:var(--ink);border-bottom-color:var(--brand);font-weight:600}
+.tabs a.on .ic{color:var(--brandInk)}
+.tabs a.off{color:var(--ter);cursor:not-allowed}
+.tabs a.off:hover{color:var(--ter)}
+/* a count on a tab is a count. It only turns red when the thing being
+   counted is a conflict. */
+.tabs a .cnt{font-size:11px;font-weight:600;background:var(--sunk);color:var(--sec);
+  border-radius:var(--r1);padding:1px 6px;line-height:1.55}
+.tabs a.on .cnt{background:var(--tint);color:var(--brandInk)}
+.tabs a.off .cnt{background:transparent;color:var(--ter);font-weight:500;padding:0}
+.tabs a .cnt.hot,.tabs a.on .cnt.hot{background:var(--dangerTint);color:var(--dangerInk)}
+
+/* ── a section on a detail page ──────────────────────────────────────────
+   "Summary", "Decisions" and "Open questions" used to be set in the same 11px
+   --ter as every other micro-label in the app — the same weight as a table
+   header — so a page of notes arrived as one undifferentiated grey column and
+   nothing told the eye where to start. The label is a step larger and two
+   steps darker now, its count is a pill rather than a middot, and consecutive
+   sections are separated by a hairline, which does the grouping that
+   whitespace alone was failing to do at this density. */
+/* A detail page is a document. An 11px uppercase label is a field name, and a
+   page of field names reads as a form — which is why it was hard to see where
+   one section stopped and the next began. These are headings: the display
+   face, sentence case, a size that outranks the body text beneath it, and a
+   rule across the column above each one so the break is structural rather than
+   implied by whitespace. */
+.sec{margin-bottom:var(--s6)}
+.sec:last-child{margin-bottom:0}
+.sec h3{font-family:var(--f-head);font-size:18px;font-weight:600;letter-spacing:-.014em;
+  text-transform:none;color:var(--ink);margin-bottom:var(--s4);line-height:1.25;
+  display:flex;align-items:baseline;gap:9px}
+.sec h3 .n{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:0;
+  text-transform:none;color:var(--sec);background:var(--sunk);border-radius:var(--rF);
+  padding:2px 8px;line-height:1.5;align-self:center}
+/* a section can end in a link back to the page it summarises ("View in
+   Tasks") — same slot and same style as a .pnl header's, so a heading and a
+   panel strip read as the same kind of thing wherever they sit next to each
+   other on a page */
+.sec h3 .go{margin-left:auto;flex:0 0 auto;align-self:center}
+.sec h3 .go>span{font-family:var(--f-body);font-size:11.5px;font-weight:600;letter-spacing:0;
+  color:var(--brandInk);cursor:pointer;display:inline-flex;align-items:center;gap:4px;
+  white-space:nowrap}
+.sec h3 .go>span:hover{text-decoration:underline}
+.sec+.sec{border-top:1px solid var(--line);padding-top:var(--s7);margin-top:var(--s2)}
+/* prose on these pages is held to a measure the eye can return from without
+   losing the line — about 66 characters, which the summary was hitting by
+   accident at one window width and overshooting at every other */
+.sec p{font-size:14.5px;line-height:1.7;color:var(--ink2);max-width:66ch}
+/* ── a record row ────────────────────────────────────────────────────────
+   Decisions and open questions are records, not prose. As a bulleted list with
+   a 4px dot they read as one paragraph of run-on sentences; as rows with a
+   line between them the eye steps down instead of reading across. */
+.bul{list-style:none;display:flex;flex-direction:column;margin:0 -10px}
+.bul li{display:flex;gap:11px;font-size:13.5px;line-height:1.6;color:var(--ink2);
+  padding:9px 10px;transition:background var(--tr)}
+.bul li+li{border-top:1px solid var(--hair)}
+.bul li:hover{background:var(--sunk)}
+.bul li>span:not(.jump):not(.from){flex:1 1 auto;min-width:0}
+.bul li .jump,.bul li .from{align-self:center}
+/* a timestamp link is a way back to the recording, not a headline */
+.jump{font-size:11.5px;color:var(--ter);white-space:nowrap;margin-left:auto;flex:0 0 auto;
+  font-family:var(--f-body);font-weight:500;cursor:pointer;font-variant-numeric:tabular-nums;
+  transition:color var(--tr)}
+.jump:hover{color:var(--brandInk)}
+.notebox{border:1px solid var(--line);border-radius:var(--r4);padding:var(--s4) var(--s5);
+  min-height:150px;transition:border-color var(--tr),box-shadow var(--tr)}
+.notebox:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px var(--ring)}
+.notebox .ln{font-size:14px;line-height:1.75;color:var(--ink2);outline:0;min-height:80px}
+.notebox .hint{font-size:12.5px;color:var(--ter);line-height:1.5}
+/* A transcript is a column of speech. Two of every six lines used to be
+   tinted-and-outlined to mark them as a task source, which turned a readable
+   column into stripes. The mark is now a left rule. */
+.trs{display:flex;gap:var(--s4);padding:10px var(--s3);border-radius:var(--r2);
+  border-left:2px solid transparent}
+.trs.hl{background:transparent;border-left-color:var(--tint);border-top:0;
+  border-right:0;border-bottom:0}
+.trs.said{background:transparent;border-left-color:var(--okLine)}
+.trs.said .spk{color:var(--okInk)}
+.trs.said .badge{background:var(--okTint);color:var(--okInk)}
+.trs .tm{font-size:11.5px;color:var(--ter);font-variant-numeric:tabular-nums;width:40px;
+  flex:0 0 auto;padding-top:3px;cursor:pointer;transition:color var(--tr)}
+.trs .tm:hover{color:var(--brandInk)}
+.trs .spk{font-family:var(--f-head);font-size:12.5px;font-weight:600;display:block;
+  margin-bottom:2px;color:var(--ink)}
+.trs .tx{font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.trs .tx mark{background:var(--tint);color:var(--brandInk);border-radius:3px}
+/* self-contained, but listed per host to match how .live is handled above */
+.trs .badge,.dchips .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+  color:var(--sec);background:var(--sunk);border-radius:var(--r1);padding:1px 7px;margin-top:6px;
+  font-family:var(--f-body);font-size:11px;font-weight:500}
+.player{display:flex;align-items:center;gap:var(--s3);background:var(--sunk);border:0;
+  border-radius:var(--r3);padding:9px var(--s3);margin-top:var(--s4);flex:0 0 auto}
+.player .pb{width:32px;height:32px;border-radius:50%;background:var(--brandFill);color:var(--brandOn);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer;
+  transition:background var(--tr)}
+.player .pb:hover{background:var(--brandFillHov)}
+.player .tm{font-size:12px;color:var(--sec);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.scrub{flex:1 1 0;min-width:0;overflow:hidden;height:24px;display:flex;align-items:center;
+  gap:2px;cursor:pointer}
+.scrub i{width:3px;flex:0 0 auto;border-radius:2px;background:var(--meterOff);opacity:.7}
+.scrub i.p{background:var(--brand);opacity:1}
+

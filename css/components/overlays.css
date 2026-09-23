@@ -1,0 +1,94 @@
+/* Modals, dropdown menus, and toasts. */
+
+/* ══════════════════════════════ modal / menu / toast ══════════════════════════════ */
+.scrim{position:absolute;inset:0;background:var(--scrim);z-index:20}
+.modal{position:absolute;z-index:21;left:50%;top:50%;transform:translate(-50%,-50%);
+  background:var(--surf);border-radius:var(--r5);box-shadow:var(--e3);
+  max-width:calc(100% - 28px);max-height:calc(100% - 28px);overflow:hidden;display:flex;
+  animation:mdin .18s cubic-bezier(.2,.9,.3,1)}
+@keyframes mdin{from{opacity:0;transform:translate(-50%,-48%) scale(.985)}}
+.mnav{width:220px;flex:0 0 auto;background:var(--rail);border-right:1px solid var(--line);
+  padding:var(--s5) var(--s2);display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.mnav h3{font-family:var(--f-head);font-size:15px;font-weight:600;padding:0 10px var(--s4)}
+.mnav .gl{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter);padding:var(--s4) 10px 5px}
+.mnav a{display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:var(--r2);
+  color:var(--ink2);font-size:13px;cursor:pointer;transition:background var(--tr),color var(--tr)}
+.mnav a:hover{background:var(--sunk)}
+.mnav a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
+.mnav a .ic{color:var(--ter)}
+.mnav a.on .ic{color:var(--brandInk)}
+.mbody{flex:1;display:flex;flex-direction:column;min-width:0}
+.mtop{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s5) var(--s6) var(--s4);
+  border-bottom:1px solid var(--line)}
+.mtop h2{font-family:var(--f-head);font-size:17px;font-weight:600;letter-spacing:-.01em}
+.mtop p{font-size:12.5px;color:var(--sec);margin-top:3px;line-height:1.5}
+.mtop .x{margin-left:auto;width:30px;height:30px;border-radius:var(--r2);border:0;
+  display:flex;align-items:center;justify-content:center;color:var(--ter);flex:0 0 auto;
+  cursor:pointer;transition:background var(--tr),color var(--tr)}
+.mtop .x:hover{background:var(--sunk);color:var(--ink2)}
+.mcont{flex:1;padding:var(--s5) var(--s6) var(--s7);display:flex;flex-direction:column;
+  gap:var(--s7);overflow-y:auto}
+/* A settings group was a bordered box with a tinted header strip and a
+   brand-tinted icon in a well — four devices to say "these belong together".
+   A label and a hairline say it on their own. */
+.sgroup{border:0;border-radius:0;overflow:visible;flex:0 0 auto}
+.sghd{display:flex;align-items:baseline;gap:var(--s2);padding:0 0 var(--s2);background:transparent;
+  border-bottom:1px solid var(--line)}
+.sghd .si{display:none}
+.sghd>span{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;min-width:0}
+.sghd b{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter);display:inline;white-space:nowrap}
+.sghd>span>span{font-size:12px;color:var(--ter);display:inline;margin:0}
+.sghd>span>span:before{content:'· '}
+.srow{display:flex;align-items:center;gap:var(--s4);padding:14px 0}
+.srow+.srow{border-top:1px solid var(--hair)}
+.srow .t{font-size:13.5px;font-weight:600;display:block;font-family:var(--f-head);line-height:1.4}
+.srow .s{font-size:12.5px;color:var(--sec);display:block;margin-top:3px;line-height:1.55;max-width:560px}
+.srow .a{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:var(--s2);
+  padding-left:var(--s4)}
+.menu{position:absolute;z-index:22;background:var(--surf);border:1px solid var(--line);
+  border-radius:var(--r3);box-shadow:var(--e2);padding:var(--s1);min-width:210px;
+  max-width:calc(100% - 24px);max-height:calc(100% - 96px);overflow-y:auto;
+  animation:mnin .12s ease-out}
+@keyframes mnin{from{opacity:0;transform:translateY(-4px)}}
+.menu a{display:flex;align-items:center;gap:10px;height:32px;padding:0 var(--s2);
+  border-radius:var(--r1);font-size:13px;color:var(--ink2);cursor:pointer;
+  transition:background var(--tr),color var(--tr)}
+.menu a:hover{background:var(--sunk)}
+.menu a .ic{color:var(--ter)}
+.menu a.dg{color:var(--dangerInk)}
+.menu a.dg .ic{color:var(--dangerInk)}
+.menu a.dg:hover{background:var(--dangerTint)}
+.menu a .k{margin-left:auto;font-size:11px;color:var(--ter);font-variant-numeric:tabular-nums}
+/* A notification carries two lines — what it is, and when — which the fixed
+   32px single-line row above cannot hold without the second line spilling
+   into the row below it. This variant grows with its content instead. */
+.menu a.nrow{height:auto;align-items:flex-start;padding:8px var(--s2)}
+.menu a.nrow .ic{flex:0 0 auto;margin-top:1px}
+.menu a.nrow .bd{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.menu a.nrow .bd .t{font-size:12.5px;line-height:1.4;color:var(--ink2);white-space:normal}
+.menu a.nrow .bd .d{font-size:11.5px;color:var(--sec)}
+.menu a.nrow+a.nrow{border-top:1px solid var(--hair)}
+.menu hr{border:0;border-top:1px solid var(--hair);margin:var(--s1) var(--s2)}
+.menu .mh{font-size:11px;font-family:var(--f-body);font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter);padding:var(--s2) var(--s2) var(--s1)}
+.menu .fn{font-size:11.5px;color:var(--ter);padding:2px var(--s2) var(--s2);line-height:1.5}
+.panel{width:384px;flex:0 0 384px;border-left:1px solid var(--line);background:var(--surf);
+  display:flex;flex-direction:column}
+.panel .ph{display:flex;align-items:center;gap:var(--s2);height:56px;padding:0 var(--s5);
+  border-bottom:1px solid var(--line);flex:0 0 auto}
+.panel .ph b{font-family:var(--f-head);font-size:14px;font-weight:600}
+.panel .pb2{padding:var(--s5);display:flex;flex-direction:column;gap:var(--s5);overflow-y:auto}
+.frow{display:flex;align-items:center;gap:var(--s3);font-size:13px}
+.frow .lb{width:84px;flex:0 0 auto;color:var(--ter);font-size:12px}
+.quote{border-left:2px solid var(--line2);padding:2px 0 2px var(--s3);font-size:13px;
+  line-height:1.65;color:var(--ink2);font-style:italic}
+#toasts{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:40;
+  display:flex;flex-direction:column;gap:var(--s2);align-items:center;pointer-events:none}
+.toast{background:var(--ink);color:var(--surf);font-size:12.5px;padding:9px var(--s4);
+  border-radius:var(--r2);box-shadow:var(--e2);animation:tin .2s;max-width:480px;
+  text-align:center;line-height:1.45}
+.toast b{font-family:var(--f-head);font-weight:600}
+@keyframes tin{from{opacity:0;transform:translateY(6px)}}
+

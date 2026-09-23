@@ -1,0 +1,68 @@
+/* Responsive breakpoints for the app shell. */
+
+/* ══════════════════════════════ responsive ══════════════════════════════
+   Widths are driven from JS (frame width, not viewport, because the mock
+   window can be smaller than the browser). w3 → tight, w2 → single column,
+   w1 → phone-ish. Sidebars are auto-collapsed by fit() at the same points. */
+/* A detail page reads top to bottom as one column — Summary, Decisions, Open
+   questions, Tasks — each section full width, so the eye steps straight down
+   instead of splitting attention between a wide left side and a narrow
+   right-hand panel. */
+.notesgrid{flex:1;display:flex;flex-direction:column;overflow-y:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s7)}
+.wrapflex{display:flex;gap:var(--s4);flex-wrap:wrap}
+/* three numbers in a row. With the boxes gone, the gap and a hairline between
+   them is what groups and separates them. */
+.statrow{display:flex;gap:var(--s7);margin-bottom:var(--s8);flex-wrap:wrap}
+.statrow>.stat+.stat{border-left:1px solid var(--hair);padding-left:var(--s7)}
+#frame.w2 .statrow{gap:var(--s5)}
+#frame.w2 .statrow>.stat+.stat{padding-left:var(--s5)}
+#frame.w1 .statrow{flex-direction:column;gap:var(--s5)}
+#frame.w1 .statrow>.stat+.stat{border-left:0;padding-left:0;
+  border-top:1px solid var(--hair);padding-top:var(--s5)}
+#frame.w3 .body{--bp:22px}
+#frame.w3 .panel{width:340px;flex-basis:340px}
+#frame.w3 .tabs{gap:var(--s5)}
+#frame.w2 .body{--bp:18px}
+#frame.w2 .g2{grid-template-columns:minmax(0,1fr);gap:var(--s6)}
+#frame.w2 .topbar{gap:10px;padding:0 12px 0 16px}
+#frame.w2 .topbar .state{display:none}
+#frame.w2 .topbar h1{font-size:19px}
+#frame.w2 .mnav{width:60px;flex-basis:60px;padding:14px 8px;align-items:center}
+#frame.w2 .mnav h3,#frame.w2 .mnav .gl,#frame.w2 .mnav .lbl{display:none}
+#frame.w2 .mnav a{justify-content:center;width:40px;height:40px;padding:0}
+#frame.w1 .mnav{display:none}
+#frame.w2 .chart{height:112px}
+#frame.w2 .stat .big{font-size:23px}
+#frame.w2 .metrics{gap:var(--s4)}
+#frame.w2 .panel{position:absolute;right:0;top:0;bottom:0;width:min(340px,88%);flex-basis:auto;
+  z-index:15;box-shadow:var(--shadow2)}
+#frame.w1 .body{--bp:14px}
+#frame.w1 .topbar h1{font-size:17px}
+#frame.w1 .tabs{gap:var(--s4)}
+#frame.w1 .tabs a{font-size:13px}
+#frame.w1 .titleblk h1{font-size:21px}
+#frame.w1 .fhead h1{font-size:20px}
+#frame.w1 .stat .big{font-size:22px}
+#frame.w1 .actbar .r,#frame.w1 .toolrow .r{margin-left:0}
+#frame.w1 .empty p,#frame.w1 .setuprow .s{max-width:none}
+#frame.w1 .setuprow,#frame.w1 .step,#frame.w1 .srow{flex-wrap:wrap}
+#frame.w1 .setuprow .a,#frame.w1 .step .a,#frame.w1 .srow .a{margin-left:0;padding-left:47px}
+/* At this width the row has no room for a title, a people line, three hover
+   actions and a right-hand column of metadata. The metadata drops to its own
+   line and the hover actions — which a touch pointer cannot reveal anyway —
+   give up their space; the row menu is still on the meeting itself. */
+#frame.w1 .mrow{flex-wrap:wrap;gap:var(--s1) var(--s2);padding:12px 10px}
+#frame.w1 .mrow>span:first-child{flex:1 1 100%}
+#frame.w1 .mrow .macts{display:none}
+#frame.w1 .mrow .rt{text-align:left;min-width:0;display:flex;align-items:baseline;
+  gap:var(--s2);flex-wrap:wrap}
+#frame.w1 .mrow .rt .tg,#frame.w1 .mrow .rt .mt{margin:0}
+#frame.w1 .player{gap:var(--s2);padding:8px 10px}
+#frame.w1 .meter{display:none}
+#frame.w1 .trk{flex-wrap:wrap}
+#frame.w1 .trk .due{margin-left:0;padding-left:29px;flex-basis:100%}
+#frame.w1 .recbar{flex-wrap:wrap}
+#frame.w1 .recbar .a{margin-left:0;width:100%}
+#frame.w1 .modal{border-radius:var(--r4)}
+

@@ -1,0 +1,304 @@
+/* Design tokens: color, typography, spacing, radius, shadow and motion variables, plus the six theme palettes (indigo/ocean/citrus/harbor/violet/ember) in light + dark. */
+
+/* ══════════════════════════════ tokens ══════════════════════════════ */
+/* Two axes. `data-th` on <html> picks the THEME (its own nine-step brand ramp and
+   its own neutrals); `data-theme` picks LIGHT or DARK within that theme. So each
+   theme ships a hand-tuned dark set rather than an inversion of its light one.
+
+   Every theme block defines the same list:
+     o50…o800   the brand ramp, light→dark in light mode, dark→light in dark mode
+     rail/surf/sunk/backdrop   surfaces, lightest content surface is `surf`
+     line/line2 ink/ink2/sec/ter
+     brand*     brand as FILL (brandFill + brandOn) vs brand as INK (brandInk)
+     tint/tint2 tinted surfaces for active rows and icon wells
+     onChip     chip background sitting on top of a brand fill
+     meterOff/ring/scrim
+
+   Rule of thumb: orange-as-fill uses o500-ish, orange-as-ink uses o700-ish.
+   Citrus breaks that on purpose — its brand IS a pale lime, so the fill is light
+   and `brandOn` is dark ink in both modes.
+
+   Status colours (danger / warn / ok / info) and the shadows are shared across
+   themes so a red always reads as a red, and live in the two blocks below. */
+:root{
+  /* Two typefaces. Sentient (a serif) is the DISPLAY face: page titles, card and
+     row titles, section headings, big stats. Onest (a grotesque) is the TEXT face:
+     body copy plus all UI chrome — buttons, tabs, chips, badges, micro-labels,
+     table headers — where a serif at 11px would only add noise. */
+  --f-head:'Sentient',Georgia,'Times New Roman',serif;
+  --f-body:'Onest','Liberation Sans',Arial,sans-serif;
+  /* ── scale ──────────────────────────────────────────────────────────────
+     Three vocabularies, deliberately short. Before this the file carried
+     eighteen different corner radii and a dozen ad-hoc shadows, which is why
+     two cards sitting next to each other never quite agreed. Anything new
+     picks a step from these rather than inventing one. */
+  /* space — 4px base */
+  --s1:4px;  --s2:8px;  --s3:12px; --s4:16px;
+  --s5:20px; --s6:24px; --s7:32px; --s8:40px;
+  /* radius — five steps and a pill. r1 chips · r2 controls · r3 rows ·
+     r4 cards and panels · r5 modals */
+  --r1:6px; --r2:8px; --r3:10px; --r4:14px; --r5:18px; --rF:999px;
+  /* elevation — three steps. Most surfaces sit flat on the page and are
+     separated by a hairline instead, so a shadow means "this floats". */
+  --e1:0 1px 2px rgba(16,24,40,.05);
+  --e2:0 8px 24px -8px rgba(16,24,40,.16),0 1px 3px rgba(16,24,40,.05);
+  --e3:0 28px 70px -18px rgba(16,24,40,.26),0 4px 14px rgba(16,24,40,.07);
+  /* motion — one duration and one curve for state changes */
+  --tr:.13s cubic-bezier(.2,.7,.4,1);
+/* ── semantic ─────────────────────────────────────────────────────────
+     Error #FF5C70, success #22B07D, warning #FFBF47, info #08A0F7 — shared
+     across every theme and both modes, exactly as the system specifies, so a
+     red always reads as a red.
+
+     Each one is a family rather than a single value, because one hex cannot do
+     both jobs: the spec's colour is the *mark* — the dot, the badge, the
+     recording light — while `*Ink` is the same hue darkened until text on white
+     clears 4.5:1, and `*Tint`/`*Line` are the surface it sits on. #FF5C70 under
+     white text is 2.9:1, so the fill is pulled a step down; the dot stays the
+     spec value. */
+  --danger:#EF4358; --dangerOn:#FFFFFF; --dangerInk:#C92A40; --dangerTint:#FFF0F2; --dangerLine:#FFD9DF;
+  --warn:#E9A21F; --warnInk:#8A6208; --warnTint:#FFF7E6; --warnLine:#FAE3B4;
+  --ok:#1A9E70; --okInk:#0E7C55; --okTint:#E8F8F1; --okLine:#BFE9D8;
+  --info:#08A0F7; --infoTint:#E6F5FE; --infoInk:#0A72B8; --infoLine:#BCE3FB;
+  --shadow:var(--e3);
+  --shadow2:var(--e2);
+  /* the floating pill is its own surface, not a theme surface: it has to read as
+     an object hovering over other apps, so it stays dark in light mode and only
+     lifts a little in dark mode. Shared across themes for the same reason a red
+     is shared — a recording control should look the same wherever it lands. */
+  /* a count sitting inside an already-tinted chip: darken the tint rather
+     than introduce a third colour */
+  --chipWell:rgba(0,0,0,.055);
+  --pill:#1F1D2B; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.62);
+  --pillLine:rgba(255,255,255,.13); --pillWell:rgba(255,255,255,.09);
+  --pillShadow:0 18px 44px rgba(12,18,28,.38),0 2px 6px rgba(12,18,28,.24),0 0 0 1px rgba(255,255,255,.06);
+  /* watchouts: conflict is the only one that earns a red */
+  --wcf:var(--danger); --wcfInk:var(--dangerInk); --wcfTint:var(--dangerTint); --wcfLine:var(--dangerLine);
+  --wdc:var(--warn); --wdcInk:var(--warnInk); --wdcTint:var(--warnTint); --wdcLine:var(--warnLine);
+  --wcl:var(--info); --wclInk:var(--infoInk); --wclTint:var(--infoTint); --wclLine:var(--infoLine);
+}
+[data-theme="dark"]{
+  --danger:#FF5C70; --dangerOn:#2A0E14; --dangerInk:#FF97A5; --dangerTint:#3A1A21; --dangerLine:#55262F;
+  --warn:#FFBF47; --warnInk:#FFD37A; --warnTint:#33270C; --warnLine:#4C3A14;
+  --ok:#22B07D; --okInk:#5FD6A8; --okTint:#113025; --okLine:#1F4A39;
+  --info:#08A0F7; --infoTint:#0F2739; --infoInk:#6BC2FB; --infoLine:#1C4560;
+  --e1:0 1px 2px rgba(0,0,0,.30);
+  --e2:0 8px 24px -8px rgba(0,0,0,.52),0 1px 3px rgba(0,0,0,.34);
+  --e3:0 28px 70px -18px rgba(0,0,0,.62),0 4px 14px rgba(0,0,0,.38);
+  --chipWell:rgba(255,255,255,.10);
+  --pill:#2B2940; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.62);
+  --pillLine:rgba(255,255,255,.11); --pillWell:rgba(255,255,255,.08);
+  --pillShadow:0 18px 44px rgba(0,0,0,.62),0 2px 6px rgba(0,0,0,.44),0 0 0 1px rgba(255,255,255,.09);
+}
+
+/* ─────────── Indigo — the default ───────────
+   Built straight from the supplied system: #525298 as the brand, #F3F3F8 /
+   #FFFFFF as the light surfaces and #1F1D2B / #252836 as the dark ones, with
+   #E2E2F0 and #2F3142 as the borders. The nine-step ramp exists because the
+   app needs a brand at six different weights — a fill, a hover, an ink that
+   passes on white, two tints and a ring — and the spec gives three; the rest
+   are interpolated along the same hue so nothing drifts off it.
+
+   #525298 lands on o600 rather than o500 because a fill is `o600` in light
+   mode by this file's convention, and #5C5CA2 — the spec's hover — is o500,
+   which is why light-mode hover here brightens rather than darkens. */
+:root,[data-th="indigo"]{
+  --o50:#F4F4FB; --o100:#EEEEFF; --o200:#DCDCF4; --o300:#B9B9E2;
+  --o400:#8A8AC4; --o500:#5C5CA2; --o600:#525298; --o700:#45457E; --o800:#33335E;
+  --rail:#F8F8FC; --surf:#FFFFFF; --sunk:#F3F3F8; --scrim:rgba(31,29,43,.44);
+  --line:#E2E2F0; --hair:#EDEDF7; --line2:#D3D3E6;
+  /* Text / Primary is the spec's #252836. Text / Secondary is given as
+     #9293A3, which is 3.0:1 on white — fine for a 14px description, not for the
+     11px uppercase micro-labels this app runs on, so the ramp keeps the hue and
+     steps it down twice: --sec at 6.4:1 for anything read as a sentence, --ter
+     at 4.5:1 for labels and counts. Nothing here drops below AA. */
+  --ink:#252836; --ink2:#3A3D50; --sec:#5B5D75; --ter:#73758C;
+  --brand:var(--o600); --brandOn:#FFFFFF; --brandHov:var(--o500); --brandInk:var(--o700);
+  --brandFill:var(--o600); --brandFillHov:var(--o500);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.24);
+  --backdrop:#E4E4EF; --meterOff:#D6D6E8; --ring:rgba(82,82,152,.24);
+}
+[data-th="indigo"][data-theme="dark"]{
+  --o50:#23233A; --o100:#2A2A46; --o200:#343458; --o300:#45457E;
+  --o400:#5E5EA8; --o500:#7A7ABF; --o600:#9797D4; --o700:#B4B4E4; --o800:#D6D6F2;
+  --rail:#1F1D2B; --surf:#252836; --sunk:#2E3143; --scrim:rgba(0,0,0,.62);
+  --line:#2F3142; --hair:#2A2C3B; --line2:#3C3F52;
+  /* the spec's #A7A7B5 clears 6.2:1 on #252836 and is used as given; --ter is
+     one step lighter so it still holds 4.9:1 rather than falling under AA */
+  --ink:#FFFFFF; --ink2:#DCDCE6; --sec:#A7A7B5; --ter:#9494A6;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o600);
+  --brandFill:var(--o400); --brandFillHov:var(--o500);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.30);
+  --backdrop:#16151F; --meterOff:#3C3F52; --ring:rgba(122,122,191,.32);
+}
+
+/* ─────────── Ocean — cool blue ─────────── */
+[data-th="ocean"]{
+  --o50:#F3F8FF; --o100:#E4EFFE; --o200:#C7DDFC; --o300:#8FB8F8;
+  --o400:#4B8BF0; --o500:#1A5FE0; --o600:#0548CF; --o700:#0A3AA0; --o800:#0A2C74;
+  --rail:#F9FBFE; --surf:#FFFFFF; --sunk:#F4F8FE; --scrim:rgba(12,25,43,.42);
+  --line:#E5EDF8; --hair:#EDF3FB; --line2:#D3E0F1;
+  --ink:#0F1B2C; --ink2:#2C3D53; --sec:#596C84; --ter:#647282;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o700); --brandInk:var(--o700);
+  --brandFill:var(--o600); --brandFillHov:var(--o700);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.24);
+  --backdrop:#E3EAF3; --meterOff:#CFDDEF; --ring:rgba(26,95,224,.22);
+}
+[data-th="ocean"][data-theme="dark"]{
+  --o50:#0F1E33; --o100:#132842; --o200:#1C3A5E; --o300:#27528A;
+  --o400:#215EE0; --o500:#4C8DF5; --o600:#71A6F8; --o700:#9BC1FB; --o800:#C4DBFD;
+  --rail:#101C2E; --surf:#0D192B; --sunk:#152438; --scrim:rgba(0,0,0,.62);
+  --line:#1D2E46; --hair:#182638; --line2:#2A3E59;
+  --ink:#EFF5FD; --ink2:#D3E0EE; --sec:#94A9C0; --ter:#798DA6;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o600);
+  --brandFill:var(--o400); --brandFillHov:var(--o500);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.28);
+  --backdrop:#060C16; --meterOff:#2C4260; --ring:rgba(76,141,245,.30);
+}
+
+/* ─────────── Citrus — warm neutrals, pale lime brand ───────────
+   The only theme whose brand fill is lighter than its text, so brandOn is dark
+   ink in both modes and onChip goes white rather than black. */
+[data-th="citrus"]{
+  --o50:#FAFDEC; --o100:#F0F8C2; --o200:#E1FA79; --o300:#C8E552;
+  --o400:#A6C531; --o500:#86A31C; --o600:#6B8415; --o700:#4F6310; --o800:#38470B;
+  --rail:#F9F9F4; --surf:#FFFFFF; --sunk:#F6F7EE; --scrim:rgba(28,32,18,.42);
+  --line:#EBEDDF; --hair:#F1F3E8; --line2:#DCDFCB;
+  --ink:#191C10; --ink2:#353A26; --sec:#6B7059; --ter:#6E725D;
+  --brand:var(--o400); --brandOn:#243005; --brandHov:var(--o300); --brandInk:var(--o700);
+  --brandFill:var(--o200); --brandFillHov:var(--o300);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(255,255,255,.62);
+  --backdrop:#E8E9DC; --meterOff:#D7DBC3; --ring:rgba(166,197,49,.32);
+}
+[data-th="citrus"][data-theme="dark"]{
+  --o50:#1A2413; --o100:#26331A; --o200:#3E4D2A; --o300:#5C7238;
+  --o400:#8CB03F; --o500:#BDE55E; --o600:#E1FA79; --o700:#EBFCA3; --o800:#F4FDC9;
+  --rail:#141C11; --surf:#18261D; --sunk:#1F2E22; --scrim:rgba(0,0,0,.64);
+  --line:#26362A; --hair:#202E24; --line2:#35483A;
+  --ink:#F1F7E9; --ink2:#DCE6D2; --sec:#9CAC91; --ter:#87987D;
+  --brand:var(--o500); --brandOn:#1B2607; --brandHov:var(--o700); --brandInk:var(--o600);
+  --brandFill:var(--o600); --brandFillHov:var(--o700);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(255,255,255,.42);
+  --backdrop:#0B1109; --meterOff:#33452F; --ring:rgba(225,250,121,.28);
+}
+
+/* ─────────── Harbor — muted steel blue, low glare ─────────── */
+[data-th="harbor"]{
+  --o50:#F4F7FB; --o100:#E3EAF3; --o200:#CFD9E9; --o300:#A3B6D0;
+  --o400:#6E8CB4; --o500:#4A6E9C; --o600:#365B90; --o700:#2A4772; --o800:#1E3455;
+  --rail:#F2F3F6; --surf:#FFFFFF; --sunk:#F5F7FA; --scrim:rgba(20,30,42,.44);
+  --line:#E6E9EF; --hair:#EEF1F5; --line2:#D5DAE3;
+  --ink:#141C26; --ink2:#333E4C; --sec:#545E6C; --ter:#666E7A;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o700); --brandInk:var(--o700);
+  --brandFill:var(--o600); --brandFillHov:var(--o700);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.24);
+  --backdrop:#E4E7ED; --meterOff:#CBD3DF; --ring:rgba(54,91,144,.26);
+}
+[data-th="harbor"][data-theme="dark"]{
+  --o50:#141E2B; --o100:#1B2938; --o200:#26384C; --o300:#345078;
+  --o400:#3F6394; --o500:#5A85BE; --o600:#83A8D6; --o700:#A9C4E5; --o800:#CBDCF0;
+  --rail:#182332; --surf:#141E2A; --sunk:#1B2836; --scrim:rgba(0,0,0,.64);
+  --line:#23303F; --hair:#1D2834; --line2:#324152;
+  --ink:#EAEFF5; --ink2:#CFD9E4; --sec:#8E9DAF; --ter:#7F90A8;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o700);
+  --brandFill:#32558A; --brandFillHov:var(--o400);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.30);
+  --backdrop:#0A1017; --meterOff:#2E3E52; --ring:rgba(90,133,190,.30);
+}
+
+/* ─────────── Violet — deep indigo, violet accent ─────────── */
+[data-th="violet"]{
+  --o50:#F6F4FE; --o100:#EAE6FD; --o200:#DCD7FD; --o300:#B7A8FA;
+  --o400:#8B72F2; --o500:#6B45EC; --o600:#5323E3; --o700:#4318BE; --o800:#331293;
+  --rail:#F2EFFE; --surf:#FFFFFF; --sunk:#F7F5FE; --scrim:rgba(22,16,48,.44);
+  --line:#EAE7F7; --hair:#F0EEFA; --line2:#DAD5EE;
+  --ink:#16112B; --ink2:#332C4E; --sec:#6A6386; --ter:#6F6982;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o700); --brandInk:var(--o700);
+  --brandFill:var(--o600); --brandFillHov:var(--o700);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.26);
+  --backdrop:#E6E2F3; --meterOff:#D6CFF0; --ring:rgba(107,69,236,.26);
+}
+[data-th="violet"][data-theme="dark"]{
+  --o50:#161A38; --o100:#1E2148; --o200:#282A5E; --o300:#32217D;
+  --o400:#5A2AEB; --o500:#7C5CF5; --o600:#9C84F9; --o700:#BCACFC; --o800:#DAD0FE;
+  --rail:#191A3F; --surf:#10142E; --sunk:#181B3B; --scrim:rgba(0,0,0,.66);
+  --line:#232748; --hair:#1D203C; --line2:#32365C;
+  --ink:#F2EFFE; --ink2:#DAD4EE; --sec:#9B95BC; --ter:#8982AC;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o700);
+  --brandFill:var(--o400); --brandFillHov:var(--o500);
+  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.30);
+  --backdrop:#080A1C; --meterOff:#2F3160; --ring:rgba(124,92,245,.32);
+}
+
+/* ─────────── Ember — the original orange ─────────── */
+[data-th="ember"]{
+  --o50:#FFF6F1; --o100:#FFEADF; --o200:#FFD2BC; --o300:#FF9F6D;
+  --o400:#FF7A33; --o500:#FF5D00; --o600:#E85200; --o700:#B84300; --o800:#8E3300;
+  --rail:#FFF7F2; --surf:#FFFFFF; --sunk:#FDF4EE; --scrim:rgba(36,22,14,.38);
+  --line:#F3E4DA; --hair:#F7EDE5; --line2:#E7D4C7;
+  --ink:#231710; --ink2:#463730; --sec:#77645A; --ter:#7E6C61;
+  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o700);
+  --brandFill:var(--o700); --brandFillHov:var(--o800);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.24);
+  --backdrop:#EBE2DA; --meterOff:#EBD8CB; --ring:rgba(255,93,0,.22);
+}
+[data-th="ember"][data-theme="dark"]{
+  --o50:#2A1408; --o100:#3B1C0B; --o200:#59290F; --o300:#8C3D12;
+  --o400:#D14E00; --o500:#FF6A1A; --o600:#FF8340; --o700:#FF9E6B; --o800:#FFC2A1;
+  --rail:#17110C; --surf:#1E1712; --sunk:#292018; --scrim:rgba(0,0,0,.62);
+  --line:#33271F; --hair:#2A2019; --line2:#443429;
+  --ink:#FAF3ED; --ink2:#E7DAD1; --sec:#B8A497; --ter:#9C8778;
+  --brand:var(--o500); --brandOn:#1A1005; --brandHov:var(--o600); --brandInk:var(--o700);
+  --brandFill:var(--o500); --brandFillHov:var(--o600);
+  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(255,255,255,.40);
+  --backdrop:#0A0705; --meterOff:#4A382B; --ring:rgba(255,106,26,.30);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--f-body);background:var(--backdrop);color:var(--ink);
+  -webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;transition:background .25s}
+.h{font-family:var(--f-head)}
+svg{display:block;flex:0 0 auto}
+/* an icon inside a sentence stays on the line with it */
+.opt .s .ic,.srow .s .ic,.setuprow .s .ic,.emptylist .ic,.sbe .ic,
+.notice>span .ic,.hint .ic,.sec p .ic,.metrics .ic{
+  display:inline-block;vertical-align:-2px;margin-right:3px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit;color:inherit;background:none;border:0;outline:0}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:var(--rF);
+  border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--ter);background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ── focus ────────────────────────────────────────────────────────────────
+   Almost every control in here is a <span> with a data-a on it, so nothing
+   was keyboard-reachable and nothing showed focus. tips() now gives those
+   spans a tabindex and a role; this is what the ring looks like when one of
+   them is reached. :focus-visible rather than :focus, so a mouse click never
+   leaves a ring behind. */
+:focus{outline:none}
+:focus-visible,[data-a]:focus-visible{outline:2px solid var(--brand);
+  outline-offset:2px;border-radius:var(--r2)}
+.mrow:focus-visible,.trk:focus-visible,.wrow:focus-visible,.trow:focus-visible,
+.vtable tr:focus-visible,.srow:focus-visible{outline-offset:-2px;border-radius:0}
+/* A text field is the one control a browser always treats as :focus-visible,
+   even on a mouse click. Every field in here sits in a well that already shows
+   focus — `.srch`, `.inp`, `.addrow`, `.compbox`, `.notebox` all light up on
+   :focus-within — so the rule above was drawing a second rounded ring INSIDE
+   the first one the moment you started typing. The well is the focus
+   indicator; the field inside it does not need its own. */
+input:focus-visible,input[data-a]:focus-visible,
+[contenteditable]:focus-visible,[contenteditable][data-a]:focus-visible{outline:none}
+/* hover-revealed row actions have to appear for the keyboard too, or they are
+   simply not there for anyone who is not holding a mouse */
+.mrow:focus-within .macts,.trow:focus-within .acts,.wrow:focus-within .wacts,
+.trk:focus-within .kb2,.views a:focus-within .fm,.fcd:focus-within .fm,
+.prow:focus-within .rm{opacity:1;pointer-events:auto}
+
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important}
+}
+

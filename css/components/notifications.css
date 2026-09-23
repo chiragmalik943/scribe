@@ -1,0 +1,40 @@
+/* Toast variants and system notification banners. */
+
+/* ══════════════════════════════ toast variants ══════════════════════════════ */
+/* A toast was a full-bleed block of the status colour, so a saved-successfully
+   message arrived as a green slab. One surface for every toast, with the
+   status carried by the glyph — the same rule the notices follow. */
+.toast{display:flex;align-items:center;justify-content:center;gap:var(--s2)}
+.toast.ok,.toast.warn,.toast.dg,.toast.info{text-align:left;justify-content:flex-start}
+.toast .ic{flex:0 0 auto}
+.toast.ok .ic{color:#6FDCA6}
+.toast.warn .ic{color:#F7CD82}
+.toast.dg .ic{color:#FFA79B}
+.toast.info .ic{color:#A8C8F8}
+.notice.info{background:var(--infoTint);color:var(--ink2)}
+.notice.info .ic{color:var(--info)}
+
+/* ══════════════════════════════ system notifications ══════════════════════════════ */
+/* The macOS-style banner AIT-Scribe posts outside the app window. Stacked top
+   right of the frame so the demo page can show them without leaving Settings. */
+#osnotifs{position:absolute;right:16px;top:70px;z-index:41;display:flex;flex-direction:column;
+  gap:var(--s2);align-items:flex-end;width:336px}
+.osn{width:100%;background:var(--surf);border:1px solid var(--line);border-radius:var(--r4);
+  box-shadow:var(--e2);padding:12px 13px;display:flex;gap:var(--s3);
+  animation:osin .26s cubic-bezier(.2,.9,.3,1)}
+.osn .ai{width:32px;height:32px;border-radius:var(--r2);background:var(--brandFill);
+  color:var(--brandOn);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.osn.dg .ai{background:var(--danger);color:var(--dangerOn)}
+.osn.ok .ai{background:var(--ok);color:#FFF}
+.osn .bd{flex:1;min-width:0}
+.osn .ap{font-size:10.5px;font-family:var(--f-body);font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter);display:flex;align-items:center;gap:6px}
+.osn .ap .w{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;font-size:11px}
+.osn .ti{display:block;font-family:var(--f-head);font-size:13.5px;font-weight:600;margin-top:4px;line-height:1.35}
+.osn .bo{display:block;font-size:12.5px;color:var(--sec);line-height:1.45;margin-top:3px}
+.osn .ac{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.osn .x{width:24px;height:24px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;
+  color:var(--ter);flex:0 0 auto;cursor:pointer}
+.osn .x:hover{background:var(--sunk);color:var(--ink2)}
+@keyframes osin{from{opacity:0;transform:translateX(22px)}}
+

@@ -1,0 +1,83 @@
+/* Demo page, folder detail, attendees, and the meeting-assistant side panel. */
+
+/* ══════════════════════════════ demo page ══════════════════════════════ */
+.dwrap{padding:14px 16px;display:flex;flex-direction:column;gap:11px}
+.dbtns{display:flex;gap:8px;flex-wrap:wrap}
+.dnote{font-size:11.5px;color:var(--ter);line-height:1.45}
+.dgrid{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* rows of sample chips; opts the row into the host-scoped .live / .badge rules */
+.dchips{}
+
+/* ══════════════════════════════ folder detail ══════════════════════════════ */
+/* A top-level folder shows its sub-folders as cards and then its own meetings;
+   a sub-folder shows the rolled-up notes instead, since it has no children. */
+.fhead{display:flex;align-items:flex-start;gap:var(--s3);margin-bottom:var(--s6);flex-wrap:wrap}
+/* the folder glyph is an identifier, not a badge — a brand-filled tile beside
+   a 24px title made the icon the loudest thing on the page */
+.fhead .fi{width:36px;height:36px;border-radius:var(--r3);background:var(--sunk);
+  color:var(--sec);display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  margin-top:2px}
+.fhead .ft{min-width:0;flex:1}
+.fhead h1{font-family:var(--f-head);font-size:26px;font-weight:600;letter-spacing:-.02em;
+  display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;line-height:1.2}
+.fhead h1 .edit{opacity:0;color:var(--ter);display:inline-flex;pointer-events:none}
+.fhead:hover h1 .edit{opacity:1}
+.fhead .fs{font-size:12.5px;color:var(--sec);margin-top:8px;display:flex;align-items:center;
+  gap:var(--s2);flex-wrap:wrap;line-height:1.5}
+.fhead .fs b{font-family:var(--f-body);font-weight:600;color:var(--ink2)}
+.fhead .fs .sp{width:3px;height:3px;border-radius:50%;background:var(--line2);flex:0 0 auto}
+.fhead .fa{margin-left:auto;display:flex;gap:var(--s1);flex:0 0 auto;flex-wrap:wrap;
+  padding-left:var(--s4)}
+/* What the project IS belongs at the top of the page, not three sections down
+   under a "Summary" label. It was the one paragraph on the page that answered
+   "what am I looking at", and it was below the watchout band and the folder
+   cards — so the page opened with its conclusions before its subject. */
+.flead{font-size:14.5px;line-height:1.7;color:var(--ink2);max-width:72ch;
+  margin:calc(-1 * var(--s3)) 0 var(--s7)}
+/* the rolled-up notes on a sub-folder page reuse the meeting note sections but
+   need a source chip per line, since each line came from a different call.
+   One column, same as a meeting's own notes tab — Decisions, Open questions
+   and Open tasks step down the page instead of splitting into a narrow
+   side panel. */
+.rollgrid{display:flex;flex-direction:column}
+.bul li .from{font-size:11.5px;color:var(--ter);white-space:nowrap;margin-left:auto;flex:0 0 auto;
+  cursor:pointer;font-family:var(--f-body);font-weight:600}
+.bul li .from:hover{color:var(--brandInk);text-decoration:underline}
+
+/* ══════════════════════════════ attendees ══════════════════════════════ */
+.faces i.more{background:var(--sunk)!important;color:var(--sec);font-size:10px}
+.prow{display:flex;align-items:center;gap:var(--s2);padding:6px var(--s2);
+  border-radius:var(--r2);transition:background var(--tr)}
+.prow:hover{background:var(--sunk)}
+.prow .av{width:26px;height:26px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;font-size:10.5px;font-weight:700;color:#FFF;font-family:var(--f-body)}
+.prow .nm{flex:1;min-width:0;font-size:13px;color:var(--ink2)}
+.prow .nm span{display:block;font-size:11px;color:var(--ter);margin-top:1px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.prow .rm{width:24px;height:24px;border-radius:var(--r1);display:flex;align-items:center;
+  justify-content:center;color:var(--ter);flex:0 0 auto;cursor:pointer;opacity:.45;
+  transition:opacity .12s}
+.prow:hover .rm{opacity:1}
+.prow .rm:hover{background:var(--dangerTint);color:var(--dangerInk)}
+.prow .me{font-size:11px;color:var(--ter);font-family:var(--f-body);font-weight:600;flex:0 0 auto}
+
+/* ══════════════════════════════ meeting assistant panel ══════════════════════════════ */
+/* Shares .panel with the task details panel, so only the chat body differs. */
+.app.mchat .notesgrid,.app.hasaside .notesgrid{overflow-y:auto}
+.app.hasaside .tabs{gap:17px}
+.panel.chat .pb2{padding:18px 18px 0;gap:0;flex:1}
+.panel .cfoot{padding:0 18px 16px;flex:0 0 auto}
+.panel .cfoot .comp{margin-top:0;padding-top:10px}
+.panel .cfoot .compbox{padding:8px 8px 8px 11px;border-radius:var(--r3)}
+.panel .cfoot .compbox input{font-size:13px}
+.panel.chat .msg{margin-bottom:15px}
+.panel.chat .msg .tx{max-width:82%;font-size:13px}
+.panel.chat .msg .who{width:26px;height:26px;border-radius:var(--r1)}
+.cempty{font-size:13px;color:var(--sec);line-height:1.6}
+.cchips{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.cchips span{border:1px solid var(--line);border-radius:var(--r2);padding:9px 12px;font-size:12.5px;
+  color:var(--ink2);cursor:pointer;display:flex;align-items:center;gap:9px;background:var(--surf)}
+.cchips span:hover{border-color:var(--brand);color:var(--brandInk)}
+.cchips span .ic{color:var(--sec);flex:0 0 auto}
+.cchips span:hover .ic{color:var(--brandInk)}
+
