@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-th="indigo" data-theme="light">
+<html lang="en" data-th="ocean" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -57,21 +57,10 @@
   --e3:0 28px 70px -18px rgba(16,24,40,.26),0 4px 14px rgba(16,24,40,.07);
   /* motion — one duration and one curve for state changes */
   --tr:.13s cubic-bezier(.2,.7,.4,1);
-/* ── semantic ─────────────────────────────────────────────────────────
-     Error #FF5C70, success #22B07D, warning #FFBF47, info #08A0F7 — shared
-     across every theme and both modes, exactly as the system specifies, so a
-     red always reads as a red.
-
-     Each one is a family rather than a single value, because one hex cannot do
-     both jobs: the spec's colour is the *mark* — the dot, the badge, the
-     recording light — while `*Ink` is the same hue darkened until text on white
-     clears 4.5:1, and `*Tint`/`*Line` are the surface it sits on. #FF5C70 under
-     white text is 2.9:1, so the fill is pulled a step down; the dot stays the
-     spec value. */
-  --danger:#EF4358; --dangerOn:#FFFFFF; --dangerInk:#C92A40; --dangerTint:#FFF0F2; --dangerLine:#FFD9DF;
-  --warn:#E9A21F; --warnInk:#8A6208; --warnTint:#FFF7E6; --warnLine:#FAE3B4;
-  --ok:#1A9E70; --okInk:#0E7C55; --okTint:#E8F8F1; --okLine:#BFE9D8;
-  --info:#08A0F7; --infoTint:#E6F5FE; --infoInk:#0A72B8; --infoLine:#BCE3FB;
+  --danger:#D92D20; --dangerOn:#FFFFFF; --dangerInk:#B42318; --dangerTint:#FEF3F1; --dangerLine:#FADBD5;
+  --warn:#DD9000; --warnInk:#8A5300; --warnTint:#FFF8E8; --warnLine:#F6E2BC;
+  --ok:#0A7548; --okInk:#07603B; --okTint:#ECFAF3; --okLine:#C8E9D7;
+  --info:#1570EF; --infoTint:#EFF5FF; --infoInk:#0B4FB0; --infoLine:#CFE0FB;
   --shadow:var(--e3);
   --shadow2:var(--e2);
   /* the floating pill is its own surface, not a theme surface: it has to read as
@@ -81,7 +70,7 @@
   /* a count sitting inside an already-tinted chip: darken the tint rather
      than introduce a third colour */
   --chipWell:rgba(0,0,0,.055);
-  --pill:#1F1D2B; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.62);
+  --pill:#161C27; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.60);
   --pillLine:rgba(255,255,255,.13); --pillWell:rgba(255,255,255,.09);
   --pillShadow:0 18px 44px rgba(12,18,28,.38),0 2px 6px rgba(12,18,28,.24),0 0 0 1px rgba(255,255,255,.06);
   /* watchouts: conflict is the only one that earns a red */
@@ -90,62 +79,21 @@
   --wcl:var(--info); --wclInk:var(--infoInk); --wclTint:var(--infoTint); --wclLine:var(--infoLine);
 }
 [data-theme="dark"]{
-  --danger:#FF5C70; --dangerOn:#2A0E14; --dangerInk:#FF97A5; --dangerTint:#3A1A21; --dangerLine:#55262F;
-  --warn:#FFBF47; --warnInk:#FFD37A; --warnTint:#33270C; --warnLine:#4C3A14;
-  --ok:#22B07D; --okInk:#5FD6A8; --okTint:#113025; --okLine:#1F4A39;
-  --info:#08A0F7; --infoTint:#0F2739; --infoInk:#6BC2FB; --infoLine:#1C4560;
+  --danger:#F0483A; --dangerOn:#26100C; --dangerInk:#FFA79B; --dangerTint:#3A1713; --dangerLine:#55231C;
+  --warn:#E9A23B; --warnInk:#F7CD82; --warnTint:#33240D; --warnLine:#4B3616;
+  --ok:#17A46A; --okInk:#6FDCA6; --okTint:#0F2A1D; --okLine:#1F4632;
+  --info:#5B95F0; --infoTint:#15233A; --infoInk:#A8C8F8; --infoLine:#274068;
   --e1:0 1px 2px rgba(0,0,0,.30);
   --e2:0 8px 24px -8px rgba(0,0,0,.52),0 1px 3px rgba(0,0,0,.34);
   --e3:0 28px 70px -18px rgba(0,0,0,.62),0 4px 14px rgba(0,0,0,.38);
   --chipWell:rgba(255,255,255,.10);
-  --pill:#2B2940; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.62);
+  --pill:#232C3B; --pillInk:#F4F8FE; --pillSec:rgba(244,248,254,.60);
   --pillLine:rgba(255,255,255,.11); --pillWell:rgba(255,255,255,.08);
   --pillShadow:0 18px 44px rgba(0,0,0,.62),0 2px 6px rgba(0,0,0,.44),0 0 0 1px rgba(255,255,255,.09);
 }
 
-/* ─────────── Indigo — the default ───────────
-   Built straight from the supplied system: #525298 as the brand, #F3F3F8 /
-   #FFFFFF as the light surfaces and #1F1D2B / #252836 as the dark ones, with
-   #E2E2F0 and #2F3142 as the borders. The nine-step ramp exists because the
-   app needs a brand at six different weights — a fill, a hover, an ink that
-   passes on white, two tints and a ring — and the spec gives three; the rest
-   are interpolated along the same hue so nothing drifts off it.
-
-   #525298 lands on o600 rather than o500 because a fill is `o600` in light
-   mode by this file's convention, and #5C5CA2 — the spec's hover — is o500,
-   which is why light-mode hover here brightens rather than darkens. */
-:root,[data-th="indigo"]{
-  --o50:#F4F4FB; --o100:#EEEEFF; --o200:#DCDCF4; --o300:#B9B9E2;
-  --o400:#8A8AC4; --o500:#5C5CA2; --o600:#525298; --o700:#45457E; --o800:#33335E;
-  --rail:#F8F8FC; --surf:#FFFFFF; --sunk:#F3F3F8; --scrim:rgba(31,29,43,.44);
-  --line:#E2E2F0; --hair:#EDEDF7; --line2:#D3D3E6;
-  /* Text / Primary is the spec's #252836. Text / Secondary is given as
-     #9293A3, which is 3.0:1 on white — fine for a 14px description, not for the
-     11px uppercase micro-labels this app runs on, so the ramp keeps the hue and
-     steps it down twice: --sec at 6.4:1 for anything read as a sentence, --ter
-     at 4.5:1 for labels and counts. Nothing here drops below AA. */
-  --ink:#252836; --ink2:#3A3D50; --sec:#5B5D75; --ter:#73758C;
-  --brand:var(--o600); --brandOn:#FFFFFF; --brandHov:var(--o500); --brandInk:var(--o700);
-  --brandFill:var(--o600); --brandFillHov:var(--o500);
-  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.24);
-  --backdrop:#E4E4EF; --meterOff:#D6D6E8; --ring:rgba(82,82,152,.24);
-}
-[data-th="indigo"][data-theme="dark"]{
-  --o50:#23233A; --o100:#2A2A46; --o200:#343458; --o300:#45457E;
-  --o400:#5E5EA8; --o500:#7A7ABF; --o600:#9797D4; --o700:#B4B4E4; --o800:#D6D6F2;
-  --rail:#1F1D2B; --surf:#252836; --sunk:#2E3143; --scrim:rgba(0,0,0,.62);
-  --line:#2F3142; --hair:#2A2C3B; --line2:#3C3F52;
-  /* the spec's #A7A7B5 clears 6.2:1 on #252836 and is used as given; --ter is
-     one step lighter so it still holds 4.9:1 rather than falling under AA */
-  --ink:#FFFFFF; --ink2:#DCDCE6; --sec:#A7A7B5; --ter:#9494A6;
-  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o600);
-  --brandFill:var(--o400); --brandFillHov:var(--o500);
-  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.30);
-  --backdrop:#16151F; --meterOff:#3C3F52; --ring:rgba(122,122,191,.32);
-}
-
-/* ─────────── Ocean — cool blue ─────────── */
-[data-th="ocean"]{
+/* ─────────── Ocean — cool blue, the default ─────────── */
+:root,[data-th="ocean"]{
   --o50:#F3F8FF; --o100:#E4EFFE; --o200:#C7DDFC; --o300:#8FB8F8;
   --o400:#4B8BF0; --o500:#1A5FE0; --o600:#0548CF; --o700:#0A3AA0; --o800:#0A2C74;
   --rail:#F9FBFE; --surf:#FFFFFF; --sunk:#F4F8FE; --scrim:rgba(12,25,43,.42);
@@ -295,14 +243,6 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   outline-offset:2px;border-radius:var(--r2)}
 .mrow:focus-visible,.trk:focus-visible,.wrow:focus-visible,.trow:focus-visible,
 .vtable tr:focus-visible,.srow:focus-visible{outline-offset:-2px;border-radius:0}
-/* A text field is the one control a browser always treats as :focus-visible,
-   even on a mouse click. Every field in here sits in a well that already shows
-   focus — `.srch`, `.inp`, `.addrow`, `.compbox`, `.notebox` all light up on
-   :focus-within — so the rule above was drawing a second rounded ring INSIDE
-   the first one the moment you started typing. The well is the focus
-   indicator; the field inside it does not need its own. */
-input:focus-visible,input[data-a]:focus-visible,
-[contenteditable]:focus-visible,[contenteditable][data-a]:focus-visible{outline:none}
 /* hover-revealed row actions have to appear for the keyboard too, or they are
    simply not there for anyone who is not holding a mouse */
 .mrow:focus-within .macts,.trow:focus-within .acts,.wrow:focus-within .wacts,
@@ -1782,24 +1722,19 @@ input:focus-visible,input[data-a]:focus-visible,
 
    The rule this palette follows: colour identifies, it does not decorate. A
    slot is always tied to a folder, so the same green means "Projects" on the
-   home page, in the sidebar, on a meeting row and in the calendar.
-
-   The six are the system's brand and accents — indigo, purple, success green,
-   orange, error rose, cyan — each pulled to the weight that clears 4.5:1 on
-   the surface it prints on, since these carry text and 11px labels, not just
-   fills. */
-.fc-1{--fcI:#525298;--fcT:#EEEEFF}
-.fc-2{--fcI:#A03BB0;--fcT:#FAECFC}
-.fc-3{--fcI:#0A7856;--fcT:#E6F7F0}
-.fc-4{--fcI:#A84F00;--fcT:#FFF0DF}
-.fc-5{--fcI:#C22843;--fcT:#FFECEF}
-.fc-6{--fcI:#0A757D;--fcT:#E0F8FA}
-[data-theme="dark"] .fc-1{--fcI:#9797D4;--fcT:#2A2A46}
-[data-theme="dark"] .fc-2{--fcI:#D98BE4;--fcT:#3A1F40}
-[data-theme="dark"] .fc-3{--fcI:#4FD3A2;--fcT:#123328}
-[data-theme="dark"] .fc-4{--fcI:#FFA542;--fcT:#3A2410}
-[data-theme="dark"] .fc-5{--fcI:#FF8496;--fcT:#3B1C23}
-[data-theme="dark"] .fc-6{--fcI:#3FE0EA;--fcT:#0E3438}
+   home page, in the sidebar, on a meeting row and in the calendar. */
+.fc-1{--fcI:#1A5FE0;--fcT:#E8F0FE}
+.fc-2{--fcI:#7B3FE4;--fcT:#F0EAFE}
+.fc-3{--fcI:#0A7548;--fcT:#E4F6EE}
+.fc-4{--fcI:#B45309;--fcT:#FCF0DE}
+.fc-5{--fcI:#BE185D;--fcT:#FCE9F1}
+.fc-6{--fcI:#0E7490;--fcT:#E2F4F9}
+[data-theme="dark"] .fc-1{--fcI:#87B4F9;--fcT:#16253E}
+[data-theme="dark"] .fc-2{--fcI:#BBA1F7;--fcT:#221A3B}
+[data-theme="dark"] .fc-3{--fcI:#5FD6A0;--fcT:#0F2A1E}
+[data-theme="dark"] .fc-4{--fcI:#F0B860;--fcT:#31220C}
+[data-theme="dark"] .fc-5{--fcI:#F490B8;--fcT:#331428}
+[data-theme="dark"] .fc-6{--fcI:#6BC7DC;--fcT:#0E2A33}
 
 /* the folder glyph, wherever it appears at tile size */
 .fwell{display:flex;align-items:center;justify-content:center;flex:0 0 auto;
@@ -1856,7 +1791,6 @@ input:focus-visible,input[data-a]:focus-visible,
    to, and the line itself — deliberately the same rhythm as a meeting row so
    the two columns on the home page scan together. */
 .uplist{display:flex;flex-direction:column;margin:0 -10px}
-.pnl .uplist,.pnl .list{margin-bottom:0}
 .upday{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
   text-transform:uppercase;color:var(--ter);padding:var(--s4) 10px var(--s1)}
 .uplist>.upday:first-child{padding-top:0}
@@ -1877,13 +1811,13 @@ input:focus-visible,input[data-a]:focus-visible,
 .uprow:hover .go{opacity:1}
 
 /* ══════════════════════════════ calendar ══════════════════════════════
-   The header leads with the date, today is marked by a rule under its own
-   header cell rather than by tinting a column all the way down, and an event
-   is a card with room to say what it is. Colour appears in three places only:
-   the folder glyph on a card, the join button, and the line marking now. */
-.calbar{display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s4);
+   A week of time slots. Everything that is not the week itself is kept off the
+   grid: no boxed toolbar, no second colour on the chrome, one hairline an hour
+   and a heavier one on the hour the day starts. Events carry their folder's
+   colour, which is the only colour on the page apart from the now-line. */
+.calbar{display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s5);
   flex-wrap:wrap;flex:0 0 auto}
-.calbar .rng{font-family:var(--f-head);font-size:18px;font-weight:600;letter-spacing:-.016em;
+.calbar .rng{font-family:var(--f-head);font-size:17px;font-weight:600;letter-spacing:-.014em;
   margin-right:var(--s2);white-space:nowrap}
 .calbar .r{margin-left:auto;display:flex;align-items:center;gap:var(--s2)}
 .calnav{display:flex;align-items:center;gap:1px;flex:0 0 auto}
@@ -1893,137 +1827,57 @@ input:focus-visible,input[data-a]:focus-visible,
 .calnav span:hover{background:var(--sunk);color:var(--ink)}
 .cal{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;border:1px solid var(--line);
   border-radius:var(--r4);overflow:hidden;background:var(--surf)}
-/* one track definition, three rows that have to line up with each other */
-.calhd,.calad,.calgrid{display:grid;grid-template-columns:84px repeat(7,minmax(0,1fr))}
-.calhd{flex:0 0 auto;border-bottom:1px solid var(--line);background:var(--surf)}
-.calhd .tz{display:flex;align-items:center;justify-content:center;padding:12px 8px}
-.tzp{display:inline-flex;align-items:center;height:26px;padding:0 11px;border-radius:var(--rF);
-  border:1px solid var(--line);background:var(--surf);font-family:var(--f-body);font-size:11px;
-  font-weight:500;color:var(--sec);white-space:nowrap;font-variant-numeric:tabular-nums}
-.calhd .d{padding:11px 6px 13px;text-align:center;border-left:1px solid var(--hair);min-width:0}
-.calhd .dn{font-family:var(--f-head);font-size:24px;font-weight:500;line-height:1.05;
-  letter-spacing:-.022em;color:var(--ink2);font-variant-numeric:tabular-nums}
-.calhd .dw{font-family:var(--f-body);font-size:10.5px;font-weight:500;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--ter);margin-top:4px}
-.calhd .d.we .dn{color:var(--sec)}
-/* today is a rule under the date, not a column of colour */
-.calhd .d.today{box-shadow:inset 0 -2px 0 var(--ink)}
-.calhd .d.today .dn{color:var(--ink);font-weight:600}
-.calhd .d.today .dw{color:var(--ink2)}
-.calad{flex:0 0 auto;border-bottom:1px solid var(--line);min-height:42px}
-.calad .lbl{display:flex;align-items:center;justify-content:flex-end;padding:0 11px;
-  font-size:11.5px;color:var(--sec)}
-.calad .cell{border-left:1px solid var(--hair);padding:6px 5px;min-width:0;display:flex;
-  flex-direction:column;gap:4px;justify-content:center}
-.calad .cell.we{background:var(--rail)}
-.adchip{display:flex;align-items:center;gap:5px;border-radius:var(--r1);background:var(--fcT);
-  color:var(--fcI);padding:4px 8px;font-family:var(--f-body);font-size:11px;font-weight:600;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
-.adchip .ic{flex:0 0 auto}
-/* The grid scrolls and the two header rows do not, so the scrollbar took its
-   10px out of the grid alone and every column below the all-day row sat 10px
-   to the left of the one above it. Reserve the gutter always, and give the
-   header rows the same 10px back as padding, so all three grids compute their
-   tracks over the same width. */
-.calbody{flex:1 1 auto;min-height:0;overflow-y:scroll;overflow-x:hidden;
-  scrollbar-gutter:stable}
-.calhd,.calad{padding-right:10px}
-.calgrid{position:relative}
+.calhd{display:grid;grid-template-columns:54px repeat(7,minmax(0,1fr));flex:0 0 auto;
+  border-bottom:1px solid var(--line);background:var(--surf)}
+.calhd>div{padding:9px 6px 10px;text-align:center;border-left:1px solid var(--hair);min-width:0}
+.calhd>div:first-child{border-left:0}
+.calhd .dw{font-family:var(--f-body);font-size:10.5px;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ter)}
+.calhd .dn{font-family:var(--f-head);font-size:17px;font-weight:600;line-height:1.1;
+  margin-top:4px;color:var(--ink2);letter-spacing:-.01em}
+.calhd .we .dw,.calhd .we .dn{color:var(--ter)}
+.calhd .today .dw{color:var(--brandInk)}
+.calhd .today .dn{width:28px;height:28px;margin:4px auto 0;border-radius:50%;
+  background:var(--brandFill);color:var(--brandOn);display:flex;align-items:center;
+  justify-content:center;font-size:14.5px}
+.calbody{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+.calgrid{display:grid;grid-template-columns:54px repeat(7,minmax(0,1fr));position:relative}
 .calgut{position:relative}
-.calgut i{position:absolute;right:11px;font-style:normal;font-size:10.5px;color:var(--ter);
+.calgut i{position:absolute;right:8px;font-style:normal;font-size:10.5px;color:var(--ter);
   transform:translateY(-50%);font-variant-numeric:tabular-nums;white-space:nowrap}
 .calcol{position:relative;border-left:1px solid var(--hair);min-width:0}
 .calcol.we{background:var(--rail)}
+.calcol.td{background:var(--tint2)}
 .calline{position:absolute;left:0;right:0;border-top:1px solid var(--hair);pointer-events:none}
-.calnow{position:absolute;left:0;right:0;height:0;border-top:2px solid var(--danger);z-index:6;
+.calev{position:absolute;left:3px;right:3px;border-radius:var(--r2);background:var(--fcT);
+  border-left:3px solid var(--fcI);padding:5px 8px;overflow:hidden;cursor:pointer;z-index:2;
+  transition:box-shadow var(--tr),transform var(--tr)}
+.calev:hover{box-shadow:var(--e2);transform:translateY(-1px);z-index:4}
+.calev b{display:block;font-family:var(--f-head);font-size:11.5px;font-weight:600;color:var(--ink);
+  line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calev em{display:block;font-style:normal;font-size:10.5px;color:var(--fcI);margin-top:1px;
+  font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calev .who{display:block;font-size:10.5px;color:var(--sec);margin-top:2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* scheduled but not recorded: the same colour, drawn as an outline */
+.calev.up{background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--fcI)}
+/* Under about 45 minutes there is no room for a stacked title and time, and a
+   clipped second line looks like a rendering fault. The compact form puts both
+   on one line instead of dropping the time. */
+.calev.sm{padding:4px 8px;display:flex;align-items:baseline;gap:6px}
+.calev.sm b{flex:1 1 auto;min-width:0}
+.calev.sm em{flex:0 0 auto;font-size:10px}
+.calev.sm .who{display:none}
+.calnow{position:absolute;left:0;right:0;height:0;border-top:2px solid var(--danger);z-index:5;
   pointer-events:none}
 .calnow:before{content:'';position:absolute;left:-3px;top:-4px;width:7px;height:7px;
   border-radius:50%;background:var(--danger)}
-
-/* ── the event card ──────────────────────────────────────────────────────
-   Recorded calls are a filled tile; scheduled ones are an outlined one on the
-   page surface. Both are cards — the difference is which one already exists
-   and which one is still only booked. */
-.calev{position:absolute;display:flex;flex-direction:column;border-radius:var(--r3);
-  /* 5px of column either side, so two columns of cards never touch */
-  padding:10px 11px;overflow:hidden;cursor:pointer;z-index:2;
-  border:1px solid transparent;background:var(--sunk);
-  transition:background var(--tr),border-color var(--tr),box-shadow var(--tr)}
-.calev.up{background:var(--surf);border-color:var(--line)}
-.calev:hover{background:var(--surf);border-color:var(--line2);box-shadow:var(--e2);z-index:5}
-.calev .ei{width:26px;height:26px;border-radius:var(--r1);background:var(--fcT);color:var(--fcI);
-  display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-bottom:9px}
-/* the same identity at a size where a tile would not fit */
-.calev .dt{width:7px;height:7px;border-radius:50%;background:var(--fcI);flex:0 0 auto;
-  font-style:normal}
-/* flex:0 0 auto throughout: if a card is a few pixels short, the bottom of it
-   is clipped by overflow, which costs the time or an avatar. Letting the items
-   shrink instead collapsed the title to nothing and left a card showing only a
-   timestamp. */
-.calev b{font-family:var(--f-head);font-size:13px;font-weight:600;line-height:1.32;
-  letter-spacing:-.005em;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;
-  -webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word;flex:0 0 auto}
-.calev.tall b{-webkit-line-clamp:3}
-.calev em{font-style:normal;font-family:var(--f-body);font-size:11.5px;color:var(--ter);
-  margin-top:5px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;flex:0 0 auto}
-.calev .faces.ev{margin-top:10px;flex:0 0 auto}
-.calev .faces.ev i{width:22px;height:22px;font-size:9.5px;border-width:2px}
-.calev .cta{display:flex;align-items:center;justify-content:center;gap:6px;height:30px;
-  border-radius:var(--r2);font-family:var(--f-body);font-size:11.5px;font-weight:600;
-  margin-top:auto;flex:0 0 auto;color:#FFFFFF;letter-spacing:-.004em;
-  transition:filter var(--tr)}
-.calev .cta:hover{filter:brightness(1.07)}
-/* the two services keep distinct buttons, but they are the system's info blue
-   and orange rather than two borrowed brand colours */
-.calev .cta.zoom{background:#0A72B8}
-.calev .cta.meet{background:#A84F00}
-.calev .cta.notes{background:var(--brandFill);color:var(--brandOn)}
-/* sm drops the icon tile: a dot rides on the title's line, the time gets its own */
-.calev.sm{padding:9px 11px}
-.calev.sm .hd{display:flex;align-items:center;gap:7px;min-width:0;flex:0 0 auto;
-  overflow:hidden}
-.calev.sm b{font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;min-width:0;flex:1 1 auto}
-/* xs is one line: dot, name, start time */
-.calev.xs{flex-direction:row;align-items:center;gap:7px;padding:7px 10px}
-.calev.xs b{flex:1 1 auto;min-width:0;font-size:12px;white-space:nowrap;text-overflow:ellipsis;
-  display:block}
-.calev.xs em{margin-top:0;font-size:10.5px}
 .callegend{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;font-size:11.5px;
   color:var(--ter);padding:var(--s3) 2px 0;flex:0 0 auto}
 .callegend span{display:inline-flex;align-items:center;gap:6px}
-.callegend i{width:11px;height:11px;border-radius:3px;flex:0 0 auto;background:var(--sunk)}
-.callegend i.out{background:var(--surf);box-shadow:inset 0 0 0 1px var(--line2)}
-
-/* ══════════════════════════════ section panel ══════════════════════════════
-   The last pass took boxes off almost everything, on the grounds that a label
-   and whitespace group a list perfectly well. That is true of a list sitting
-   on its own in a column. It stops being true when two unlike things sit side
-   by side — a list of calls next to a schedule, two charts next to each other —
-   because then the only thing saying where one ends and the other begins is
-   the gap, and a gap reads as alignment, not as a boundary.
-
-   So: a panel is a hairline, a radius and a header strip. It is used where
-   sections sit beside each other, not as a default wrapper for everything. */
-.pnl{border:1px solid var(--line);border-radius:var(--r4);background:var(--surf);
-  display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.pnl>.ph{display:flex;align-items:center;gap:var(--s2);padding:11px var(--s4);
-  border-bottom:1px solid var(--hair);flex:0 0 auto}
-.pnl>.ph .t{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--ter);white-space:nowrap}
-.pnl>.ph .n{font-size:12px;color:var(--ter);font-weight:500}
-.pnl>.ph .go{margin-left:auto;flex:0 0 auto}
-.pnl>.ph .go>span{font-family:var(--f-body);font-size:11.5px;font-weight:600;
-  color:var(--brandInk);cursor:pointer;display:inline-flex;align-items:center;gap:4px;
-  white-space:nowrap}
-.pnl>.ph .go>span:hover{text-decoration:underline}
-.pnl>.pb{padding:var(--s3) var(--s4) var(--s4);min-width:0}
-/* a list already carries its own 10px hover overhang, so it sits tighter */
-.pnl>.pb.rows{padding:var(--s2) var(--s4) var(--s3)}
-.pnl .statrow{margin-bottom:0}
-.pnl .ghd:last-child,.pnl .hbar:last-child{margin-bottom:0}
-.g2.pnls{gap:var(--s4)}
+.callegend i{width:8px;height:8px;border-radius:2px;background:var(--fcI);flex:0 0 auto}
+.callegend i.out{background:transparent;box-shadow:inset 0 0 0 1.5px var(--fcI)}
+.fhead .fi.fw,.fcard .top .fi.fw{background:var(--fcT);color:var(--fcI)}
 
 /* ══════════════════════════════ filter chip row ══════════════════════════════
    The scope that used to live in the list column. On Speech, Vocabulary and
@@ -2048,7 +1902,7 @@ input:focus-visible,input[data-a]:focus-visible,
    Giving the container the same 10px back as padding, and taking it off again
    as margin, keeps every column exactly where it was and leaves the wells
    room to sit in. */
-.notesgrid,.wscroll{padding-left:10px;padding-right:10px;
+.notesgrid,.wscroll,.homegrid{padding-left:10px;padding-right:10px;
   margin-left:-10px;margin-right:-10px}
 .sec p,.bul li>span,.wrow .wt,.wrow .ws,.wcmp .q,.fcd .ds{overflow-wrap:break-word}
 
@@ -2076,28 +1930,18 @@ input:focus-visible,input[data-a]:focus-visible,
 #frame.w2 .fgrid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
 #frame.w1 .fgrid{grid-template-columns:1fr}
 #frame.w1 .fcd{min-height:0}
-#frame.w2 .calhd,#frame.w2 .calad,#frame.w2 .calgrid{
-  grid-template-columns:54px repeat(7,minmax(0,1fr))}
-#frame.w2 .calhd .tz{padding:10px 4px}
-#frame.w2 .tzp{padding:0 7px;font-size:10px;height:22px}
-#frame.w2 .calhd .dn{font-size:19px}
-#frame.w2 .calad .lbl{padding:0 6px;font-size:10.5px}
-#frame.w2 .calgut i{right:7px;font-size:10px}
-#frame.w2 .calev{padding:8px 8px}
-#frame.w2 .calev b{font-size:12px}
-#frame.w2 .calev .faces.ev i{width:19px;height:19px;font-size:9px}
+#frame.w2 .calhd,#frame.w2 .calgrid{grid-template-columns:44px repeat(7,minmax(0,1fr))}
+#frame.w2 .calhd .dn{font-size:15px}
+#frame.w2 .calev{padding:3px 5px}
+#frame.w2 .calev .who{display:none}
 #frame.w1 .cal{min-width:0}
-#frame.w1 .calhd,#frame.w1 .calad,#frame.w1 .calgrid{
-  grid-template-columns:40px repeat(7,minmax(0,1fr))}
-#frame.w1 .calhd .tz{display:none}
-#frame.w1 .calad .lbl{font-size:0;padding:0}
+#frame.w1 .calhd,#frame.w1 .calgrid{grid-template-columns:36px repeat(7,minmax(0,1fr))}
 #frame.w1 .calhd .dw{font-size:9px;letter-spacing:.04em}
-#frame.w1 .calhd .dn{font-size:15px}
-#frame.w1 .calgut i{right:4px;font-size:9px}
-#frame.w1 .calev{padding:5px 6px;border-radius:var(--r2)}
-#frame.w1 .calev b{font-size:10.5px;-webkit-line-clamp:2}
-#frame.w1 .calev em,#frame.w1 .calev .faces.ev,#frame.w1 .calev .cta{display:none}
-#frame.w1 .calev .ei{width:20px;height:20px;margin-bottom:5px}
+#frame.w1 .calhd .dn{font-size:13px}
+#frame.w1 .calhd .today .dn{width:22px;height:22px;font-size:12px}
+#frame.w1 .calev{padding:2px 4px;border-left-width:2px}
+#frame.w1 .calev b{font-size:10px}
+#frame.w1 .calev em{display:none}
 
 .hidden{display:none!important}
 </style>
@@ -2176,7 +2020,6 @@ layers:'<path d="M8 1.9l6.1 3.1L8 8.1 1.9 5z"/><path d="M2.4 8.2L8 11l5.6-2.8"/>
 grid:'<rect x="2.1" y="2.1" width="5" height="5" rx="1.4"/><rect x="8.9" y="2.1" width="5" height="5" rx="1.4"/><rect x="2.1" y="8.9" width="5" height="5" rx="1.4"/><rect x="8.9" y="8.9" width="5" height="5" rx="1.4"/>',
 chevl:'<path d="M9.8 3.6L5.4 8l4.4 4.4"/>',
 calday:'<rect x="2.2" y="3.4" width="11.6" height="10.4" rx="2.2"/><path d="M2.2 6.6h11.6M5.5 2v2.6M10.5 2v2.6"/><path d="M5.2 9.6h5.6M5.2 11.6h3.2"/>',
-cam:'<rect x="1.5" y="4.2" width="9.2" height="7.6" rx="1.8"/><path d="M10.7 7.6l3.8-2.3v5.4l-3.8-2.3z"/>',
 /* ── watchouts ─────────────────────────────────────────────────────────────
    One glyph per classification, readable at 13px: two arrows meeting head-on
    for a conflict, a not-equals for a discrepancy, a question for a
@@ -2198,10 +2041,7 @@ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
    is the four-band strip above it: [rail, surface, brand, tint] for light and
    for dark, so a card previews both modes at a glance. */
 const THEMES=[
- {id:'indigo',name:'Indigo',ds:'Muted indigo on soft grey. The default.',
-  sw:['#525298','#8A8AC4','#EEEEFF','#252836'],
-  pv:{light:['#F8F8FC','#FFFFFF','#525298','#EEEEFF'],dark:['#1F1D2B','#252836','#7A7ABF','#343458']}},
- {id:'ocean',name:'Ocean',ds:'Cool blue on white. High contrast.',
+ {id:'ocean',name:'Ocean',ds:'Cool blue on white. High contrast, the default.',
   sw:['#0548CF','#4B8BF0','#E4EFFE','#0D192B'],
   pv:{light:['#F9FBFE','#FFFFFF','#0548CF','#E4EFFE'],dark:['#101C2E','#0D192B','#4C8DF5','#1C3A5E']}},
  {id:'citrus',name:'Citrus',ds:'Warm neutrals with a pale lime accent.',
@@ -2220,12 +2060,7 @@ const THEMES=[
 const theme=id=>THEMES.find(t=>t.id===id)||THEMES[0];
 
 /* ══════════════════════════════════ data ══════════════════════════════════ */
-/* An avatar is a filled circle with white initials on it, so every one of
-   these has to clear 3:1 against white — which is why they are the system's
-   accents pulled a step down rather than the raw #FF8700 / #08A0F7 / #12CDD9,
-   none of which carry white type. */
-const AV={J:'#B85F00',T:'#0A72B8',M:'#0E8A60',E:'#8C3A98',D:'#8A6208',R:'#0A7D86',
-          A:'#C2334F',K:'#525298',P:'#5C5CA2',N:'#0E7C8A',S:'#A03BB0',L:'#1A7A5C'};
+const AV={J:'#C24600',T:'#1159C0',M:'#0A7548',E:'#7C3AED',D:'#8A5300',R:'#0E7490',A:'#BE185D',K:'#41680C'};
 const F=(n,i,e)=>({n,i,c:AV[i]||'#C24600',e:e||''});
 /* email is optional on purpose: the attendee popover has to show both states,
    because only people with one can be sent the notes */
@@ -2454,34 +2289,23 @@ vocab:[
    notes can never drift apart. Times are 24h; `f` is the folder the call will
    be filed into, which is where the event takes its colour from. */
 events:[
- {id:'a1',d:'2026-08-14',ad:true,title:'Q3 budget locks',f:'f-q3'},
- {id:'e1',d:'2026-08-11',s:'16:30',e:'17:00',title:'Design handoff — onboarding',f:'internal',
-  who:'Emily Foster'},
- {id:'e2',d:'2026-08-12',s:'10:00',e:'11:30',title:'Legal review — Acme DPA',f:'f-acme',
-  who:'Tom Ellis, Priya Raman',lk:'zoom'},
- {id:'e3',d:'2026-08-12',s:'15:00',e:'16:00',title:'Meridian Health — security questionnaire',
-  f:'client',who:'Nadia Haddad, Marcus Webb',lk:'meet'},
- {id:'e4',d:'2026-08-13',s:'09:30',e:'11:00',title:'Q3 headcount review',f:'f-q3',
-  who:'Ashley Nguyen, Daniel Brooks',lk:'meet'},
- {id:'e5',d:'2026-08-13',s:'14:00',e:'14:45',title:'Candidate debrief — Backend',f:'f-backend',
-  who:'David Kim, Priya Raman'},
- {id:'e6',d:'2026-08-14',s:'09:00',e:'09:30',title:'Weekly sync',f:'internal',
-  who:'Ashley Nguyen, Emily Foster'},
- {id:'e7',d:'2026-08-14',s:'11:30',e:'12:15',title:'Northwind — final figure',f:'f-northwind',
-  who:'Robert Hayes'},
- {id:'e8',d:'2026-08-14',s:'16:00',e:'17:30',title:'Acme technical deep-dive',f:'f-acme',
-  who:'Jennifer Walsh, Tom Ellis, Sofia Alvarez, Liam Novak',lk:'zoom'},
- {id:'e9',d:'2026-08-17',s:'10:00',e:'10:30',title:'Backend take-home walkthrough',f:'f-backend',
-  who:'David Kim'},
- {id:'e10',d:'2026-08-18',s:'13:00',e:'14:00',title:'Lawson Group — SOW review',f:'client',
-  who:'Karen Doyle',lk:'meet'}],
+ {id:'e1',d:'2026-08-11',s:'16:30',e:'17:00',title:'Design handoff — onboarding',f:'internal',who:'Emily Foster'},
+ {id:'e2',d:'2026-08-12',s:'10:00',e:'10:45',title:'Legal review — Acme DPA',f:'f-acme',who:'Tom Ellis, Legal'},
+ {id:'e3',d:'2026-08-12',s:'15:00',e:'15:45',title:'Meridian Health — security questionnaire',f:'client',who:'Nadia Haddad'},
+ {id:'e4',d:'2026-08-13',s:'09:30',e:'10:15',title:'Q3 headcount review',f:'f-q3',who:'Ashley Nguyen, Daniel Brooks'},
+ {id:'e5',d:'2026-08-13',s:'14:00',e:'14:30',title:'Candidate debrief — Backend',f:'f-backend',who:'David Kim'},
+ {id:'e6',d:'2026-08-14',s:'09:00',e:'09:30',title:'Weekly sync',f:'internal',who:'Ashley Nguyen, Emily Foster'},
+ {id:'e7',d:'2026-08-14',s:'11:30',e:'12:00',title:'Northwind — final figure',f:'f-northwind',who:'Robert Hayes'},
+ {id:'e8',d:'2026-08-14',s:'16:00',e:'17:30',title:'Acme technical deep-dive',f:'f-acme',who:'Jennifer Walsh, Tom Ellis +2'},
+ {id:'e9',d:'2026-08-17',s:'10:00',e:'10:30',title:'Backend take-home walkthrough',f:'f-backend',who:'David Kim'},
+ {id:'e10',d:'2026-08-18',s:'13:00',e:'14:00',title:'Lawson Group — SOW review',f:'client',who:'Karen Doyle'}],
 settings:{detect:true,screenRec:true,hearOthers:true,recScreen:false,autoFile:true,calendar:false,
   engine:'local',lang:'English (US)',useVocab:true,hotkey:'Fn',mode:'Hold to talk',
   convo:false,anthropicKey:'',spoken:false,convoHotkey:'⌃⌥Space',askFirst:true,
   gmail:false,gcal:false,slack:false,actFollowups:true,
   extract:true,onlyNamed:false,names:['Michael','Mike','MC'],daily:true,dailyAt:'6:00 PM',
   woOn:true,woConflict:true,woDiscrepancy:true,woClarify:true,woPeek:'conflict',woSpeak:true,
-  overdue:true,overdueAt:'9:00 AM',noInterrupt:true,theme:'light',th:'indigo',bubble:true},
+  overdue:true,overdueAt:'9:00 AM',noInterrupt:true,theme:'light',th:'ocean',bubble:true},
 setupDone:3
 };}
 
@@ -2492,8 +2316,6 @@ const S={route:'meetings',view:'all',mid:null,fid:null,tab:'notes',tid:null,cid:
   openF:{client:true,interviews:true},
   mpanel:false,mtyping:false,
   bub:{x:null,y:null,rec:false,secs:0},
-  /* what the sidebars were doing before a right-hand panel pushed them shut */
-  asideWas:null,
   /* a hover peek is temporary and never touches railmin/listmin, so letting go
      of the pointer always puts the sidebar back the way the user left it */
   peek:null,
@@ -2668,18 +2490,16 @@ function allEvents(){
   (db.events||[]).forEach(x=>{
     const parts=String(x.d).split('-');
     const dd=new Date(+parts[0],+parts[1]-1,+parts[2]);
-    out.push({id:x.id,iso:x.d,date:dd,ad:!!x.ad,
-      s:x.ad?0:parseTime(x.s),e:x.ad?24:parseTime(x.e),title:x.title,
-      f:x.f,mid:null,up:true,lk:x.lk||'',who:x.who||''});
+    out.push({id:x.id,iso:x.d,date:dd,s:parseTime(x.s),e:parseTime(x.e),title:x.title,
+      f:x.f,mid:null,up:true,who:x.who||''});
   });
   return out;
 }
-const eventsOn=iso=>allEvents().filter(e=>e.iso===iso&&!e.ad).sort((a,b)=>a.s-b.s);
-const alldayOn=iso=>allEvents().filter(e=>e.iso===iso&&e.ad);
+const eventsOn=iso=>allEvents().filter(e=>e.iso===iso).sort((a,b)=>a.s-b.s);
 /* what has not happened yet, soonest first */
 function upcoming(n){
   const k=isod(TODAY);
-  return allEvents().filter(e=>e.up&&!e.ad&&(e.iso>k||(e.iso===k&&e.e>NOWH)))
+  return allEvents().filter(e=>e.up&&(e.iso>k||(e.iso===k&&e.e>NOWH)))
     .sort((a,b)=>a.iso<b.iso?-1:a.iso>b.iso?1:a.s-b.s).slice(0,n||8);
 }
 const newFolderId=()=>'f'+Math.random().toString(36).slice(2,8);
@@ -2911,14 +2731,6 @@ const chiprow=(items,act,cur,right)=>`<div class="chiprow">${items.map(([k,l,n])
     n!=null?`<span class="b">${n}</span>`:''}</span>`).join('')}${
   right?`<span class="r">${right}</span>`:''}</div>`;
 
-/* A bordered section with a header strip. `rows` tightens the body padding for
-   a list that already carries its own hover overhang. */
-const pnl=(title,meta,action,body,rows)=>`<div class="pnl">
-  <div class="ph"><span class="t">${title}</span>${
-    (meta||meta===0)?`<span class="n">· ${meta}</span>`:''}${
-    action?`<span class="go">${action}</span>`:''}</div>
-  <div class="pb ${rows?'rows':''}">${body}</div></div>`;
-
 /* ══════════════════════════════════ meetings home ══════════════════════════════════ */
 /* The landing screen. It carries no list column on purpose: the folders on the
    page ARE the navigation, and a second copy of them down the left would be
@@ -2989,78 +2801,27 @@ function viewHome(){
      <span><b>${unf}</b> meeting${unf===1?'':'s'} could not be filed automatically.
      <span class="link" data-a="view" data-p="unfiled" style="margin-left:4px">Review them</span></span></div>`:''}
    <div class="homegrid">
-    ${pnl('Recent meetings',recent.length,
-      `<span data-a="view" data-p="recent">See all ${ic('chev',12)}</span>`,
-      recent.length?`<div class="list">${recent.map(m=>meetingRow(m)).join('')}</div>`
-        :`<div class="hint" style="padding:var(--s4) 2px">Nothing recorded in the last two days.</div>`,
-      true)}
-    ${pnl('Upcoming',null,
-      `<span data-a="go" data-p="calendar">Open calendar ${ic('chev',12)}</span>`,
-      upcomingList(6),true)}
-   </div></div>`;
+    <div>
+      <div class="ghd">Recent meetings <span class="n">· ${recent.length}</span>
+        <span class="go" data-a="view" data-p="recent">See all ${ic('chev',12)}</span></div>
+      ${recent.length?`<div class="list">${recent.map(m=>meetingRow(m)).join('')}</div>`
+        :`<div class="hint" style="padding:var(--s4) 2px">Nothing recorded in the last two days.</div>`}
+    </div>
+    <div>
+      <div class="ghd">Upcoming
+        <span class="go" data-a="go" data-p="calendar">Open calendar ${ic('chev',12)}</span></div>
+      ${upcomingList(6)}
+    </div></div></div>`;
 }
 
 /* ══════════════════════════════════ calendar ══════════════════════════════════ */
-/* A week of time slots, laid out the way a calendar actually gets read: the
-   date is the loudest thing in the header, today is marked by a rule under it
-   rather than by tinting a whole column, and an event is a CARD — an icon that
-   says which folder it belongs to, its name, its hours, who is on it, and the
-   one action it affords — rather than a coloured sliver with a label crammed
-   into it.
-
-   Cards need height to be cards, so the hour is 124px rather than the 58px a
-   dense grid would use. That is the trade: you see about five hours at a time
-   and scroll for the rest, and in exchange a 90-minute call carries its
-   attendees and its join button the way it would in a list.
-
-   Recorded calls are read straight off `meetings` — parsed from the day, time
-   and duration already in the data — so the calendar can never disagree with
-   the notes. Only what has not happened yet lives in `events`. */
-const CAL_S=8,CAL_E=19,CAL_H=124,CAL_P=10;
-/* What fits, measured rather than guessed. `xs` is one row (≈30px), `sm` is a
-   title line and a time line (≈53px), `md` adds the folder tile above them
-   (≈92px). Anything between two modes takes the smaller one, so a card is
-   never asked to draw something it has no room for. */
-const evMode=h=>h<56?'xs':h<92?'sm':'md';
-/* the viewer's own offset, since the pill is the one part of a calendar that
-   should not be pretend */
-function tzLabel(){
-  const m=-new Date().getTimezoneOffset();
-  const a=Math.abs(m),h=Math.floor(a/60),mm=a%60;
-  return 'UTC '+(m<0?'−':'+')+h+(mm?':'+String(mm).padStart(2,'0'):'');
-}
-/* Everyone AIT-Scribe has seen, so a name written on a scheduled call gets the
-   same face and the same colour it has on the calls already recorded. */
-let PIDX=null;
-function peopleIndex(){
-  if(PIDX)return PIDX;
-  PIDX={};db.meetings.forEach(m=>m.people.forEach(x=>{if(x.n!=='you'&&!PIDX[x.n])PIDX[x.n]=x}));
-  return PIDX;
-}
-function personChip(name){
-  const k=peopleIndex()[name];if(k)return k;
-  const keys=Object.keys(AV);let h=0;
-  for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;
-  return {n:name,i:name.trim().charAt(0).toUpperCase(),c:AV[keys[h%keys.length]]};
-}
-const evPeople=ev=>ev.mid
-  ?((meeting(ev.mid)||{people:[]}).people.filter(x=>x.n!=='you'))
-  :String(ev.who||'').split(',').map(x=>x.trim()).filter(Boolean).map(personChip);
-function evFaces(list,max){
-  if(!list.length)return '';
-  const show=list.slice(0,max||4),rest=list.length-show.length;
-  return `<span class="faces ev">${show.map(p=>
-    `<i style="background:${p.c}" title="${esc(p.n)}">${p.i}</i>`).join('')}${
-    rest>0?`<i class="more">+${rest}</i>`:''}</span>`;
-}
-/* The one action a card affords. You join something that has not happened and
-   you open the notes of something that has, so the button names itself. */
-const LKS={zoom:['zoom','Join Zoom','cam'],meet:['meet','Open Meet','cam']};
-function evCta(ev){
-  if(ev.mid)return `<span class="cta notes">${ic('spark',13)}Open notes</span>`;
-  const l=LKS[ev.lk];if(!l)return '';
-  return `<span class="cta ${l[0]}">${ic(l[2],13)}${l[1]}</span>`;
-}
+/* A week of time slots. Recorded calls are read off `meetings`, so what the
+   calendar shows and what the notes say can never disagree; only what has not
+   happened yet is stored separately. An event carries its folder's colour and
+   nothing else on the page is coloured except the line marking now — which is
+   the whole idea, because a week grid with eight accent colours on the chrome
+   is a week grid you cannot read. */
+const CAL_S=8,CAL_E=19,CAL_H=58,CAL_P=10;
 /* side-by-side packing for calls that overlap */
 function calLanes(list){
   const evs=list.slice().sort((a,b)=>a.s-b.s||b.e-a.e);
@@ -3071,65 +2832,42 @@ function calLanes(list){
   return evs;
 }
 function calRange(days){
-  const a=days[0],b=days[6],y=b.getFullYear();
+  const a=days[0],b=days[6];
+  const y=b.getFullYear();
   return a.getMonth()===b.getMonth()
     ? `${a.getDate()} – ${b.getDate()} ${MONS[b.getMonth()]} ${y}`
     : `${a.getDate()} ${MONS[a.getMonth()]} – ${b.getDate()} ${MONS[b.getMonth()]} ${y}`;
-}
-function calCard(ev){
-  const s=Math.max(CAL_S,ev.s),e=Math.min(CAL_E,Math.max(ev.e,ev.s+.25));
-  if(e<=CAL_S||s>=CAL_E)return '';
-  const top=CAL_P+(s-CAL_S)*CAL_H,h=Math.max(30,(e-s)*CAL_H-4);
-  const w=100/ev._n,l=ev._l*w,mode=evMode(h);
-  const tall=h>=230?' tall':'';
-  const ppl=evPeople(ev);
-  /* A two-line title is the common case, so these are the heights at which
-     the row below it still lands inside the card rather than under its edge. */
-  const cta=h>=172?evCta(ev):'';
-  const faces=h>=140&&ppl.length?evFaces(ppl,4):'';
-  const tip=`${esc(ev.title)} · ${clockLabel(ev.s)}–${clockLabel(ev.e)}${
-    ppl.length?' · '+esc(ppl.map(x=>x.n).join(', ')):''}`;
-  /* the family glyph, not the sub-folder's, because at 14px the thing worth
-     recognising is "this is an interview" rather than "this is a folder" */
-  const gl=folderMeta(ev.f).ic;
-  const body=mode==='xs'
-    ? `<i class="dt"></i><b>${esc(ev.title)}</b><em>${clockLabel(ev.s)}</em>`
-    : mode==='sm'
-    ? `<span class="hd"><i class="dt"></i><b>${esc(ev.title)}</b></span>
-       <em>${clockLabel(ev.s)} – ${clockLabel(ev.e)}</em>`
-    : `<span class="ei">${ic(gl,14)}</span>
-       <b>${esc(ev.title)}</b>
-       <em>${clockLabel(ev.s)} – ${clockLabel(ev.e)}</em>${faces}${cta}`;
-  return `<div class="calev ${fcls(ev.f)} ${ev.up?'up':'rec'} ${mode}${tall}"
-    style="top:${top}px;height:${h}px;left:calc(${l}% + 5px);width:calc(${w}% - 10px)"
-    data-a="${ev.mid?'open':'calev'}" data-p="${ev.mid||ev.id}"
-    title="${tip}">${body}</div>`;
 }
 function viewCalendar(){
   const ws=weekStart(S.week);
   const days=Array.from({length:7},(_,i)=>addDays(ws,i));
   const all=allEvents(),tk=isod(TODAY);
   const H=CAL_P*2+(CAL_E-CAL_S)*CAL_H;
-  const isWe=d=>d.getDay()===0||d.getDay()===6;
   const gut=[];
   for(let h=CAL_S;h<=CAL_E;h++)gut.push(`<i style="top:${
     CAL_P+(h-CAL_S)*CAL_H}px">${clockLabel(h).replace(':00','')}</i>`);
   const col=d=>{
-    const k=isod(d),td=k===tk;
-    const evs=calLanes(all.filter(e=>e.iso===k&&!e.ad));
+    const k=isod(d),we=d.getDay()===0||d.getDay()===6,td=k===tk;
+    const evs=calLanes(all.filter(e=>e.iso===k));
     let out='';
     for(let h=CAL_S;h<=CAL_E;h++)out+=`<div class="calline" style="top:${
       CAL_P+(h-CAL_S)*CAL_H}px"></div>`;
     if(td&&NOWH>=CAL_S&&NOWH<=CAL_E)
       out+=`<div class="calnow" style="top:${CAL_P+(NOWH-CAL_S)*CAL_H}px"></div>`;
-    out+=evs.map(calCard).join('');
-    return `<div class="calcol ${isWe(d)?'we':''} ${td?'td':''}">${out}</div>`;
+    out+=evs.map(ev=>{
+      const s=Math.max(CAL_S,ev.s),e=Math.min(CAL_E,Math.max(ev.e,ev.s+.25));
+      if(e<=CAL_S||s>=CAL_E)return '';
+      const top=CAL_P+(s-CAL_S)*CAL_H,h=Math.max(30,(e-s)*CAL_H-3);
+      const w=100/ev._n,l=ev._l*w;
+      return `<div class="calev ${fcls(ev.f)} ${ev.up?'up':''} ${h<46?'sm':''}"
+        style="top:${top}px;height:${h}px;left:calc(${l}% + 3px);width:calc(${w}% - 6px)"
+        data-a="${ev.mid?'open':'calev'}" data-p="${ev.mid||ev.id}"
+        title="${esc(ev.title)} · ${clockLabel(ev.s)}–${clockLabel(ev.e)}${
+          ev.who?' · '+esc(ev.who):''}">
+        <b>${esc(ev.title)}</b><em>${clockLabel(ev.s)}</em>
+        ${h>=78?`<span class="who">${esc(ev.who||'')}</span>`:''}</div>`;}).join('');
+    return `<div class="calcol ${we?'we':''} ${td?'td':''}">${out}</div>`;
   };
-  const adRow=days.map(d=>{
-    const items=all.filter(e=>e.iso===isod(d)&&e.ad);
-    return `<div class="cell ${isWe(d)?'we':''}">${items.map(e=>
-      `<span class="adchip ${fcls(e.f)}" title="${esc(e.title)}">${ic(folderMeta(e.f).ic,11)}${
-        esc(e.title)}</span>`).join('')}</div>`;}).join('');
   return `<div class="body" style="overflow:hidden">
    <div class="calbar">
      <span class="rng">${calRange(days)}</span>
@@ -3140,16 +2878,15 @@ function viewCalendar(){
        :`<span class="hint" style="padding-left:2px">This week</span>`}
      <span class="r"><span class="hint">${upcoming(99).length} scheduled ahead</span></span></div>
    <div class="cal">
-     <div class="calhd">
-       <div class="tz"><span class="tzp">${tzLabel()}</span></div>
-       ${days.map(d=>`<div class="d ${isod(d)===tk?'today':''} ${isWe(d)?'we':''}">
-         <div class="dn">${d.getDate()}</div><div class="dw">${DOWS[d.getDay()]}</div></div>`).join('')}</div>
-     <div class="calad"><div class="lbl">All day</div>${adRow}</div>
+     <div class="calhd"><div></div>${days.map(d=>{
+       const we=d.getDay()===0||d.getDay()===6,td=isod(d)===tk;
+       return `<div class="${td?'today':''} ${we?'we':''}">
+         <div class="dw">${DOWS[d.getDay()]}</div><div class="dn">${d.getDate()}</div></div>`;}).join('')}</div>
      <div class="calbody"><div class="calgrid" style="height:${H}px">
        <div class="calgut">${gut.join('')}</div>${days.map(col).join('')}</div></div></div>
    <div class="callegend">
-     <span><i class="rec"></i>Recorded — opens its notes</span>
-     <span><i class="out"></i>Scheduled</span>
+     <span><i class="fc-1"></i>Recorded — opens its notes</span>
+     <span><i class="out fc-1"></i>Scheduled</span>
      <span>Each call takes the colour of the folder it is filed into.</span></div></div>`;
 }
 
@@ -3839,30 +3576,29 @@ function viewInsights(){
   return `<div class="body">
    ${chiprow([['week','This week'],['month','This month'],['all','All time']],'range',S.range,
      `<span class="hint">Computed on this Mac from your own activity. Nothing is uploaded.</span>`)}
-   ${pnl('Summary',R.label,'',`<div class="statrow">
+   <div class="statrow">
      <div class="stat fcs fc-1"><div class="lb">Time in meetings</div><div class="big h">${R.t1}</div>
        <div class="dl">${ic('chart',13)}${R.d1}</div></div>
      <div class="stat fcs fc-2"><div class="lb">Words dictated</div><div class="big h">${R.t2}</div>
        <div class="dl">${ic('clock',13)}${R.d2}</div></div>
      <div class="stat fcs fc-3"><div class="lb">Kept after editing</div><div class="big h">${R.t3}</div>
-       <div class="dl">${ic('check',13)}${R.d3}</div></div></div>`)}
-   <div class="g2 pnls" style="margin-top:var(--s4)">
-     ${pnl('Time in meetings','minutes per '+per,'',
-       chart(R.mins,R.days,4,S.range==='week'?'2h 40m':'9h 00m','Busiest in this range','fc-1'))}
-     ${pnl('Words dictated','per '+per,'',chart(R.words,R.days,-1,'','','fc-2'))}</div>
-   <div class="g2 pnls" style="margin-top:var(--s4)">
-     ${pnl('Most corrected terms',terms.length,
-       `<span data-a="go" data-p="vocabulary">Open Vocabulary ${ic('chev',12)}</span>`,
-       terms.map((t,i)=>`<div class="hbar fc-${3+(i%3)}"><span class="lb">${esc(t.t)}</span>
+       <div class="dl">${ic('check',13)}${R.d3}</div></div></div>
+   <div class="g2">
+     <div><div class="ghd" style="margin-bottom:14px">Time in meetings <span class="n">· minutes per ${per}</span></div>
+       ${chart(R.mins,R.days,4,S.range==='week'?'2h 40m':'9h 00m','Busiest in this range','fc-1')}</div>
+     <div><div class="ghd" style="margin-bottom:14px">Words dictated <span class="n">· per ${per}</span></div>
+       ${chart(R.words,R.days,-1,'','','fc-2')}</div></div>
+   <div class="g2" style="margin-top:var(--s8)">
+     <div><div class="ghd" style="margin-bottom:6px">Most corrected terms</div>
+       ${terms.map((t,i)=>`<div class="hbar fc-${3+(i%3)}"><span class="lb">${esc(t.t)}</span>
          <span class="tr"><i style="width:${Math.round(t.n/mx*100)}%"></i></span>
-         <span class="vv">${t.n}&times;</span></div>`).join(''))}
-     ${pnl('Worth adding',null,'',
-       `<div style="font-size:13.5px;line-height:1.7;color:var(--ink2)">Adding the three terms
-         beside this to your vocabulary would have saved <b>${
-         terms.reduce((a,b)=>a+b.n,0)} corrections</b> in this range — AIT&#8209;Scribe applies them
-         to dictation and meeting transcripts alike.</div>
-        <div style="margin-top:var(--s4)"><button class="btn s sm" data-a="go" data-p="vocabulary">${
-          ic('book',14)}Open Vocabulary</button></div>`)}
+         <span class="vv">${t.n}&times;</span></div>`).join('')}</div>
+     <div style="display:flex;align-items:flex-end">
+       <div class="notice quiet" style="width:100%;align-items:flex-start">${ic('book',15)}
+         <span>Adding these to your vocabulary would have saved <b>${
+           terms.reduce((a,b)=>a+b.n,0)} corrections</b> in this range.
+         <span class="link" data-a="go" data-p="vocabulary"
+           style="margin-left:6px">Open Vocabulary</span></span></div></div>
    </div></div>`;
 }
 
@@ -4844,31 +4580,9 @@ document.addEventListener('focusout',e=>{
 });
 
 /* ══════════════════════════════════ render ══════════════════════════════════ */
-/* ── room for the panel ───────────────────────────────────────────────────
-   A right-hand panel — a watchout, the meeting assistant, a task — is a second
-   reading column, and three columns plus a panel leaves the middle one too
-   narrow to be worth reading. So opening one folds both left sidebars to their
-   icon rails, and closing it gives back exactly what the user had before,
-   unless fit() has since decided the window is too narrow for them anyway.
-
-   It runs from render() rather than from each of the six actions that can open
-   a panel, so nothing can open one and forget. */
-function syncAside(){
-  const on=(['folder','meeting'].includes(S.route)&&((S.wpanel&&S.wid)||S.mpanel))
-        || (S.route==='tasks'&&S.panel);
-  if(on&&!S.asideWas){
-    S.asideWas={rail:S.railmin,list:S.listmin};
-    S.railmin=true;S.listmin=true;S.peek=null;
-  }else if(!on&&S.asideWas){
-    S.railmin=AUTO.rail?true:S.asideWas.rail;
-    S.listmin=AUTO.list?true:S.asideWas.list;
-    S.asideWas=null;
-  }
-}
 function render(){
-  syncAside();
   document.documentElement.dataset.theme=db.settings.theme;
-  document.documentElement.dataset.th=db.settings.th||'indigo';
+  document.documentElement.dataset.th=db.settings.th||'ocean';
   /* one invariant rather than a clear-the-peek call at every place a modal can
      open: nothing floats over the page while something else is on top of it */
   if(S.settings||S.share||S.addPerson||S.menu)S.peek=null;
@@ -4962,11 +4676,12 @@ function render(){
    the call has already cost something. Everything else waits to be asked for. */
 const BUBACTS=[['record','rec','Record a meeting'],['ask','spark','Ask the assistant'],
                ['more','dots','More']];
-/* The bottom-right corner, 24px clear of both edges — the same inset on each
-   side, which is what makes it read as parked in the corner rather than
-   floating somewhere down the right-hand side. It is draggable, so this is
-   only where it starts and where "Reset position" puts it back. */
-function bubHome(){return {x:FW()-84,y:FH()-84};}
+/* bottom right, but clear of the Ask dock that now runs along the foot of a
+   meeting or a project — and clear of the room the hover pill needs to grow
+   into. Draggable, if the user wants it elsewhere. */
+/* It used to rest a third of the way up the window, on top of whatever row
+   happened to be there. Bottom-right corner: still reachable, over far less. */
+function bubHome(){return {x:FW()-84,y:FH()-232};}
 const bubMode=()=>S.rec?'meet':S.bub.rec?'dict':'idle';
 /* Which edge the control is anchored to. Everything that changes its width —
    growing into a pill on hover, becoming the recording pill, collapsing back —
@@ -5008,7 +4723,7 @@ function renderBubble(){
   const sig=[mode,mode==='meet'&&S.rec.paused,S.wpeek,S.wopen,S.wsay,S.walert,
              open.length,open.map(w=>w.id).join(',')].join('|');
   const side=bubSide();
-  b.y=Math.max(72,Math.min(b.y,FH()-80));
+  b.y=Math.max(72,Math.min(b.y,FH()-96));
   /* the popover is taller than the pill, so it drops below it near the top */
   const head=(S.wpeek||S.wopen||S.wsay)?424:mode==='idle'?150:120;
   /* the class list is what decides the width — idle is a fixed 60px box with an

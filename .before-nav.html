@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-th="indigo" data-theme="light">
+<html lang="en" data-th="ocean" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -57,21 +57,10 @@
   --e3:0 28px 70px -18px rgba(16,24,40,.26),0 4px 14px rgba(16,24,40,.07);
   /* motion — one duration and one curve for state changes */
   --tr:.13s cubic-bezier(.2,.7,.4,1);
-/* ── semantic ─────────────────────────────────────────────────────────
-     Error #FF5C70, success #22B07D, warning #FFBF47, info #08A0F7 — shared
-     across every theme and both modes, exactly as the system specifies, so a
-     red always reads as a red.
-
-     Each one is a family rather than a single value, because one hex cannot do
-     both jobs: the spec's colour is the *mark* — the dot, the badge, the
-     recording light — while `*Ink` is the same hue darkened until text on white
-     clears 4.5:1, and `*Tint`/`*Line` are the surface it sits on. #FF5C70 under
-     white text is 2.9:1, so the fill is pulled a step down; the dot stays the
-     spec value. */
-  --danger:#EF4358; --dangerOn:#FFFFFF; --dangerInk:#C92A40; --dangerTint:#FFF0F2; --dangerLine:#FFD9DF;
-  --warn:#E9A21F; --warnInk:#8A6208; --warnTint:#FFF7E6; --warnLine:#FAE3B4;
-  --ok:#1A9E70; --okInk:#0E7C55; --okTint:#E8F8F1; --okLine:#BFE9D8;
-  --info:#08A0F7; --infoTint:#E6F5FE; --infoInk:#0A72B8; --infoLine:#BCE3FB;
+  --danger:#D92D20; --dangerOn:#FFFFFF; --dangerInk:#B42318; --dangerTint:#FEF3F1; --dangerLine:#FADBD5;
+  --warn:#DD9000; --warnInk:#8A5300; --warnTint:#FFF8E8; --warnLine:#F6E2BC;
+  --ok:#0A7548; --okInk:#07603B; --okTint:#ECFAF3; --okLine:#C8E9D7;
+  --info:#1570EF; --infoTint:#EFF5FF; --infoInk:#0B4FB0; --infoLine:#CFE0FB;
   --shadow:var(--e3);
   --shadow2:var(--e2);
   /* the floating pill is its own surface, not a theme surface: it has to read as
@@ -81,7 +70,7 @@
   /* a count sitting inside an already-tinted chip: darken the tint rather
      than introduce a third colour */
   --chipWell:rgba(0,0,0,.055);
-  --pill:#1F1D2B; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.62);
+  --pill:#161C27; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.60);
   --pillLine:rgba(255,255,255,.13); --pillWell:rgba(255,255,255,.09);
   --pillShadow:0 18px 44px rgba(12,18,28,.38),0 2px 6px rgba(12,18,28,.24),0 0 0 1px rgba(255,255,255,.06);
   /* watchouts: conflict is the only one that earns a red */
@@ -90,62 +79,21 @@
   --wcl:var(--info); --wclInk:var(--infoInk); --wclTint:var(--infoTint); --wclLine:var(--infoLine);
 }
 [data-theme="dark"]{
-  --danger:#FF5C70; --dangerOn:#2A0E14; --dangerInk:#FF97A5; --dangerTint:#3A1A21; --dangerLine:#55262F;
-  --warn:#FFBF47; --warnInk:#FFD37A; --warnTint:#33270C; --warnLine:#4C3A14;
-  --ok:#22B07D; --okInk:#5FD6A8; --okTint:#113025; --okLine:#1F4A39;
-  --info:#08A0F7; --infoTint:#0F2739; --infoInk:#6BC2FB; --infoLine:#1C4560;
+  --danger:#F0483A; --dangerOn:#26100C; --dangerInk:#FFA79B; --dangerTint:#3A1713; --dangerLine:#55231C;
+  --warn:#E9A23B; --warnInk:#F7CD82; --warnTint:#33240D; --warnLine:#4B3616;
+  --ok:#17A46A; --okInk:#6FDCA6; --okTint:#0F2A1D; --okLine:#1F4632;
+  --info:#5B95F0; --infoTint:#15233A; --infoInk:#A8C8F8; --infoLine:#274068;
   --e1:0 1px 2px rgba(0,0,0,.30);
   --e2:0 8px 24px -8px rgba(0,0,0,.52),0 1px 3px rgba(0,0,0,.34);
   --e3:0 28px 70px -18px rgba(0,0,0,.62),0 4px 14px rgba(0,0,0,.38);
   --chipWell:rgba(255,255,255,.10);
-  --pill:#2B2940; --pillInk:#FFFFFF; --pillSec:rgba(255,255,255,.62);
+  --pill:#232C3B; --pillInk:#F4F8FE; --pillSec:rgba(244,248,254,.60);
   --pillLine:rgba(255,255,255,.11); --pillWell:rgba(255,255,255,.08);
   --pillShadow:0 18px 44px rgba(0,0,0,.62),0 2px 6px rgba(0,0,0,.44),0 0 0 1px rgba(255,255,255,.09);
 }
 
-/* ─────────── Indigo — the default ───────────
-   Built straight from the supplied system: #525298 as the brand, #F3F3F8 /
-   #FFFFFF as the light surfaces and #1F1D2B / #252836 as the dark ones, with
-   #E2E2F0 and #2F3142 as the borders. The nine-step ramp exists because the
-   app needs a brand at six different weights — a fill, a hover, an ink that
-   passes on white, two tints and a ring — and the spec gives three; the rest
-   are interpolated along the same hue so nothing drifts off it.
-
-   #525298 lands on o600 rather than o500 because a fill is `o600` in light
-   mode by this file's convention, and #5C5CA2 — the spec's hover — is o500,
-   which is why light-mode hover here brightens rather than darkens. */
-:root,[data-th="indigo"]{
-  --o50:#F4F4FB; --o100:#EEEEFF; --o200:#DCDCF4; --o300:#B9B9E2;
-  --o400:#8A8AC4; --o500:#5C5CA2; --o600:#525298; --o700:#45457E; --o800:#33335E;
-  --rail:#F8F8FC; --surf:#FFFFFF; --sunk:#F3F3F8; --scrim:rgba(31,29,43,.44);
-  --line:#E2E2F0; --hair:#EDEDF7; --line2:#D3D3E6;
-  /* Text / Primary is the spec's #252836. Text / Secondary is given as
-     #9293A3, which is 3.0:1 on white — fine for a 14px description, not for the
-     11px uppercase micro-labels this app runs on, so the ramp keeps the hue and
-     steps it down twice: --sec at 6.4:1 for anything read as a sentence, --ter
-     at 4.5:1 for labels and counts. Nothing here drops below AA. */
-  --ink:#252836; --ink2:#3A3D50; --sec:#5B5D75; --ter:#73758C;
-  --brand:var(--o600); --brandOn:#FFFFFF; --brandHov:var(--o500); --brandInk:var(--o700);
-  --brandFill:var(--o600); --brandFillHov:var(--o500);
-  --tint:var(--o100); --tint2:var(--o50); --onChip:rgba(0,0,0,.24);
-  --backdrop:#E4E4EF; --meterOff:#D6D6E8; --ring:rgba(82,82,152,.24);
-}
-[data-th="indigo"][data-theme="dark"]{
-  --o50:#23233A; --o100:#2A2A46; --o200:#343458; --o300:#45457E;
-  --o400:#5E5EA8; --o500:#7A7ABF; --o600:#9797D4; --o700:#B4B4E4; --o800:#D6D6F2;
-  --rail:#1F1D2B; --surf:#252836; --sunk:#2E3143; --scrim:rgba(0,0,0,.62);
-  --line:#2F3142; --hair:#2A2C3B; --line2:#3C3F52;
-  /* the spec's #A7A7B5 clears 6.2:1 on #252836 and is used as given; --ter is
-     one step lighter so it still holds 4.9:1 rather than falling under AA */
-  --ink:#FFFFFF; --ink2:#DCDCE6; --sec:#A7A7B5; --ter:#9494A6;
-  --brand:var(--o500); --brandOn:#FFFFFF; --brandHov:var(--o600); --brandInk:var(--o600);
-  --brandFill:var(--o400); --brandFillHov:var(--o500);
-  --tint:var(--o200); --tint2:var(--o100); --onChip:rgba(0,0,0,.30);
-  --backdrop:#16151F; --meterOff:#3C3F52; --ring:rgba(122,122,191,.32);
-}
-
-/* ─────────── Ocean — cool blue ─────────── */
-[data-th="ocean"]{
+/* ─────────── Ocean — cool blue, the default ─────────── */
+:root,[data-th="ocean"]{
   --o50:#F3F8FF; --o100:#E4EFFE; --o200:#C7DDFC; --o300:#8FB8F8;
   --o400:#4B8BF0; --o500:#1A5FE0; --o600:#0548CF; --o700:#0A3AA0; --o800:#0A2C74;
   --rail:#F9FBFE; --surf:#FFFFFF; --sunk:#F4F8FE; --scrim:rgba(12,25,43,.42);
@@ -295,14 +243,6 @@ input{font:inherit;color:inherit;background:none;border:0;outline:0}
   outline-offset:2px;border-radius:var(--r2)}
 .mrow:focus-visible,.trk:focus-visible,.wrow:focus-visible,.trow:focus-visible,
 .vtable tr:focus-visible,.srow:focus-visible{outline-offset:-2px;border-radius:0}
-/* A text field is the one control a browser always treats as :focus-visible,
-   even on a mouse click. Every field in here sits in a well that already shows
-   focus — `.srch`, `.inp`, `.addrow`, `.compbox`, `.notebox` all light up on
-   :focus-within — so the rule above was drawing a second rounded ring INSIDE
-   the first one the moment you started typing. The well is the focus
-   indicator; the field inside it does not need its own. */
-input:focus-visible,input[data-a]:focus-visible,
-[contenteditable]:focus-visible,[contenteditable][data-a]:focus-visible{outline:none}
 /* hover-revealed row actions have to appear for the keyboard too, or they are
    simply not there for anyone who is not holding a mouse */
 .mrow:focus-within .macts,.trow:focus-within .acts,.wrow:focus-within .wacts,
@@ -1772,333 +1712,6 @@ input:focus-visible,input[data-a]:focus-visible,
 .cchips span:hover{border-color:var(--brand);color:var(--brandInk)}
 .cchips span .ic{color:var(--sec);flex:0 0 auto}
 .cchips span:hover .ic{color:var(--brandInk)}
-
-/* ══════════════════════════════ folder & data palette ══════════════════════════════
-   One palette, six slots, and every place that needs to tell one thing from
-   another reads it: a folder's icon, the tag on a meeting row, an event in the
-   calendar, a series in the insights charts. --fcI is the ink (and the fill for
-   solid marks), --fcT the tint it sits on. Each slot is hand-tuned for dark
-   mode rather than inverted, the same way the themes are.
-
-   The rule this palette follows: colour identifies, it does not decorate. A
-   slot is always tied to a folder, so the same green means "Projects" on the
-   home page, in the sidebar, on a meeting row and in the calendar.
-
-   The six are the system's brand and accents — indigo, purple, success green,
-   orange, error rose, cyan — each pulled to the weight that clears 4.5:1 on
-   the surface it prints on, since these carry text and 11px labels, not just
-   fills. */
-.fc-1{--fcI:#525298;--fcT:#EEEEFF}
-.fc-2{--fcI:#A03BB0;--fcT:#FAECFC}
-.fc-3{--fcI:#0A7856;--fcT:#E6F7F0}
-.fc-4{--fcI:#A84F00;--fcT:#FFF0DF}
-.fc-5{--fcI:#C22843;--fcT:#FFECEF}
-.fc-6{--fcI:#0A757D;--fcT:#E0F8FA}
-[data-theme="dark"] .fc-1{--fcI:#9797D4;--fcT:#2A2A46}
-[data-theme="dark"] .fc-2{--fcI:#D98BE4;--fcT:#3A1F40}
-[data-theme="dark"] .fc-3{--fcI:#4FD3A2;--fcT:#123328}
-[data-theme="dark"] .fc-4{--fcI:#FFA542;--fcT:#3A2410}
-[data-theme="dark"] .fc-5{--fcI:#FF8496;--fcT:#3B1C23}
-[data-theme="dark"] .fc-6{--fcI:#3FE0EA;--fcT:#0E3438}
-
-/* the folder glyph, wherever it appears at tile size */
-.fwell{display:flex;align-items:center;justify-content:center;flex:0 0 auto;
-  background:var(--fcT);color:var(--fcI);border-radius:var(--r3)}
-
-/* a folder row in the list column keeps its colour on the glyph only — the row
-   itself still selects with the brand tint like every other row in that column */
-.views a.fdr>.ic{color:var(--fcI)}
-.views a.fdr.on>.ic{color:var(--fcI)}
-
-/* ══════════════════════════════ meetings home ══════════════════════════════
-   The home screen has no list column: the folders ARE the navigation, so a
-   second copy of them down the left would be the same list twice. Three
-   blocks — folders, what is coming up, what was just recorded. */
-.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));
-  gap:var(--s3);margin-bottom:var(--s8)}
-.fcd{border:1px solid var(--line);border-radius:var(--r4);padding:var(--s4);cursor:pointer;
-  background:var(--surf);display:flex;flex-direction:column;gap:var(--s3);min-height:132px;
-  transition:border-color var(--tr),box-shadow var(--tr),transform var(--tr)}
-.fcd:hover{border-color:var(--line2);box-shadow:var(--e2);transform:translateY(-1px)}
-.fcd .top{display:flex;align-items:center;gap:var(--s3)}
-.fcd .fi{width:36px;height:36px}
-.fcd .nm{font-family:var(--f-head);font-size:14.5px;font-weight:600;flex:1;min-width:0;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.01em}
-.fcd .fm{width:26px;height:26px;border-radius:var(--r1);display:flex;align-items:center;
-  justify-content:center;color:var(--ter);flex:0 0 auto;opacity:0;pointer-events:none;
-  transition:opacity var(--tr),background var(--tr)}
-.fcd:hover .fm{opacity:1;pointer-events:auto}
-.fcd .fm:hover{background:var(--sunk);color:var(--ink2)}
-.fcd .subs{display:flex;gap:5px;flex-wrap:wrap;min-height:0}
-.fcd .subs span{font-size:11px;font-weight:500;color:var(--sec);background:var(--sunk);
-  border-radius:var(--r1);padding:2px 7px;line-height:1.5;white-space:nowrap}
-.fcd .subs span.plain{background:transparent;padding:2px 0;color:var(--ter)}
-.fcd .mt{font-size:11.5px;color:var(--ter);display:flex;align-items:center;gap:6px;
-  flex-wrap:wrap;margin-top:auto}
-.fcd .mt b{color:var(--ink2);font-family:var(--f-body);font-weight:600}
-.fcd .mt .dotc{width:5px;height:5px;border-radius:50%;background:var(--fcI);flex:0 0 auto}
-.fcd.add{border-style:dashed;align-items:center;justify-content:center;text-align:center;
-  color:var(--ter);background:transparent;gap:var(--s2);min-height:132px}
-.fcd.add:hover{color:var(--brandInk);border-color:var(--brand);background:var(--tint2);
-  box-shadow:none;transform:none}
-.fcd.add .nm{flex:0 0 auto;font-family:var(--f-body);font-size:12.5px;font-weight:500;
-  text-align:center;white-space:normal}
-.homegrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);
-  gap:var(--s7);align-items:start}
-.homegrid>div{min-width:0}
-/* a heading with somewhere to go on the end of it */
-.ghd .go{margin-left:auto;font-family:var(--f-body);font-size:11.5px;font-weight:600;
-  letter-spacing:0;text-transform:none;color:var(--brandInk);cursor:pointer;
-  display:inline-flex;align-items:center;gap:3px}
-.ghd .go:hover{text-decoration:underline}
-
-/* what is coming up. A time, a colour rule that says which folder it belongs
-   to, and the line itself — deliberately the same rhythm as a meeting row so
-   the two columns on the home page scan together. */
-.uplist{display:flex;flex-direction:column;margin:0 -10px}
-.pnl .uplist,.pnl .list{margin-bottom:0}
-.upday{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--ter);padding:var(--s4) 10px var(--s1)}
-.uplist>.upday:first-child{padding-top:0}
-.uprow{display:flex;align-items:stretch;gap:var(--s3);padding:9px 10px;border-radius:var(--r2);
-  cursor:pointer;transition:background var(--tr)}
-.uprow:hover{background:var(--sunk)}
-.uprow .tmc{flex:0 0 auto;width:54px;font-size:12.5px;font-weight:600;color:var(--ink2);
-  font-variant-numeric:tabular-nums;line-height:1.35;padding-top:1px}
-.uprow .tmc span{display:block;font-weight:500;font-size:11px;color:var(--ter)}
-.uprow .rule{width:3px;border-radius:2px;background:var(--fcI);flex:0 0 auto;opacity:.9}
-.uprow .bd{flex:1;min-width:0;padding-top:1px}
-.uprow .t{font-family:var(--f-head);font-size:13.5px;font-weight:600;display:block;
-  line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.uprow .s{font-size:11.5px;color:var(--sec);display:block;margin-top:3px;overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap}
-.uprow .go{flex:0 0 auto;align-self:center;opacity:0;color:var(--ter);
-  transition:opacity var(--tr)}
-.uprow:hover .go{opacity:1}
-
-/* ══════════════════════════════ calendar ══════════════════════════════
-   The header leads with the date, today is marked by a rule under its own
-   header cell rather than by tinting a column all the way down, and an event
-   is a card with room to say what it is. Colour appears in three places only:
-   the folder glyph on a card, the join button, and the line marking now. */
-.calbar{display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s4);
-  flex-wrap:wrap;flex:0 0 auto}
-.calbar .rng{font-family:var(--f-head);font-size:18px;font-weight:600;letter-spacing:-.016em;
-  margin-right:var(--s2);white-space:nowrap}
-.calbar .r{margin-left:auto;display:flex;align-items:center;gap:var(--s2)}
-.calnav{display:flex;align-items:center;gap:1px;flex:0 0 auto}
-.calnav span{width:28px;height:28px;border-radius:var(--r2);display:flex;align-items:center;
-  justify-content:center;color:var(--sec);cursor:pointer;
-  transition:background var(--tr),color var(--tr)}
-.calnav span:hover{background:var(--sunk);color:var(--ink)}
-.cal{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;border:1px solid var(--line);
-  border-radius:var(--r4);overflow:hidden;background:var(--surf)}
-/* one track definition, three rows that have to line up with each other */
-.calhd,.calad,.calgrid{display:grid;grid-template-columns:84px repeat(7,minmax(0,1fr))}
-.calhd{flex:0 0 auto;border-bottom:1px solid var(--line);background:var(--surf)}
-.calhd .tz{display:flex;align-items:center;justify-content:center;padding:12px 8px}
-.tzp{display:inline-flex;align-items:center;height:26px;padding:0 11px;border-radius:var(--rF);
-  border:1px solid var(--line);background:var(--surf);font-family:var(--f-body);font-size:11px;
-  font-weight:500;color:var(--sec);white-space:nowrap;font-variant-numeric:tabular-nums}
-.calhd .d{padding:11px 6px 13px;text-align:center;border-left:1px solid var(--hair);min-width:0}
-.calhd .dn{font-family:var(--f-head);font-size:24px;font-weight:500;line-height:1.05;
-  letter-spacing:-.022em;color:var(--ink2);font-variant-numeric:tabular-nums}
-.calhd .dw{font-family:var(--f-body);font-size:10.5px;font-weight:500;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--ter);margin-top:4px}
-.calhd .d.we .dn{color:var(--sec)}
-/* today is a rule under the date, not a column of colour */
-.calhd .d.today{box-shadow:inset 0 -2px 0 var(--ink)}
-.calhd .d.today .dn{color:var(--ink);font-weight:600}
-.calhd .d.today .dw{color:var(--ink2)}
-.calad{flex:0 0 auto;border-bottom:1px solid var(--line);min-height:42px}
-.calad .lbl{display:flex;align-items:center;justify-content:flex-end;padding:0 11px;
-  font-size:11.5px;color:var(--sec)}
-.calad .cell{border-left:1px solid var(--hair);padding:6px 5px;min-width:0;display:flex;
-  flex-direction:column;gap:4px;justify-content:center}
-.calad .cell.we{background:var(--rail)}
-.adchip{display:flex;align-items:center;gap:5px;border-radius:var(--r1);background:var(--fcT);
-  color:var(--fcI);padding:4px 8px;font-family:var(--f-body);font-size:11px;font-weight:600;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
-.adchip .ic{flex:0 0 auto}
-/* The grid scrolls and the two header rows do not, so the scrollbar took its
-   10px out of the grid alone and every column below the all-day row sat 10px
-   to the left of the one above it. Reserve the gutter always, and give the
-   header rows the same 10px back as padding, so all three grids compute their
-   tracks over the same width. */
-.calbody{flex:1 1 auto;min-height:0;overflow-y:scroll;overflow-x:hidden;
-  scrollbar-gutter:stable}
-.calhd,.calad{padding-right:10px}
-.calgrid{position:relative}
-.calgut{position:relative}
-.calgut i{position:absolute;right:11px;font-style:normal;font-size:10.5px;color:var(--ter);
-  transform:translateY(-50%);font-variant-numeric:tabular-nums;white-space:nowrap}
-.calcol{position:relative;border-left:1px solid var(--hair);min-width:0}
-.calcol.we{background:var(--rail)}
-.calline{position:absolute;left:0;right:0;border-top:1px solid var(--hair);pointer-events:none}
-.calnow{position:absolute;left:0;right:0;height:0;border-top:2px solid var(--danger);z-index:6;
-  pointer-events:none}
-.calnow:before{content:'';position:absolute;left:-3px;top:-4px;width:7px;height:7px;
-  border-radius:50%;background:var(--danger)}
-
-/* ── the event card ──────────────────────────────────────────────────────
-   Recorded calls are a filled tile; scheduled ones are an outlined one on the
-   page surface. Both are cards — the difference is which one already exists
-   and which one is still only booked. */
-.calev{position:absolute;display:flex;flex-direction:column;border-radius:var(--r3);
-  /* 5px of column either side, so two columns of cards never touch */
-  padding:10px 11px;overflow:hidden;cursor:pointer;z-index:2;
-  border:1px solid transparent;background:var(--sunk);
-  transition:background var(--tr),border-color var(--tr),box-shadow var(--tr)}
-.calev.up{background:var(--surf);border-color:var(--line)}
-.calev:hover{background:var(--surf);border-color:var(--line2);box-shadow:var(--e2);z-index:5}
-.calev .ei{width:26px;height:26px;border-radius:var(--r1);background:var(--fcT);color:var(--fcI);
-  display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-bottom:9px}
-/* the same identity at a size where a tile would not fit */
-.calev .dt{width:7px;height:7px;border-radius:50%;background:var(--fcI);flex:0 0 auto;
-  font-style:normal}
-/* flex:0 0 auto throughout: if a card is a few pixels short, the bottom of it
-   is clipped by overflow, which costs the time or an avatar. Letting the items
-   shrink instead collapsed the title to nothing and left a card showing only a
-   timestamp. */
-.calev b{font-family:var(--f-head);font-size:13px;font-weight:600;line-height:1.32;
-  letter-spacing:-.005em;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;
-  -webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word;flex:0 0 auto}
-.calev.tall b{-webkit-line-clamp:3}
-.calev em{font-style:normal;font-family:var(--f-body);font-size:11.5px;color:var(--ter);
-  margin-top:5px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;flex:0 0 auto}
-.calev .faces.ev{margin-top:10px;flex:0 0 auto}
-.calev .faces.ev i{width:22px;height:22px;font-size:9.5px;border-width:2px}
-.calev .cta{display:flex;align-items:center;justify-content:center;gap:6px;height:30px;
-  border-radius:var(--r2);font-family:var(--f-body);font-size:11.5px;font-weight:600;
-  margin-top:auto;flex:0 0 auto;color:#FFFFFF;letter-spacing:-.004em;
-  transition:filter var(--tr)}
-.calev .cta:hover{filter:brightness(1.07)}
-/* the two services keep distinct buttons, but they are the system's info blue
-   and orange rather than two borrowed brand colours */
-.calev .cta.zoom{background:#0A72B8}
-.calev .cta.meet{background:#A84F00}
-.calev .cta.notes{background:var(--brandFill);color:var(--brandOn)}
-/* sm drops the icon tile: a dot rides on the title's line, the time gets its own */
-.calev.sm{padding:9px 11px}
-.calev.sm .hd{display:flex;align-items:center;gap:7px;min-width:0;flex:0 0 auto;
-  overflow:hidden}
-.calev.sm b{font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;min-width:0;flex:1 1 auto}
-/* xs is one line: dot, name, start time */
-.calev.xs{flex-direction:row;align-items:center;gap:7px;padding:7px 10px}
-.calev.xs b{flex:1 1 auto;min-width:0;font-size:12px;white-space:nowrap;text-overflow:ellipsis;
-  display:block}
-.calev.xs em{margin-top:0;font-size:10.5px}
-.callegend{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap;font-size:11.5px;
-  color:var(--ter);padding:var(--s3) 2px 0;flex:0 0 auto}
-.callegend span{display:inline-flex;align-items:center;gap:6px}
-.callegend i{width:11px;height:11px;border-radius:3px;flex:0 0 auto;background:var(--sunk)}
-.callegend i.out{background:var(--surf);box-shadow:inset 0 0 0 1px var(--line2)}
-
-/* ══════════════════════════════ section panel ══════════════════════════════
-   The last pass took boxes off almost everything, on the grounds that a label
-   and whitespace group a list perfectly well. That is true of a list sitting
-   on its own in a column. It stops being true when two unlike things sit side
-   by side — a list of calls next to a schedule, two charts next to each other —
-   because then the only thing saying where one ends and the other begins is
-   the gap, and a gap reads as alignment, not as a boundary.
-
-   So: a panel is a hairline, a radius and a header strip. It is used where
-   sections sit beside each other, not as a default wrapper for everything. */
-.pnl{border:1px solid var(--line);border-radius:var(--r4);background:var(--surf);
-  display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.pnl>.ph{display:flex;align-items:center;gap:var(--s2);padding:11px var(--s4);
-  border-bottom:1px solid var(--hair);flex:0 0 auto}
-.pnl>.ph .t{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--ter);white-space:nowrap}
-.pnl>.ph .n{font-size:12px;color:var(--ter);font-weight:500}
-.pnl>.ph .go{margin-left:auto;flex:0 0 auto}
-.pnl>.ph .go>span{font-family:var(--f-body);font-size:11.5px;font-weight:600;
-  color:var(--brandInk);cursor:pointer;display:inline-flex;align-items:center;gap:4px;
-  white-space:nowrap}
-.pnl>.ph .go>span:hover{text-decoration:underline}
-.pnl>.pb{padding:var(--s3) var(--s4) var(--s4);min-width:0}
-/* a list already carries its own 10px hover overhang, so it sits tighter */
-.pnl>.pb.rows{padding:var(--s2) var(--s4) var(--s3)}
-.pnl .statrow{margin-bottom:0}
-.pnl .ghd:last-child,.pnl .hbar:last-child{margin-bottom:0}
-.g2.pnls{gap:var(--s4)}
-
-/* ══════════════════════════════ filter chip row ══════════════════════════════
-   The scope that used to live in the list column. On Speech, Vocabulary and
-   Insights the list column now names the *section*, and the range is a row of
-   chips directly above the thing it filters — which is where the eye already
-   is when it wants to change it. */
-.chiprow{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;flex:0 0 auto;
-  margin:0 0 var(--s5)}
-.chiprow .r{margin-left:auto;display:flex;align-items:center;gap:var(--s3)}
-
-/* ══════════════════════════════ scroll containment ══════════════════════════════
-   `overflow-y:auto` on a box whose overflow-x is `visible` computes overflow-x
-   to `auto` — which is why AI notes and Watchouts both carried a horizontal
-   scrollbar they had no content for. Naming the axis stops it. */
-.notesgrid,.wscroll,.calbody{overflow-x:hidden}
-.notesgrid>div,.wscroll>div{min-width:0}
-/* Rows in this app carry a hover well that reaches 10px past the text column
-   (`.list`, `.uplist`, `.sidebox .trk` all sit at margin:0 -10px). Inside
-   `.body` that overhang lands in the page's own 28px padding and costs
-   nothing. A scroll container between the two has no padding of its own, so
-   the overhang became overflow — which is the width the scrollbar was for.
-   Giving the container the same 10px back as padding, and taking it off again
-   as margin, keeps every column exactly where it was and leaves the wells
-   room to sit in. */
-.notesgrid,.wscroll{padding-left:10px;padding-right:10px;
-  margin-left:-10px;margin-right:-10px}
-.sec p,.bul li>span,.wrow .wt,.wrow .ws,.wcmp .q,.fcd .ds{overflow-wrap:break-word}
-
-/* ══════════════════════════════ colour, threaded ══════════════════════════════ */
-/* the folder a call was filed into: neutral text, one coloured dot. Enough to
-   group a list of calls by eye without printing four accent colours of type. */
-.mrow .rt .tg{display:inline-flex;align-items:center;gap:5px;justify-content:flex-end;
-  color:var(--sec)}
-.mrow .rt .tg i{width:6px;height:6px;border-radius:50%;background:var(--fcI);flex:0 0 auto}
-/* the stat's own colour rides on the delta glyph under the number, not on the
-   number — three 29px figures in three colours is a chart, not a stat row */
-.stat.fcs .dl .ic{color:var(--fcI)}
-.chart .bar{background:var(--fcI)}
-.chart .bar{opacity:.55}
-.chart .col:hover .bar{background:var(--fcI);opacity:1}
-.chart .bar.mute{background:var(--meterOff);opacity:.5}
-.hbar .tr i{background:var(--fcI);opacity:.62}
-.hbar:hover .tr i{background:var(--fcI);opacity:1}
-.pillx.you{background:var(--okTint);color:var(--okInk)}
-.trk .due.wn{color:var(--warnInk);font-weight:600}
-.acct .avat{background:var(--fcT);color:var(--fcI)}
-
-/* ══════════════════════════════ new responsive ══════════════════════════════ */
-#frame.w2 .homegrid{grid-template-columns:minmax(0,1fr);gap:var(--s6)}
-#frame.w2 .fgrid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
-#frame.w1 .fgrid{grid-template-columns:1fr}
-#frame.w1 .fcd{min-height:0}
-#frame.w2 .calhd,#frame.w2 .calad,#frame.w2 .calgrid{
-  grid-template-columns:54px repeat(7,minmax(0,1fr))}
-#frame.w2 .calhd .tz{padding:10px 4px}
-#frame.w2 .tzp{padding:0 7px;font-size:10px;height:22px}
-#frame.w2 .calhd .dn{font-size:19px}
-#frame.w2 .calad .lbl{padding:0 6px;font-size:10.5px}
-#frame.w2 .calgut i{right:7px;font-size:10px}
-#frame.w2 .calev{padding:8px 8px}
-#frame.w2 .calev b{font-size:12px}
-#frame.w2 .calev .faces.ev i{width:19px;height:19px;font-size:9px}
-#frame.w1 .cal{min-width:0}
-#frame.w1 .calhd,#frame.w1 .calad,#frame.w1 .calgrid{
-  grid-template-columns:40px repeat(7,minmax(0,1fr))}
-#frame.w1 .calhd .tz{display:none}
-#frame.w1 .calad .lbl{font-size:0;padding:0}
-#frame.w1 .calhd .dw{font-size:9px;letter-spacing:.04em}
-#frame.w1 .calhd .dn{font-size:15px}
-#frame.w1 .calgut i{right:4px;font-size:9px}
-#frame.w1 .calev{padding:5px 6px;border-radius:var(--r2)}
-#frame.w1 .calev b{font-size:10.5px;-webkit-line-clamp:2}
-#frame.w1 .calev em,#frame.w1 .calev .faces.ev,#frame.w1 .calev .cta{display:none}
-#frame.w1 .calev .ei{width:20px;height:20px;margin-bottom:5px}
-
 .hidden{display:none!important}
 </style>
 </head>
@@ -2168,15 +1781,6 @@ minus:'<path d="M3.4 8h9.2"/>',
 expand:'<path d="M3.2 3.2h5.6L3.2 8.8z" fill="currentColor" stroke="none"/><path d="M12.8 12.8H7.2l5.6-5.6z" fill="currentColor" stroke="none"/>',
 md:'<rect x="1.6" y="3.4" width="12.8" height="9.2" rx="1.8"/><path d="M4.2 10.4V5.6l2 2.4 2-2.4v4.8M11 5.6v4.8M9.4 8.8L11 10.4l1.6-1.6"/>',
 userplus:'<circle cx="6.4" cy="5.6" r="2.7"/><path d="M1.9 13.6a4.5 4.5 0 0 1 9 0"/><path d="M12.6 5.2v4M14.6 7.2h-4"/>',
-/* ── folder identity ───────────────────────────────────────────────────────
-   The four folders AIT-Scribe creates for you get a glyph of their own, so a
-   grid of folders reads as four kinds of work rather than four folders. */
-brief:'<rect x="1.9" y="4.9" width="12.2" height="8.6" rx="1.9"/><path d="M5.6 4.9V3.6a1.3 1.3 0 0 1 1.3-1.3h2.2a1.3 1.3 0 0 1 1.3 1.3v1.3"/><path d="M1.9 8.4h12.2"/>',
-layers:'<path d="M8 1.9l6.1 3.1L8 8.1 1.9 5z"/><path d="M2.4 8.2L8 11l5.6-2.8"/><path d="M2.4 11.1L8 13.9l5.6-2.8"/>',
-grid:'<rect x="2.1" y="2.1" width="5" height="5" rx="1.4"/><rect x="8.9" y="2.1" width="5" height="5" rx="1.4"/><rect x="2.1" y="8.9" width="5" height="5" rx="1.4"/><rect x="8.9" y="8.9" width="5" height="5" rx="1.4"/>',
-chevl:'<path d="M9.8 3.6L5.4 8l4.4 4.4"/>',
-calday:'<rect x="2.2" y="3.4" width="11.6" height="10.4" rx="2.2"/><path d="M2.2 6.6h11.6M5.5 2v2.6M10.5 2v2.6"/><path d="M5.2 9.6h5.6M5.2 11.6h3.2"/>',
-cam:'<rect x="1.5" y="4.2" width="9.2" height="7.6" rx="1.8"/><path d="M10.7 7.6l3.8-2.3v5.4l-3.8-2.3z"/>',
 /* ── watchouts ─────────────────────────────────────────────────────────────
    One glyph per classification, readable at 13px: two arrows meeting head-on
    for a conflict, a not-equals for a discrepancy, a question for a
@@ -2198,10 +1802,7 @@ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
    is the four-band strip above it: [rail, surface, brand, tint] for light and
    for dark, so a card previews both modes at a glance. */
 const THEMES=[
- {id:'indigo',name:'Indigo',ds:'Muted indigo on soft grey. The default.',
-  sw:['#525298','#8A8AC4','#EEEEFF','#252836'],
-  pv:{light:['#F8F8FC','#FFFFFF','#525298','#EEEEFF'],dark:['#1F1D2B','#252836','#7A7ABF','#343458']}},
- {id:'ocean',name:'Ocean',ds:'Cool blue on white. High contrast.',
+ {id:'ocean',name:'Ocean',ds:'Cool blue on white. High contrast, the default.',
   sw:['#0548CF','#4B8BF0','#E4EFFE','#0D192B'],
   pv:{light:['#F9FBFE','#FFFFFF','#0548CF','#E4EFFE'],dark:['#101C2E','#0D192B','#4C8DF5','#1C3A5E']}},
  {id:'citrus',name:'Citrus',ds:'Warm neutrals with a pale lime accent.',
@@ -2220,18 +1821,13 @@ const THEMES=[
 const theme=id=>THEMES.find(t=>t.id===id)||THEMES[0];
 
 /* ══════════════════════════════════ data ══════════════════════════════════ */
-/* An avatar is a filled circle with white initials on it, so every one of
-   these has to clear 3:1 against white — which is why they are the system's
-   accents pulled a step down rather than the raw #FF8700 / #08A0F7 / #12CDD9,
-   none of which carry white type. */
-const AV={J:'#B85F00',T:'#0A72B8',M:'#0E8A60',E:'#8C3A98',D:'#8A6208',R:'#0A7D86',
-          A:'#C2334F',K:'#525298',P:'#5C5CA2',N:'#0E7C8A',S:'#A03BB0',L:'#1A7A5C'};
+const AV={J:'#C24600',T:'#1159C0',M:'#0A7548',E:'#7C3AED',D:'#8A5300',R:'#0E7490',A:'#BE185D',K:'#41680C'};
 const F=(n,i,e)=>({n,i,c:AV[i]||'#C24600',e:e||''});
 /* email is optional on purpose: the attendee popover has to show both states,
    because only people with one can be sent the notes */
 
 function seed(){return{
-user:{name:'Michael Carter',initial:'M',plan:'Free',email:'michael.carter@example.com',fc:2},
+user:{name:'Michael Carter',initial:'M',plan:'Free',email:'michael.carter@example.com'},
 folders:[{id:'client',name:'Client Calls'},
            {id:'f-acme',name:'Acme',parent:'client',
             sum:'The Acme rollout is agreed in principle at 400 seats with a March go-live, and the commercials are close to final. Everything now hangs on two things: the revised pricing sheet reaching Jennifer before her internal review, and Legal clearing the data-processing addendum, which Tom has made a condition of signature.'},
@@ -2291,7 +1887,7 @@ meetings:[
   transcript:[['09:30','Robert Hayes','Hold the uplift at four percent and I will sign for two years.',''],
    ['21:14','Robert Hayes','Send me the final figure in writing before I take it to finance.','Source of task 1']]},
  {id:'m5',title:'Q3 planning',people:[F('Ashley Nguyen','A'),F('Daniel Brooks','D'),F('you','M')],
-  group:'Friday',day:'7 Aug 2026',time:'10:00 am',dur:'52:10',folder:'f-q3',fups:2,
+  group:'Monday',day:'8 Aug 2026',time:'10:00 am',dur:'52:10',folder:'f-q3',fups:2,
   notes:{summary:'Quarter planning across the three workstreams. Headcount is the constraint, not scope; Ashley needs final numbers before the budget lock on Friday.',
    decisions:[['Migration work moves ahead of the reporting rebuild.','22:15']],
    questions:[['Where does the contractor budget sit after the freeze?','44:30']]},
@@ -2301,17 +1897,17 @@ meetings:[
    ['31:08','Ashley Nguyen','I need the headcount numbers before the budget locks on Friday.','Source of task 1'],
    ['44:30','Ashley Nguyen','And where does the contractor budget sit once the freeze applies?','']]},
  {id:'m6',title:'Weekly sync',people:[F('Ashley Nguyen','A'),F('Emily Foster','E'),F('you','M')],
-  group:'Friday',day:'7 Aug 2026',time:'9:00 am',dur:'18:22',folder:'internal',fups:0,
+  group:'Monday',day:'8 Aug 2026',time:'9:00 am',dur:'18:22',folder:'internal',fups:0,
   notes:{summary:'Standing team sync. No blockers raised; two items carried over from last week.',decisions:[],questions:[]},
   mynotes:'Nothing blocking.',transcript:[['02:11','Ashley Nguyen','Nothing blocking from my side this week.','']]},
  {id:'m7',title:'Vendor call — Lawson Group',people:[F('Karen Doyle','K'),F('you','M')],
-  group:'Thursday',day:'6 Aug 2026',time:'3:30 pm',dur:'31:07',folder:'client',fups:1,
+  group:'Friday',day:'5 Aug 2026',time:'3:30 pm',dur:'31:07',folder:'client',fups:1,
   notes:{summary:'Scoping call with Lawson Group. Karen will send a draft statement of work covering the two integration phases.',
    decisions:[['Two-phase integration, SOW to follow.','14:40']],questions:[]},
   mynotes:'SOW covers 2 phases. Karen sends draft.',
   transcript:[['14:40','Karen Doyle','I will get you a draft SOW covering both phases by the end of next week.','Source of task 1']]},
  {id:'m8',title:'Candidate screen — Frontend',people:[F('Tom Ellis','T'),F('you','M')],
-  group:'Thursday',day:'6 Aug 2026',time:'11:15 am',dur:'38:44',folder:'f-frontend',fups:1,
+  group:'Friday',day:'5 Aug 2026',time:'11:15 am',dur:'38:44',folder:'f-frontend',fups:1,
   notes:{summary:'Frontend screen. Good product instincts and accessibility awareness; wants clarity on the take-home time budget before committing.',
    decisions:[['Send the take-home with an explicit four-hour cap.','33:20']],questions:[]},
   mynotes:'Good a11y awareness. Wants a time cap on the take-home.',
@@ -2389,14 +1985,14 @@ watchouts:[
   title:'4% uplift sits under the 6% renewal floor set in Q3 planning',
   why:'Daniel set a six percent minimum on renewals this year and asked for anything below it to come through him. Robert has been offered four, and the figure is about to go to him in writing.',
   now:{tx:'Hold the uplift at four percent and I will sign for two years.',who:'Robert Hayes',at:'09:30'},
-  ref:{tx:'Renewals hold at six percent minimum this year. Anything under that has to come through me.',who:'Daniel Brooks',mid:'m5',mt:'Q3 planning',date:'7 Aug 2026',at:'18:44'},
+  ref:{tx:'Renewals hold at six percent minimum this year. Anything under that has to come through me.',who:'Daniel Brooks',mid:'m5',mt:'Q3 planning',date:'8 Aug 2026',at:'18:44'},
   say:'I should be straight with you — we have a floor on renewals this year, so let me confirm four percent internally before I put a figure in writing.',
   status:'open',age:'Yesterday'},
  {id:'w6',mid:'m3',type:'discrepancy',
   title:'This take-home has no time cap; the frontend candidate was promised four hours',
   why:'Tom was given a hard four-hour cap on the same hiring round. Sending an uncapped take-home to David makes the two candidates incomparable and is hard to defend later.',
   now:{tx:'I would scope the take-home around data modelling, since that is where the gap is.',who:'David Kim',at:'38:02'},
-  ref:{tx:'Send it over with a hard four-hour cap and I will do it this weekend.',who:'Tom Ellis',mid:'m8',mt:'Candidate screen — Frontend',date:'6 Aug 2026',at:'33:20'},
+  ref:{tx:'Send it over with a hard four-hour cap and I will do it this weekend.',who:'Tom Ellis',mid:'m8',mt:'Candidate screen — Frontend',date:'5 Aug 2026',at:'33:20'},
   say:'Worth saying now — we capped the frontend take-home at four hours, so let us hold this one to the same budget.',
   status:'open',age:'Yesterday'},
  {id:'w7',mid:'m5',type:'clarification',
@@ -2405,7 +2001,7 @@ watchouts:[
   now:{tx:'And where does the contractor budget sit once the freeze applies?',who:'Ashley Nguyen',at:'44:30'},
   ref:{tx:'Is the freeze on backfills too, or only new roles?',who:'Priya Raman',mid:'m9',mt:'All-hands — Q3 results',date:'11 Aug 2026',at:'41:52'},
   say:'This came up at the all-hands as well and is still unanswered — can we get a ruling on the freeze before Friday?',
-  status:'open',age:'Friday'},
+  status:'open',age:'Monday'},
  {id:'w8',mid:'m2',type:'clarification',
   title:'Whether the checklist survives a reinstall was never confirmed',
   why:'Emily approved the three-step checklist without this settled. It changes the empty-state copy she asked to have rewritten.',
@@ -2418,11 +2014,11 @@ tasks:[
  {id:'t2',title:'Loop in Legal on the data-processing addendum',mid:'m1',due:'Yesterday',late:true,pri:'hi',done:false,grp:'Overdue',quote:'The data-processing addendum has to be reviewed before I can sign anything.',who:'Tom Ellis',at:'12:19'},
  {id:'t3',title:'Share the onboarding flow with Emily for review',mid:'m2',due:'5:00 pm',late:false,pri:'md',done:false,grp:'Today',quote:'Rewrite that before handoff.',who:'Emily Foster',at:'15:22'},
  {id:'t4',title:'Confirm the renewal figure with Robert before sending',mid:'m4',due:'Today',late:false,pri:'md',done:false,grp:'Today',quote:'Send me the final figure in writing before I take it to finance.',who:'Robert Hayes',at:'21:14'},
- {id:'t5',title:'Book a technical deep-dive for the week of the 25th',mid:'m1',due:'Fri 14 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I want our platform team in the room, not just procurement.',who:'Jennifer Walsh',at:'27:12'},
- {id:'t6',title:'Send Q3 headcount numbers to Ashley',mid:'m5',due:'Fri 14 Aug',late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I need the headcount numbers before the budget locks on Friday.',who:'Ashley Nguyen',at:'31:08'},
- {id:'t7',title:'Scope the take-home around data modelling',mid:'m3',due:'Tue 18 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I would scope the take-home around data modelling.',who:'David Kim',at:'38:02'},
- {id:'t8',title:'Chase Karen for the draft SOW',mid:'m7',due:'Wed 19 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I will get you a draft SOW covering both phases.',who:'Karen Doyle',at:'14:40'},
- {id:'t9',title:'Send Tom the take-home with a four-hour cap',mid:'m8',due:'Thu 20 Aug',late:false,pri:'md',done:false,grp:'Upcoming',quote:'Send it over with a hard four-hour cap.',who:'Tom Ellis',at:'33:20'}],
+ {id:'t5',title:'Book a technical deep-dive for the week of the 25th',mid:'m1',due:'Thu 14 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I want our platform team in the room, not just procurement.',who:'Jennifer Walsh',at:'27:12'},
+ {id:'t6',title:'Send Q3 headcount numbers to Ashley',mid:'m5',due:'Fri 15 Aug',late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I need the headcount numbers before the budget locks on Friday.',who:'Ashley Nguyen',at:'31:08'},
+ {id:'t7',title:'Scope the take-home around data modelling',mid:'m3',due:'Mon 18 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I would scope the take-home around data modelling.',who:'David Kim',at:'38:02'},
+ {id:'t8',title:'Chase Karen for the draft SOW',mid:'m7',due:'Tue 19 Aug',late:false,pri:'',done:false,grp:'Upcoming',quote:'I will get you a draft SOW covering both phases.',who:'Karen Doyle',at:'14:40'},
+ {id:'t9',title:'Send Tom the take-home with a four-hour cap',mid:'m8',due:'Wed 20 Aug',late:false,pri:'md',done:false,grp:'Upcoming',quote:'Send it over with a hard four-hour cap.',who:'Tom Ellis',at:'33:20'}],
 transcripts:[
  {id:'s1',tx:'A golden shaft of late afternoon sunlight cut through the dusty window',time:'2:41 pm',dest:'pasted into Notes',when:'today'},
  {id:'s2',tx:'The old wooden clock on the wall ticked slowly, marking the quiet passage of time',time:'2:39 pm',dest:'pasted into Notes · edited',when:'today'},
@@ -2436,8 +2032,8 @@ convos:[
   {r:'a',tx:"You made three commitments on that call:<br>&nbsp;&nbsp;1.&nbsp; Send the revised pricing sheet to Jennifer by <b>Friday</b>.<br>&nbsp;&nbsp;2.&nbsp; Loop in Legal on the data-processing addendum.<br>&nbsp;&nbsp;3.&nbsp; Book a technical deep-dive for the week of the 25th.<br>All three are already on your task list.",src:['m1','Acme kickoff · 11 Aug · from 12:04']}]},
  {id:'c2',title:'Summarise the Q3 planning call',when:'Monday',msgs:[
   {r:'u',tx:'Summarise the Q3 planning call in three lines.'},
-  {r:'a',tx:'Headcount is the constraint this quarter, not scope. Migration work moves ahead of the reporting rebuild. Ashley needs final headcount numbers before the budget locks on Friday.',src:['m5','Q3 planning · 7 Aug']}]},
- {id:'c3',title:'Draft a recap for Northwind',when:'Fri 7 Aug',msgs:[
+  {r:'a',tx:'Headcount is the constraint this quarter, not scope. Migration work moves ahead of the reporting rebuild. Ashley needs final headcount numbers before the budget locks on Friday.',src:['m5','Q3 planning · 8 Aug']}]},
+ {id:'c3',title:'Draft a recap for Northwind',when:'Fri 8 Aug',msgs:[
   {r:'u',tx:'Draft a short recap email for Robert at Northwind.'},
   {r:'a',tx:"Hi Robert,<br><br>Thanks for the time today. To confirm what we agreed: the uplift holds at 4% on a two-year term, and I will send the final figure in writing before you take it to finance.<br><br>Best,<br>Michael",src:['m4','Northwind renewal · 10 Aug']}]}],
 vocab:[
@@ -2448,40 +2044,13 @@ vocab:[
  {t:'Jennifer Walsh',h:'jennifer welsh, jen walsh',n:11,s:'ai'},
  {t:'Acme',h:'acmi, ackme',n:7,s:'you'},
  {t:'Lawson Group',h:'lawsen, lorson',n:5,s:'ai'}],
-/* ── the schedule ──────────────────────────────────────────────────────────
-   What is still to come. Calls that have already happened are not listed here:
-   the Calendar reads those straight off `meetings`, so a recorded call and its
-   notes can never drift apart. Times are 24h; `f` is the folder the call will
-   be filed into, which is where the event takes its colour from. */
-events:[
- {id:'a1',d:'2026-08-14',ad:true,title:'Q3 budget locks',f:'f-q3'},
- {id:'e1',d:'2026-08-11',s:'16:30',e:'17:00',title:'Design handoff — onboarding',f:'internal',
-  who:'Emily Foster'},
- {id:'e2',d:'2026-08-12',s:'10:00',e:'11:30',title:'Legal review — Acme DPA',f:'f-acme',
-  who:'Tom Ellis, Priya Raman',lk:'zoom'},
- {id:'e3',d:'2026-08-12',s:'15:00',e:'16:00',title:'Meridian Health — security questionnaire',
-  f:'client',who:'Nadia Haddad, Marcus Webb',lk:'meet'},
- {id:'e4',d:'2026-08-13',s:'09:30',e:'11:00',title:'Q3 headcount review',f:'f-q3',
-  who:'Ashley Nguyen, Daniel Brooks',lk:'meet'},
- {id:'e5',d:'2026-08-13',s:'14:00',e:'14:45',title:'Candidate debrief — Backend',f:'f-backend',
-  who:'David Kim, Priya Raman'},
- {id:'e6',d:'2026-08-14',s:'09:00',e:'09:30',title:'Weekly sync',f:'internal',
-  who:'Ashley Nguyen, Emily Foster'},
- {id:'e7',d:'2026-08-14',s:'11:30',e:'12:15',title:'Northwind — final figure',f:'f-northwind',
-  who:'Robert Hayes'},
- {id:'e8',d:'2026-08-14',s:'16:00',e:'17:30',title:'Acme technical deep-dive',f:'f-acme',
-  who:'Jennifer Walsh, Tom Ellis, Sofia Alvarez, Liam Novak',lk:'zoom'},
- {id:'e9',d:'2026-08-17',s:'10:00',e:'10:30',title:'Backend take-home walkthrough',f:'f-backend',
-  who:'David Kim'},
- {id:'e10',d:'2026-08-18',s:'13:00',e:'14:00',title:'Lawson Group — SOW review',f:'client',
-  who:'Karen Doyle',lk:'meet'}],
 settings:{detect:true,screenRec:true,hearOthers:true,recScreen:false,autoFile:true,calendar:false,
   engine:'local',lang:'English (US)',useVocab:true,hotkey:'Fn',mode:'Hold to talk',
   convo:false,anthropicKey:'',spoken:false,convoHotkey:'⌃⌥Space',askFirst:true,
   gmail:false,gcal:false,slack:false,actFollowups:true,
   extract:true,onlyNamed:false,names:['Michael','Mike','MC'],daily:true,dailyAt:'6:00 PM',
   woOn:true,woConflict:true,woDiscrepancy:true,woClarify:true,woPeek:'conflict',woSpeak:true,
-  overdue:true,overdueAt:'9:00 AM',noInterrupt:true,theme:'light',th:'indigo',bubble:true},
+  overdue:true,overdueAt:'9:00 AM',noInterrupt:true,theme:'light',th:'ocean',bubble:true},
 setupDone:3
 };}
 
@@ -2492,8 +2061,6 @@ const S={route:'meetings',view:'all',mid:null,fid:null,tab:'notes',tid:null,cid:
   openF:{client:true,interviews:true},
   mpanel:false,mtyping:false,
   bub:{x:null,y:null,rec:false,secs:0},
-  /* what the sidebars were doing before a right-hand panel pushed them shut */
-  asideWas:null,
   /* a hover peek is temporary and never touches railmin/listmin, so letting go
      of the pointer always puts the sidebar back the way the user left it */
   peek:null,
@@ -2503,7 +2070,7 @@ const S={route:'meetings',view:'all',mid:null,fid:null,tab:'notes',tid:null,cid:
   wid:null,wpanel:false,wfilter:'all',wdone:false,
   wpeek:null,wopen:false,walert:false,wsay:null,wseen:[],
   railmin:false,listmin:false,q:'',tq:'',vq:'',taskFilter:'all',showDone:false,
-  speakers:'All speakers',range:'week',week:0,
+  speakers:'All speakers',range:'week',
   rec:null,playing:false,playPos:44,busy:false,typing:false,firstRun:false,
   addPerson:false,menuXY:null,zoom:false};
 let timers=[];
@@ -2574,114 +2141,10 @@ const folderPath=id=>{const f=folder(id);if(!f)return 'Unfiled';
   return f.parent?folderName(f.parent)+' / '+f.name:f.name;};
 const inFolder=(m,id)=>m.folder===id||subFolders(id).some(sf=>sf.id===m.folder);
 const folderCount=id=>db.meetings.filter(m=>inFolder(m,id)).length;
-/* ── folder identity ──────────────────────────────────────────────────────
-   A folder gets a glyph and one of six colour slots, and both are inherited
-   from the top-level folder, so a sub-folder reads as part of its parent
-   rather than as a new category. The four folders AIT-Scribe ships with are
-   named explicitly — Client Calls is a briefcase, Interviews is a person being
-   added, Projects is a stack, Internal is a house — and anything the user
-   creates is hashed onto a slot so it is stable across sessions rather than
-   depending on the order folders happen to be in.
-
-   The slot is a class (`fc-3`), not a colour value, because each slot is
-   redefined for dark mode in the stylesheet. Nothing in JS knows a hex. */
-const FMETA={client:{ic:'brief',c:1},interviews:{ic:'userplus',c:2},
-  projects:{ic:'layers',c:3},internal:{ic:'home',c:4}};
-function folderMeta(id){
-  const root=rootOf(id);
-  if(FMETA[root])return FMETA[root];
-  const k=String(root||'');
-  let h=0;for(let i=0;i<k.length;i++)h=(h*31+k.charCodeAt(i))>>>0;
-  return {ic:'folder',c:(h%6)+1};
-}
-/* the class that carries the colour, safe to drop on anything */
-const fcls=id=>'fc-'+folderMeta(id).c;
-/* a sub-folder keeps the family colour but takes the plain folder glyph, so
-   the parent stays the one that names the category */
-const ficon=id=>{const f=folder(id);return f&&f.parent?'folder':folderMeta(id).ic;};
-/* a folder glyph at tile size, wherever one is needed */
-const fwell=(id,px,gl)=>`<span class="fwell ${fcls(id)}" style="width:${px}px;height:${px}px">${
-  ic(gl||ficon(id),Math.round(px*.5))}</span>`;
-
-/* ── dates ────────────────────────────────────────────────────────────────
-   The prototype is pinned to a single day so every relative label in the seed
-   ("Today", "2 days late") stays true. The calendar is the first screen that
-   has to agree with those labels on a real grid, so the parsing lives here and
-   everything else keeps using the written strings it already had. */
-const MONS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const TODAY=new Date(2026,7,11);        /* Tue 11 Aug 2026 */
-const NOWH=15.2;                         /* a little after 3pm */
-const isod=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+
-  String(d.getDate()).padStart(2,'0');
-const addDays=(d,n)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());
-  x.setDate(x.getDate()+n);return x;};
-/* '11 Aug 2026' → Date */
-function parseDay(v){
-  const m=/^(\d{1,2})\s+([A-Za-z]{3})[a-z]*\s+(\d{4})$/.exec(String(v||'').trim());
-  if(!m)return null;
-  const mo=MONS.indexOf(m[2].slice(0,1).toUpperCase()+m[2].slice(1,3).toLowerCase());
-  return mo<0?null:new Date(+m[3],mo,+m[1]);
-}
-/* '2:14 pm' or '14:30' → 14.233 */
-function parseTime(v){
-  const m=/^(\d{1,2}):(\d{2})\s*(am|pm)?$/i.exec(String(v||'').trim());
-  if(!m)return 9;
-  let h=+m[1];const ap=(m[3]||'').toLowerCase();
-  if(ap==='pm'&&h!==12)h+=12;
-  if(ap==='am'&&h===12)h=0;
-  return h+(+m[2])/60;
-}
-/* 'mm:ss' → hours */
-const durHours=v=>{const a=String(v||'0:00').split(':');
-  return ((+a[0]||0)+(+a[1]||0)/60)/60;};
-const clockLabel=h=>{const H=Math.floor(h),M=Math.round((h-H)*60);
-  const ap=H<12?'am':'pm',hh=H%12===0?12:H%12;
-  return hh+':'+String(M).padStart(2,'0')+' '+ap;};
-const dayLabel=d=>DOWS[d.getDay()]+' '+d.getDate()+' '+MONS[d.getMonth()];
-/* Today / Tomorrow / Thu 13 Aug */
-function relDay(d){
-  const k=isod(d);
-  if(k===isod(TODAY))return 'Today';
-  if(k===isod(addDays(TODAY,1)))return 'Tomorrow';
-  if(k===isod(addDays(TODAY,-1)))return 'Yesterday';
-  return dayLabel(d);
-}
-/* Monday of the week `off` weeks away from the week containing TODAY */
-function weekStart(off){
-  const d=new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());
-  const back=(d.getDay()+6)%7;          /* Monday-first */
-  return addDays(d,-back+(off||0)*7);
-}
-/* Everything with a time on it, in one shape. Recorded calls come straight off
-   `meetings` so the calendar can never disagree with the notes; `events` holds
-   only what has not happened yet. */
-function allEvents(){
-  const out=[];
-  db.meetings.forEach(m=>{
-    const d=parseDay(m.day);if(!d)return;
-    const s=parseTime(m.time);
-    out.push({id:'m-'+m.id,iso:isod(d),date:d,s,e:s+durHours(m.dur),title:m.title,
-      f:m.folder,mid:m.id,up:false,
-      who:m.people.filter(x=>x.n!=='you').map(x=>x.n).join(', ')});
-  });
-  (db.events||[]).forEach(x=>{
-    const parts=String(x.d).split('-');
-    const dd=new Date(+parts[0],+parts[1]-1,+parts[2]);
-    out.push({id:x.id,iso:x.d,date:dd,ad:!!x.ad,
-      s:x.ad?0:parseTime(x.s),e:x.ad?24:parseTime(x.e),title:x.title,
-      f:x.f,mid:null,up:true,lk:x.lk||'',who:x.who||''});
-  });
-  return out;
-}
-const eventsOn=iso=>allEvents().filter(e=>e.iso===iso&&!e.ad).sort((a,b)=>a.s-b.s);
-const alldayOn=iso=>allEvents().filter(e=>e.iso===iso&&e.ad);
-/* what has not happened yet, soonest first */
-function upcoming(n){
-  const k=isod(TODAY);
-  return allEvents().filter(e=>e.up&&!e.ad&&(e.iso>k||(e.iso===k&&e.e>NOWH)))
-    .sort((a,b)=>a.iso<b.iso?-1:a.iso>b.iso?1:a.s-b.s).slice(0,n||8);
-}
+/* colour is inherited from the top-level folder so a sub-folder reads as part
+   of its parent rather than as a new category */
+const folderColor=id=>({client:'var(--brandInk)',internal:'var(--okInk)',
+  interviews:'var(--info)',projects:'var(--warnInk)'}[rootOf(id)]||'var(--sec)');
 const newFolderId=()=>'f'+Math.random().toString(36).slice(2,8);
 /* A sub-folder control is named after the folder it will sit in — "Add Client
    Calls Folder" — so the destination is unambiguous wherever the button appears.
@@ -2740,30 +2203,25 @@ const openTasks=()=>db.tasks.filter(t=>!t.done);
 const taskCount=id=>db.tasks.filter(t=>t.mid===id).length;
 const overdue=()=>db.tasks.filter(t=>!t.done&&t.late);
 /* ══════════════════════════════════ chrome ══════════════════════════════════ */
-/* Six destinations, each one a place rather than a mode. Speech to Text used
-   to carry Vocabulary and Insights as a sub-tree hanging off the rail, which
-   put three levels of navigation on screen at once and buried Insights — a
-   view about the whole workspace — inside dictation. Insights and Calendar are
-   their own entries now, and Speech's own sections moved to the list column
-   beside it, where every other section of the app keeps them. */
-const NAV=[['meetings','Meetings','people'],['calendar','Calendar','cal'],
-           ['speech','Speech to Text','wave2'],['insights','Insights','chart'],
+const NAV=[['meetings','Meetings','people'],['speech','Speech to Text','wave2'],
            ['tasks','Tasks','clipb'],['assistant','AI Assistant','spark']];
-const isSpeech=r=>['speech','vocabulary'].includes(r);
-/* the meetings family: the home screen, the list behind it, a folder, a call */
-const isMeet=r=>['meetings','mlist','folder','meeting'].includes(r);
+const isSpeech=r=>['speech','vocabulary','insights'].includes(r);
 
 function rail(){
   const items=NAV.map(([k,label,icon])=>{
-    const on=(k===S.route)||(k==='speech'&&isSpeech(S.route))||
-             (k==='meetings'&&isMeet(S.route));
-    return `<a class="${on?'on':''}" data-a="go" data-p="${k}" title="${label}">${
-      ic(icon,18)}<span class="lbl">${label}</span></a>`;}).join('');
+    const on=(k===S.route)||(k==='speech'&&isSpeech(S.route));
+    let h=`<a class="${on?'on':''}" data-a="go" data-p="${k}" title="${label}">${
+      ic(icon,18)}<span class="lbl">${label}</span></a>`;
+    if(k==='speech'&&isSpeech(S.route)&&railOpen())
+      h+=`<div class="subnav">
+        <a class="${S.route==='vocabulary'?'on':''}" data-a="go" data-p="vocabulary">${ic('book',14,1.8)}Vocabulary</a>
+        <a class="${S.route==='insights'?'on':''}" data-a="go" data-p="insights">${ic('chart',14,1.8)}Insights</a></div>`;
+    return h;}).join('');
   return `<div class="rail">
     <div class="slab">Workspace</div>
     <div class="nav">${items}</div><div class="spacer"></div>
     ${colbtn('rail')}
-    <div class="acct"><span class="top"><span class="avat fc-${db.user.fc||1}">${db.user.initial}</span>
+    <div class="acct"><span class="top"><span class="avat">${db.user.initial}</span>
       <span class="who"><span class="nm">${db.user.name}</span><span class="pl">${db.user.plan} plan</span></span>
       <button class="upg" data-a="demo" data-p="open the upgrade flow">Upgrade</button></span></div></div>`;
 }
@@ -2817,9 +2275,8 @@ function folderRow(f,sub){
     ? `<span class="tw ${open?'o':''}" data-a="foldtoggle" data-p="${f.id}"
         title="${open?'Collapse':'Expand'}">${ic('chev',11,2.4)}</span>`
     : (sub?'':`<span class="tw sp"></span>`);
-  return `<a class="fdr ${fcls(f.id)} ${S.view==='f:'+f.id?'on':''}${sub?' sub':''}"
-     data-a="view" data-p="f:${f.id}"
-     title="${esc(sub?folderPath(f.id):f.name)}">${tw}${ic(sub?'folder':ficon(f.id),sub?15:16)}
+  return `<a class="${S.view==='f:'+f.id?'on':''}${sub?' sub':''}" data-a="view" data-p="f:${f.id}"
+     title="${esc(sub?folderPath(f.id):f.name)}">${tw}${ic('folder',sub?15:16)}
     <span class="lbl">${esc(f.name)}</span>
     <span class="fm" data-a="menu" data-p="fmenu:${f.id}" title="Folder options">${ic('dots',14)}</span>
     ${cnt(folderCount(f.id))}</a>`;
@@ -2835,8 +2292,7 @@ function listMeetings(){
    <div class="srch" data-a="expandlist" title="Search meetings and transcripts">${ic('search',15)}<input placeholder="Search meetings and transcripts" data-a="q" value="${esc(S.q)}"></div>
    <div class="lbody">
     <div class="views">
-     ${v(false,'grid','Meetings home','','go','meetings')}
-     ${v(S.view==='all','list','All meetings',cnt(all),'view','all')}
+     ${v(S.view==='all','home','All meetings',cnt(all),'view','all')}
      ${v(S.view==='recent','clock','Recent',cnt(rec),'view','recent')}
     </div>
     ${db.meetings.length?`<div class="slabel">Folders</div>
@@ -2849,22 +2305,32 @@ function listMeetings(){
     </div>`:`<div class="note">Folders appear here once AIT&#8209;Scribe files your first call.</div>`}
     </div></div>`;
 }
-/* Speech to Text has two sections, not five. Transcripts and Vocabulary are
-   different bodies of content and belong in the column; Today / This week /
-   All transcripts are a *range over one of them* and belong above the list
-   they filter, which is where they are now. */
-function listSpeechNav(){
-  const voc=S.route==='vocabulary';
+function listSpeech(){
+  const t=db.transcripts.filter(x=>x.when==='today').length;
   return `<div class="listcol">
-   <div class="srch" data-a="expandlist" title="${voc?'Search vocabulary':'Search transcripts'}">${
-      ic('search',15)}<input placeholder="${voc?'Search terms':'Search transcripts'}"
-      data-a="${voc?'vq':'q'}" value="${esc(voc?S.vq:S.q)}"></div>
+   <div class="srch" data-a="expandlist" title="Search transcripts">${ic('search',15)}<input placeholder="Search transcripts" data-a="q" value="${esc(S.q)}"></div>
    <div class="lbody"><div class="views">
-     ${v(S.route==='speech','wave2','Transcripts',cnt(db.transcripts.length),'go','speech')}
-     ${v(voc,'book','Vocabulary',cnt(db.vocab.length),'go','vocabulary')}
-   </div><div class="note">${voc
-     ?'Terms apply to dictation and meeting transcripts alike.'
-     :'Transcripts stay on this Mac until you delete them.'}</div></div></div>`;
+     ${v(S.view==='today','clock','Today',cnt(t),'view','today')}
+     ${v(S.view==='week','cal','This week',cnt(db.transcripts.length),'view','week')}
+     ${v(S.view==='all','file','All transcripts',cnt(db.transcripts.length?48:0),'view','all')}
+   </div><div class="note">Transcripts stay on this Mac until you delete them.</div></div></div>`;
+}
+function listVocab(){
+  return `<div class="listcol">
+   <div class="srch" data-a="expandlist" title="Search vocabulary">${ic('search',15)}<input placeholder="Search terms" data-a="vq" value="${esc(S.vq)}"></div>
+   <div class="lbody"><div class="views">
+     ${v(S.view==='all','book','All terms',cnt(db.vocab.length),'view','all')}
+     ${v(S.view==='you','edit','Added by you',cnt(db.vocab.filter(x=>x.s==='you').length),'view','you')}
+     ${v(S.view==='ai','spark','Learned from corrections',cnt(db.vocab.filter(x=>x.s==='ai').length),'view','ai')}
+   </div><div class="note">Terms apply to dictation and meeting transcripts alike.</div></div></div>`;
+}
+function listInsights(){
+  return `<div class="listcol"><div class="lbody" style="padding-top:20px"><div class="views">
+     ${v(S.range==='week','cal','This week','','range','week')}
+     ${v(S.range==='month','cal','This month','','range','month')}
+     ${v(S.range==='all','clock','All time','','range','all')}
+   </div><div class="note">Insights are computed on this Mac from your own activity. Nothing is uploaded.</div>
+   </div></div>`;
 }
 function listTasks(){
   const o=openTasks().length,od=overdue().length,
@@ -2903,261 +2369,13 @@ function meterBars(n,live,seedv=0){
   return `<span class="meter ${live?'live':'idle'}">${out}</span>`;
 }
 
-/* ══════════════════════════════════ chips ══════════════════════════════════ */
-/* A scope that used to sit in the list column. `cur` is whatever piece of state
-   the chips are switching, so the same row serves a view, a range or a filter. */
-const chiprow=(items,act,cur,right)=>`<div class="chiprow">${items.map(([k,l,n])=>
-  `<span class="fchip ${cur===k?'on':''}" data-a="${act}" data-p="${k}">${esc(l)}${
-    n!=null?`<span class="b">${n}</span>`:''}</span>`).join('')}${
-  right?`<span class="r">${right}</span>`:''}</div>`;
-
-/* A bordered section with a header strip. `rows` tightens the body padding for
-   a list that already carries its own hover overhang. */
-const pnl=(title,meta,action,body,rows)=>`<div class="pnl">
-  <div class="ph"><span class="t">${title}</span>${
-    (meta||meta===0)?`<span class="n">· ${meta}</span>`:''}${
-    action?`<span class="go">${action}</span>`:''}</div>
-  <div class="pb ${rows?'rows':''}">${body}</div></div>`;
-
-/* ══════════════════════════════════ meetings home ══════════════════════════════════ */
-/* The landing screen. It carries no list column on purpose: the folders on the
-   page ARE the navigation, and a second copy of them down the left would be
-   the same list twice — which is exactly what the old screen did. Opening a
-   folder is what brings the column in, because that is the first moment you
-   might want to move between folders without coming back here. */
-function folderCard(f){
-  const ms=folderMeetings(f.id),kids=subFolders(f.id),
-        ts=folderTasks(f.id),ws=fWatchOpen(f.id);
-  return `<div class="fcd ${fcls(f.id)}" data-a="view" data-p="f:${f.id}"
-      title="${esc(f.name)}">
-    <div class="top">${fwell(f.id,36)}<span class="nm">${esc(f.name)}</span>
-      <span class="fm" data-a="menu" data-p="fmenu:${f.id}" title="Folder options">${ic('dots',14)}</span></div>
-    <div class="subs">${kids.length
-      ?kids.slice(0,3).map(k=>`<span>${esc(k.name)}</span>`).join('')+
-        (kids.length>3?`<span class="plain">+${kids.length-3} more</span>`:'')
-      :`<span class="plain">No sub-folders yet</span>`}</div>
-    <div class="mt"><b>${ms.length}</b> meeting${ms.length===1?'':'s'}
-      ${ts.length?`<span>·</span><b>${ts.length}</b> open task${ts.length===1?'':'s'}`:''}
-      ${ws.length?`<span>·</span><span class="wstat w-${
-        hasConflict(ws)?'conflict':ws[0].type}"><i></i><b>${ws.length}</b> watchout${
-        ws.length===1?'':'s'}</span>`:''}</div></div>`;
-}
-/* Grouped by day, because "Thursday" is how anyone reads a schedule. A call
-   that has already been recorded opens its notes; one that has not yet
-   happened opens the calendar, since there is nothing else to show. */
-function upcomingList(n){
-  const up=upcoming(n);
-  if(!up.length)return `<div class="hint" style="padding:var(--s4) 2px">Nothing scheduled.
-    Connect your calendar in Settings and AIT&#8209;Scribe will show what is coming
-    and offer to take notes when each call starts.</div>`;
-  let last='';
-  return `<div class="uplist">${up.map(e=>{
-    const head=e.iso!==last?`<div class="upday">${relDay(e.date)}</div>`:'';
-    last=e.iso;
-    const mins=Math.round((e.e-e.s)*60);
-    return head+`<div class="uprow ${fcls(e.f)}" data-a="go" data-p="calendar"
-        title="${esc(e.title)} · ${clockLabel(e.s)}">
-      <span class="tmc">${clockLabel(e.s)}<span>${mins} min</span></span>
-      <span class="rule"></span>
-      <span class="bd"><span class="t">${esc(e.title)}</span>
-        <span class="s">${esc(e.who||'No attendees yet')} · ${esc(folderPath(e.f))}</span></span>
-      <span class="go">${ic('chev',14)}</span></div>`;}).join('')}</div>`;
-}
-function viewHome(){
-  const tops=topFolders(),unf=folderCount('');
-  const recent=db.meetings.filter(m=>['Today','Yesterday'].includes(m.group)).slice(0,6);
-  const setup=db.setupDone<3?setupCard():'';
-  const done=db.setupDone>=3&&!db.dismissedOk?`<div class="notice ok" style="margin-bottom:var(--s6)">${ic('check',16)}
-    <span><b>Setup complete.</b> Call detection is on — AIT-Scribe will offer to take notes when your next call starts.</span>
-    <span class="act"><button class="btn t sm" data-a="dismissOk">Dismiss</button></span></div>`:'';
-  if(!db.meetings.length&&!tops.length)return `<div class="body">${setup}
-    <div class="empty" style="${setup?'justify-content:flex-start;padding-top:64px':''}">
-      <span class="ico">${ic('cal',22,1.6)}</span>
-      <h2>No meetings yet</h2>
-      <p>Turn on call detection and AIT-Scribe will take the notes, work out which
-        folder the call belongs in, and file it for you.</p>
-      <div class="a"><button class="btn s sm" data-a="record">${ic('rec',15)}Record one now</button></div>
-    </div></div>`;
-  return `<div class="body">${setup}${done}
-   <div class="ghd">Folders <span class="n">· ${tops.length}</span>
-     <span class="go" data-a="newfolder" data-p="" style="margin-left:auto">${
-       ic('folderplus',13)}New folder</span>
-     <span class="go" data-a="view" data-p="all" style="margin-left:var(--s4)">All meetings ${
-       ic('chev',12)}</span></div>
-   <div class="fgrid">${tops.map(folderCard).join('')}</div>
-   ${unf?`<div class="notice quiet" style="margin:calc(-1 * var(--s6)) 0 var(--s7)">${ic('info',14)}
-     <span><b>${unf}</b> meeting${unf===1?'':'s'} could not be filed automatically.
-     <span class="link" data-a="view" data-p="unfiled" style="margin-left:4px">Review them</span></span></div>`:''}
-   <div class="homegrid">
-    ${pnl('Recent meetings',recent.length,
-      `<span data-a="view" data-p="recent">See all ${ic('chev',12)}</span>`,
-      recent.length?`<div class="list">${recent.map(m=>meetingRow(m)).join('')}</div>`
-        :`<div class="hint" style="padding:var(--s4) 2px">Nothing recorded in the last two days.</div>`,
-      true)}
-    ${pnl('Upcoming',null,
-      `<span data-a="go" data-p="calendar">Open calendar ${ic('chev',12)}</span>`,
-      upcomingList(6),true)}
-   </div></div>`;
-}
-
-/* ══════════════════════════════════ calendar ══════════════════════════════════ */
-/* A week of time slots, laid out the way a calendar actually gets read: the
-   date is the loudest thing in the header, today is marked by a rule under it
-   rather than by tinting a whole column, and an event is a CARD — an icon that
-   says which folder it belongs to, its name, its hours, who is on it, and the
-   one action it affords — rather than a coloured sliver with a label crammed
-   into it.
-
-   Cards need height to be cards, so the hour is 124px rather than the 58px a
-   dense grid would use. That is the trade: you see about five hours at a time
-   and scroll for the rest, and in exchange a 90-minute call carries its
-   attendees and its join button the way it would in a list.
-
-   Recorded calls are read straight off `meetings` — parsed from the day, time
-   and duration already in the data — so the calendar can never disagree with
-   the notes. Only what has not happened yet lives in `events`. */
-const CAL_S=8,CAL_E=19,CAL_H=124,CAL_P=10;
-/* What fits, measured rather than guessed. `xs` is one row (≈30px), `sm` is a
-   title line and a time line (≈53px), `md` adds the folder tile above them
-   (≈92px). Anything between two modes takes the smaller one, so a card is
-   never asked to draw something it has no room for. */
-const evMode=h=>h<56?'xs':h<92?'sm':'md';
-/* the viewer's own offset, since the pill is the one part of a calendar that
-   should not be pretend */
-function tzLabel(){
-  const m=-new Date().getTimezoneOffset();
-  const a=Math.abs(m),h=Math.floor(a/60),mm=a%60;
-  return 'UTC '+(m<0?'−':'+')+h+(mm?':'+String(mm).padStart(2,'0'):'');
-}
-/* Everyone AIT-Scribe has seen, so a name written on a scheduled call gets the
-   same face and the same colour it has on the calls already recorded. */
-let PIDX=null;
-function peopleIndex(){
-  if(PIDX)return PIDX;
-  PIDX={};db.meetings.forEach(m=>m.people.forEach(x=>{if(x.n!=='you'&&!PIDX[x.n])PIDX[x.n]=x}));
-  return PIDX;
-}
-function personChip(name){
-  const k=peopleIndex()[name];if(k)return k;
-  const keys=Object.keys(AV);let h=0;
-  for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;
-  return {n:name,i:name.trim().charAt(0).toUpperCase(),c:AV[keys[h%keys.length]]};
-}
-const evPeople=ev=>ev.mid
-  ?((meeting(ev.mid)||{people:[]}).people.filter(x=>x.n!=='you'))
-  :String(ev.who||'').split(',').map(x=>x.trim()).filter(Boolean).map(personChip);
-function evFaces(list,max){
-  if(!list.length)return '';
-  const show=list.slice(0,max||4),rest=list.length-show.length;
-  return `<span class="faces ev">${show.map(p=>
-    `<i style="background:${p.c}" title="${esc(p.n)}">${p.i}</i>`).join('')}${
-    rest>0?`<i class="more">+${rest}</i>`:''}</span>`;
-}
-/* The one action a card affords. You join something that has not happened and
-   you open the notes of something that has, so the button names itself. */
-const LKS={zoom:['zoom','Join Zoom','cam'],meet:['meet','Open Meet','cam']};
-function evCta(ev){
-  if(ev.mid)return `<span class="cta notes">${ic('spark',13)}Open notes</span>`;
-  const l=LKS[ev.lk];if(!l)return '';
-  return `<span class="cta ${l[0]}">${ic(l[2],13)}${l[1]}</span>`;
-}
-/* side-by-side packing for calls that overlap */
-function calLanes(list){
-  const evs=list.slice().sort((a,b)=>a.s-b.s||b.e-a.e);
-  const ends=[];
-  evs.forEach(ev=>{let i=0;while(i<ends.length&&ends[i]>ev.s+1e-6)i++;ends[i]=ev.e;ev._l=i;});
-  const n=Math.max(1,ends.length);
-  evs.forEach(ev=>ev._n=n);
-  return evs;
-}
-function calRange(days){
-  const a=days[0],b=days[6],y=b.getFullYear();
-  return a.getMonth()===b.getMonth()
-    ? `${a.getDate()} – ${b.getDate()} ${MONS[b.getMonth()]} ${y}`
-    : `${a.getDate()} ${MONS[a.getMonth()]} – ${b.getDate()} ${MONS[b.getMonth()]} ${y}`;
-}
-function calCard(ev){
-  const s=Math.max(CAL_S,ev.s),e=Math.min(CAL_E,Math.max(ev.e,ev.s+.25));
-  if(e<=CAL_S||s>=CAL_E)return '';
-  const top=CAL_P+(s-CAL_S)*CAL_H,h=Math.max(30,(e-s)*CAL_H-4);
-  const w=100/ev._n,l=ev._l*w,mode=evMode(h);
-  const tall=h>=230?' tall':'';
-  const ppl=evPeople(ev);
-  /* A two-line title is the common case, so these are the heights at which
-     the row below it still lands inside the card rather than under its edge. */
-  const cta=h>=172?evCta(ev):'';
-  const faces=h>=140&&ppl.length?evFaces(ppl,4):'';
-  const tip=`${esc(ev.title)} · ${clockLabel(ev.s)}–${clockLabel(ev.e)}${
-    ppl.length?' · '+esc(ppl.map(x=>x.n).join(', ')):''}`;
-  /* the family glyph, not the sub-folder's, because at 14px the thing worth
-     recognising is "this is an interview" rather than "this is a folder" */
-  const gl=folderMeta(ev.f).ic;
-  const body=mode==='xs'
-    ? `<i class="dt"></i><b>${esc(ev.title)}</b><em>${clockLabel(ev.s)}</em>`
-    : mode==='sm'
-    ? `<span class="hd"><i class="dt"></i><b>${esc(ev.title)}</b></span>
-       <em>${clockLabel(ev.s)} – ${clockLabel(ev.e)}</em>`
-    : `<span class="ei">${ic(gl,14)}</span>
-       <b>${esc(ev.title)}</b>
-       <em>${clockLabel(ev.s)} – ${clockLabel(ev.e)}</em>${faces}${cta}`;
-  return `<div class="calev ${fcls(ev.f)} ${ev.up?'up':'rec'} ${mode}${tall}"
-    style="top:${top}px;height:${h}px;left:calc(${l}% + 5px);width:calc(${w}% - 10px)"
-    data-a="${ev.mid?'open':'calev'}" data-p="${ev.mid||ev.id}"
-    title="${tip}">${body}</div>`;
-}
-function viewCalendar(){
-  const ws=weekStart(S.week);
-  const days=Array.from({length:7},(_,i)=>addDays(ws,i));
-  const all=allEvents(),tk=isod(TODAY);
-  const H=CAL_P*2+(CAL_E-CAL_S)*CAL_H;
-  const isWe=d=>d.getDay()===0||d.getDay()===6;
-  const gut=[];
-  for(let h=CAL_S;h<=CAL_E;h++)gut.push(`<i style="top:${
-    CAL_P+(h-CAL_S)*CAL_H}px">${clockLabel(h).replace(':00','')}</i>`);
-  const col=d=>{
-    const k=isod(d),td=k===tk;
-    const evs=calLanes(all.filter(e=>e.iso===k&&!e.ad));
-    let out='';
-    for(let h=CAL_S;h<=CAL_E;h++)out+=`<div class="calline" style="top:${
-      CAL_P+(h-CAL_S)*CAL_H}px"></div>`;
-    if(td&&NOWH>=CAL_S&&NOWH<=CAL_E)
-      out+=`<div class="calnow" style="top:${CAL_P+(NOWH-CAL_S)*CAL_H}px"></div>`;
-    out+=evs.map(calCard).join('');
-    return `<div class="calcol ${isWe(d)?'we':''} ${td?'td':''}">${out}</div>`;
-  };
-  const adRow=days.map(d=>{
-    const items=all.filter(e=>e.iso===isod(d)&&e.ad);
-    return `<div class="cell ${isWe(d)?'we':''}">${items.map(e=>
-      `<span class="adchip ${fcls(e.f)}" title="${esc(e.title)}">${ic(folderMeta(e.f).ic,11)}${
-        esc(e.title)}</span>`).join('')}</div>`;}).join('');
-  return `<div class="body" style="overflow:hidden">
-   <div class="calbar">
-     <span class="rng">${calRange(days)}</span>
-     <span class="calnav">
-       <span data-a="calnav" data-p="-1" title="Previous week">${ic('chevl',15,2)}</span>
-       <span data-a="calnav" data-p="1" title="Next week">${ic('chev',15,2)}</span></span>
-     ${S.week?`<button class="btn s sm" data-a="calnav" data-p="0">Today</button>`
-       :`<span class="hint" style="padding-left:2px">This week</span>`}
-     <span class="r"><span class="hint">${upcoming(99).length} scheduled ahead</span></span></div>
-   <div class="cal">
-     <div class="calhd">
-       <div class="tz"><span class="tzp">${tzLabel()}</span></div>
-       ${days.map(d=>`<div class="d ${isod(d)===tk?'today':''} ${isWe(d)?'we':''}">
-         <div class="dn">${d.getDate()}</div><div class="dw">${DOWS[d.getDay()]}</div></div>`).join('')}</div>
-     <div class="calad"><div class="lbl">All day</div>${adRow}</div>
-     <div class="calbody"><div class="calgrid" style="height:${H}px">
-       <div class="calgut">${gut.join('')}</div>${days.map(col).join('')}</div></div></div>
-   <div class="callegend">
-     <span><i class="rec"></i>Recorded — opens its notes</span>
-     <span><i class="out"></i>Scheduled</span>
-     <span>Each call takes the colour of the folder it is filed into.</span></div></div>`;
-}
-
 /* ══════════════════════════════════ meetings ══════════════════════════════════ */
-/* Lives on the home screen now, so it is a function rather than a literal
-   wedged into the meeting list. */
-function setupCard(){
-  return `<div class="card setupcard" style="margin-bottom:var(--s7)">
+function viewMeetings(){
+  let list=db.meetings.slice();
+  if(S.view==='recent')list=list.filter(m=>['Today','Yesterday'].includes(m.group));
+  if(S.q)list=list.filter(m=>(m.title+' '+m.people.map(p=>p.n).join(' ')+' '+
+    m.transcript.map(t=>t[2]).join(' ')).toLowerCase().includes(S.q.toLowerCase()));
+  const setup=db.setupDone<3?`<div class="card setupcard" style="margin-bottom:var(--s7)">
     <div class="setuphd"><b>Finish setting up</b><span class="step">${3-db.setupDone} steps left</span>
       <span class="x" data-a="dismissSetup" title="Hide the setup checklist">${ic('x',15)}</span></div>
     <div class="setuprow"><span class="si">${ic('rec',17)}</span>
@@ -3169,18 +2387,9 @@ function setupCard(){
       <span><span class="t">See what's coming up</span><span class="s">Connect Google Calendar for your
       schedule and a nudge before each call. Optional.</span></span>
       <span class="a"><button class="btn s sm" data-a="connectCal">${
-        db.settings.calendar?ic('check',14)+'Connected':'Connect calendar'}</button></span></div></div>`;
-}
-/* The flat list of every call, reached from the home screen or from the list
-   column beside it. The setup checklist belongs on the home screen and is not
-   repeated here. */
-function viewMeetings(){
-  let list=db.meetings.slice();
-  if(S.view==='recent')list=list.filter(m=>['Today','Yesterday'].includes(m.group));
-  if(S.q)list=list.filter(m=>(m.title+' '+m.people.map(p=>p.n).join(' ')+' '+
-    m.transcript.map(t=>t[2]).join(' ')).toLowerCase().includes(S.q.toLowerCase()));
-  if(!list.length) return `<div class="body">
-    <div class="empty">
+        db.settings.calendar?ic('check',14)+'Connected':'Connect calendar'}</button></span></div></div>`:'';
+  if(!list.length) return `<div class="body">${setup}
+    <div class="empty" style="${setup?'justify-content:flex-start;padding-top:64px':''}">
       <span class="ico">${ic('cal',22,1.6)}</span>
       <h2>${S.q?'No meetings match':'No meetings yet'}</h2>
       <p>${S.q?'Try a different search, or clear it to see everything.':
@@ -3190,9 +2399,23 @@ function viewMeetings(){
     </div></div>`;
   const groups=[];
   list.forEach(m=>{let g=groups.find(x=>x.g===m.group);if(!g){g={g:m.group,items:[]};groups.push(g)}g.items.push(m)});
-  return `<div class="body">${groups.map(g=>`
+  const done=db.setupDone>=3&&!db.dismissedOk?`<div class="notice ok" style="margin-bottom:var(--s6)">${ic('check',16)}
+    <span><b>Setup complete.</b> Call detection is on — AIT-Scribe will offer to take notes when your next call starts.</span>
+    <span class="act"><button class="btn t sm" data-a="dismissOk">Dismiss</button></span></div>`:'';
+  return `<div class="body">${setup}${done}${groups.map(g=>`
     <div class="ghd">${g.g} <span class="n">· ${g.items.length} meeting${g.items.length>1?'s':''}</span></div>
-    <div class="list">${g.items.map(m=>meetingRow(m,false,true)).join('')}
+    <div class="list">${g.items.map(m=>{
+      const live=S.rec&&S.rec.mid===m.id;
+      return `<div class="mrow" data-a="open" data-p="${m.id}">
+      <span><span class="t">${esc(m.title)}</span>
+        <span class="s">${peopleLine(m)} · ${live?'recording now':m.dur}</span></span>
+      ${live?'':`<span class="macts">
+        <span data-a="menu" data-p="folder:${m.id}" title="Move to folder">${ic('folder',14)}</span>
+        <span data-a="share" data-p="${m.id}" title="Share">${ic('share',14)}</span>
+        <span class="dg" data-a="confirmDelete" data-p="${m.id}" title="Delete">${ic('trash',14)}</span></span>`}
+      <span class="rt">${live?`<span class="live">${ic('rec',12)}Recording</span>`:
+        `<span class="tg">${esc(folderPath(m.folder))}</span>
+         <span class="mt">${m.time} · ${taskCount(m.id)} task${taskCount(m.id)===1?'':'s'}</span>`}</span></div>`}).join('')}
     </div>`).join('')}</div>`;
 }
 /* ── shared page furniture ────────────────────────────────────────────────
@@ -3212,23 +2435,18 @@ const askDock=(ph,stick)=>`<div class="comp${stick?' stick':''}">
 /* ══════════════════════════════════ folder detail ══════════════════════════════════ */
 /* One row per meeting, shared by the folder page and the Unfiled page. `showFolder`
    forces the move-to-folder control visible, which is the whole point of Unfiled. */
-/* `people` swaps the sub-line from a count to the names, which is what the
-   flat meeting list wants and a folder page does not. The folder tag carries
-   one coloured dot — enough to group a list of calls by eye without printing
-   four accent colours of type, which is what the last pass took out. */
-function meetingRow(m,showFolder,people){
+function meetingRow(m,showFolder){
   const live=S.rec&&S.rec.mid===m.id;
   return `<div class="mrow" data-a="open" data-p="${m.id}">
     <span><span class="t">${esc(m.title)}${live?'':mwDot(m.id)}</span>
-      <span class="s">${people?peopleLine(m):m.people.length+' attendee'+
-        (m.people.length===1?'':'s')} · ${live?'recording now':m.dur}</span></span>
+      <span class="s">${m.people.length} attendee${m.people.length===1?'':'s'} · ${
+        live?'recording now':m.dur}</span></span>
     ${live?'':`<span class="macts" ${showFolder?'style="opacity:1;pointer-events:auto"':''}>
       <span data-a="menu" data-p="folder:${m.id}" title="Move to folder">${ic('folder',14)}</span>
       <span data-a="share" data-p="${m.id}" title="Share">${ic('share',14)}</span>
       <span class="dg" data-a="confirmDelete" data-p="${m.id}" title="Delete">${ic('trash',14)}</span></span>`}
     <span class="rt">${live?`<span class="live">${ic('rec',12)}Recording</span>`:
-      `<span class="tg ${m.folder?fcls(m.folder):''}">${m.folder?'<i></i>':''}${
-         esc(folderPath(m.folder))}</span>
+      `<span class="tg">${esc(folderPath(m.folder))}</span>
        <span class="mt">${m.time} · ${taskCount(m.id)} task${taskCount(m.id)===1?'':'s'}</span>`}</span></div>`;
 }
 function mwDot(id){
@@ -3242,7 +2460,7 @@ function viewFolder(){
   const f=folder(id);
   if(!unfiled&&!f)return `<div class="body"><div class="empty"><h2>Folder not found</h2>
     <p>It may have been deleted.</p>
-    <div class="a"><button class="btn s sm" data-a="go" data-p="meetings">Meetings home</button></div></div></div>`;
+    <div class="a"><button class="btn s sm" data-a="go" data-p="meetings">All meetings</button></div></div></div>`;
   const kids=unfiled?[]:subFolders(id);
   const isTop=!unfiled&&!f.parent;
   const own=db.meetings.filter(m=>m.folder===id);
@@ -3250,7 +2468,7 @@ function viewFolder(){
   const tasks=folderTasks(id);
 
   const head=`<div class="fhead">
-    <span class="fi ${unfiled?'':'fw '+fcls(id)}">${ic(unfiled?'file':ficon(id),21)}</span>
+    <span class="fi">${ic(unfiled?'file':'folder',21)}</span>
     <span class="ft"><h1 class="h" ${unfiled?'':`data-a="renamefolder" data-p="${id}" style="cursor:text"`}>${
         esc(unfiled?'Unfiled':f.name)}${unfiled?'':`<span class="edit">${ic('edit',15)}</span>`}</h1>
       <span class="fs">${unfiled?'<span>Not in a folder yet</span>'
@@ -3279,8 +2497,8 @@ function viewFolder(){
   const cards=isTop?`<div class="ghd">Folders <span class="n">· ${kids.length}</span></div>
     <div class="fcards">${kids.map(k=>{
       const km=folderMeetings(k.id),kt=folderTasks(k.id),kw=fWatchOpen(k.id);
-      return `<div class="fcard ${fcls(k.id)}" data-a="view" data-p="f:${k.id}">
-        <div class="top"><span class="fi fw">${ic('folder',16)}</span>
+      return `<div class="fcard" data-a="view" data-p="f:${k.id}">
+        <div class="top"><span class="fi">${ic('folder',16)}</span>
           <span class="nm">${esc(k.name)}</span>
           <span class="fm" data-a="menu" data-p="fmenu:${k.id}" title="Folder options">${ic('dots',14)}</span></div>
         <div class="ds">${esc(folderSummary(k.id))}</div>
@@ -3770,10 +2988,8 @@ function viewSpeech(){
     <span><b>1.2s</b> average hold to paste</span>
     <span><b>${db.vocab.filter(v=>v.s==='ai').length}</b> terms learned from your corrections</span></div>`:'';
   return `<div class="body">${card}${warn}
-    ${chiprow([['today','Today',db.transcripts.filter(x=>x.when==='today').length],
-               ['week','This week',db.transcripts.length],
-               ['all','All transcripts',db.transcripts.length]],'view',S.view,
-      `<span class="hint">${list.length} shown · nothing leaves this Mac</span>`)}
+    <div class="ghd">${S.view==='today'?'Today':S.view==='week'?'This week':'All transcripts'}
+      <span class="n">· ${list.length} transcript${list.length===1?'':'s'}</span></div>
     ${rows}${metrics}</div>`;
 }
 
@@ -3787,9 +3003,6 @@ function viewVocab(){
    <div style="font-size:13.5px;color:var(--sec);line-height:1.65;max-width:600px;
      margin-bottom:var(--s6)">Words AIT&#8209;Scribe should get right — names, products and acronyms.
      These apply to both dictation and meeting transcripts.</div>
-   ${chiprow([['all','All terms',db.vocab.length],
-               ['you','Added by you',db.vocab.filter(x=>x.s==='you').length],
-               ['ai','Learned from corrections',db.vocab.filter(x=>x.s==='ai').length]],'view',S.view)}
    <div class="toolrow"><button class="btn q sm" data-a="demo" data-p="import a term list from a file">${
       ic('down',15)}Import</button>
      <button class="btn q sm" data-a="demo" data-p="export your vocabulary">${ic('copy',15)}Export</button>
@@ -3800,7 +3013,7 @@ function viewVocab(){
     <table class="vtable"><thead><tr><th>Term</th><th>Often heard as</th><th>Corrected</th><th>Source</th><th></th></tr></thead>
      <tbody>${list.length?list.map((v,i)=>`<tr>
        <td class="tm">${esc(v.t)}</td><td>${esc(v.h)}</td><td>${v.n}&times;</td>
-       <td><span class="pillx ${v.s==='ai'?'ai':'you'}">${v.s==='ai'?'Learned':'Added by you'}</span></td>
+       <td><span class="pillx ${v.s==='ai'?'ai':''}">${v.s==='ai'?'Learned':'Added by you'}</span></td>
        <td style="text-align:right"><span class="kb2" style="opacity:1;display:inline-flex;cursor:pointer"
          data-a="delterm" data-p="${esc(v.t)}">${ic('trash',15)}</span></td></tr>`).join('')
        :`<tr><td colspan="5" style="padding:var(--s6) 2px;color:var(--ter);font-size:12.5px">No terms match.</td></tr>`}
@@ -3812,7 +3025,7 @@ function viewVocab(){
 
 /* ══════════════════════════════════ insights ══════════════════════════════════ */
 const RANGES={week:{days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],mins:[95,40,130,75,160,20,0],
-  words:[320,180,540,410,620,90,0],label:'This week · 10–16 Aug',t1:'8h 40m',t2:'2,160',t3:'96%',
+  words:[320,180,540,410,620,90,0],label:'This week · 4–10 Aug',t1:'8h 40m',t2:'2,160',t3:'96%',
   d1:'1h 15m more than last week',d2:'About 43 minutes of typing saved',d3:'Up 3 points since you added 6 terms'},
  month:{days:['W1','W2','W3','W4','W5','W6','W7'],mins:[420,510,380,620,540,300,160],
   words:[1400,1900,1650,2400,2160,980,620],label:'This month · August',t1:'32h 10m',t2:'11,110',t3:'94%',
@@ -3820,7 +3033,7 @@ const RANGES={week:{days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],mins:[95,40
  all:{days:['Mar','Apr','May','Jun','Jul','Aug','Sep'],mins:[1200,1450,1310,1620,1580,1930,0],
   words:[4100,5200,4800,6100,5900,7300,0],label:'All time',t1:'151h 30m',t2:'33,400',t3:'93%',
   d1:'Since March 2026',d2:'About 11 hours of typing saved',d3:'Improving ~1 point a month'}};
-function chart(vals,days,tipIdx,tipA,tipB,slot){
+function chart(vals,days,tipIdx,tipA,tipB){
   const max=Math.max(...vals)||1,H=120;
   const cols=vals.map((val,i)=>{
     const h=val?Math.max(3,Math.round(val/max*H)):3;
@@ -3829,40 +3042,36 @@ function chart(vals,days,tipIdx,tipA,tipB,slot){
     return `<span class="col">${tip}<span class="bar ${val?'':'mute'}" style="height:${h}px"></span></span>`;}).join('');
   const grid=[0.5,1].map(f=>`<span class="gridl" style="bottom:${Math.round(f*H)+9}px">
     <span>${Math.round(max*f)}</span></span>`).join('');
-  return `<div style="padding-left:38px"><div class="chart ${slot||'fc-1'}">${grid}${cols}</div>
+  return `<div style="padding-left:38px"><div class="chart">${grid}${cols}</div>
     <div class="xax">${days.map(d=>`<span>${d}</span>`).join('')}</div></div>`;
 }
 function viewInsights(){
   const R=RANGES[S.range];
   const terms=db.vocab.slice(0,3);const mx=terms[0]?terms[0].n:1;
-  const per=S.range==='week'?'day':S.range==='month'?'week':'month';
   return `<div class="body">
-   ${chiprow([['week','This week'],['month','This month'],['all','All time']],'range',S.range,
-     `<span class="hint">Computed on this Mac from your own activity. Nothing is uploaded.</span>`)}
-   ${pnl('Summary',R.label,'',`<div class="statrow">
-     <div class="stat fcs fc-1"><div class="lb">Time in meetings</div><div class="big h">${R.t1}</div>
+   <div class="statrow">
+     <div class="stat"><div class="lb">Time in meetings</div><div class="big h">${R.t1}</div>
        <div class="dl">${ic('chart',13)}${R.d1}</div></div>
-     <div class="stat fcs fc-2"><div class="lb">Words dictated</div><div class="big h">${R.t2}</div>
+     <div class="stat"><div class="lb">Words dictated</div><div class="big h">${R.t2}</div>
        <div class="dl">${ic('clock',13)}${R.d2}</div></div>
-     <div class="stat fcs fc-3"><div class="lb">Kept after editing</div><div class="big h">${R.t3}</div>
-       <div class="dl">${ic('check',13)}${R.d3}</div></div></div>`)}
-   <div class="g2 pnls" style="margin-top:var(--s4)">
-     ${pnl('Time in meetings','minutes per '+per,'',
-       chart(R.mins,R.days,4,S.range==='week'?'2h 40m':'9h 00m','Busiest in this range','fc-1'))}
-     ${pnl('Words dictated','per '+per,'',chart(R.words,R.days,-1,'','','fc-2'))}</div>
-   <div class="g2 pnls" style="margin-top:var(--s4)">
-     ${pnl('Most corrected terms',terms.length,
-       `<span data-a="go" data-p="vocabulary">Open Vocabulary ${ic('chev',12)}</span>`,
-       terms.map((t,i)=>`<div class="hbar fc-${3+(i%3)}"><span class="lb">${esc(t.t)}</span>
+     <div class="stat"><div class="lb">Kept after editing</div><div class="big h">${R.t3}</div>
+       <div class="dl">${ic('check',13)}${R.d3}</div></div></div>
+   <div class="g2">
+     <div><div class="ghd" style="margin-bottom:14px">Time in meetings <span class="n">· minutes per ${S.range==='week'?'day':S.range==='month'?'week':'month'}</span></div>
+       ${chart(R.mins,R.days,4,S.range==='week'?'2h 40m':'9h 00m','Busiest in this range')}</div>
+     <div><div class="ghd" style="margin-bottom:14px">Words dictated <span class="n">· per ${S.range==='week'?'day':S.range==='month'?'week':'month'}</span></div>
+       ${chart(R.words,R.days,-1,'','')}</div></div>
+   <div class="g2" style="margin-top:var(--s8)">
+     <div><div class="ghd" style="margin-bottom:6px">Most corrected terms</div>
+       ${terms.map(t=>`<div class="hbar"><span class="lb">${esc(t.t)}</span>
          <span class="tr"><i style="width:${Math.round(t.n/mx*100)}%"></i></span>
-         <span class="vv">${t.n}&times;</span></div>`).join(''))}
-     ${pnl('Worth adding',null,'',
-       `<div style="font-size:13.5px;line-height:1.7;color:var(--ink2)">Adding the three terms
-         beside this to your vocabulary would have saved <b>${
-         terms.reduce((a,b)=>a+b.n,0)} corrections</b> in this range — AIT&#8209;Scribe applies them
-         to dictation and meeting transcripts alike.</div>
-        <div style="margin-top:var(--s4)"><button class="btn s sm" data-a="go" data-p="vocabulary">${
-          ic('book',14)}Open Vocabulary</button></div>`)}
+         <span class="vv">${t.n}&times;</span></div>`).join('')}</div>
+     <div style="display:flex;align-items:flex-end">
+       <div class="notice quiet" style="width:100%;align-items:flex-start">${ic('book',15)}
+         <span>Adding these to your vocabulary would have saved <b>${
+           terms.reduce((a,b)=>a+b.n,0)} corrections</b> in this range.
+         <span class="link" data-a="go" data-p="vocabulary"
+           style="margin-left:6px">Open Vocabulary</span></span></div></div>
    </div></div>`;
 }
 
@@ -4780,6 +3989,7 @@ const PEEK={open:350,close:420,tick:100,slop:9};
 const FINE=window.matchMedia&&window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 const PKARM={rail:true,list:true};
 let PKZONE=null,PKINT=null,PKCLOSE=null,PKMS=0,PKX=0,PKY=0,PKLX=0,PKLY=0,PKNEW=false;
+const railOpen=()=>!S.railmin||S.peek==='rail';
 const listOpen=()=>!S.listmin||S.peek==='list';
 document.addEventListener('mousemove',e=>{PKX=e.clientX;PKY=e.clientY},{passive:true});
 
@@ -4844,55 +4054,23 @@ document.addEventListener('focusout',e=>{
 });
 
 /* ══════════════════════════════════ render ══════════════════════════════════ */
-/* ── room for the panel ───────────────────────────────────────────────────
-   A right-hand panel — a watchout, the meeting assistant, a task — is a second
-   reading column, and three columns plus a panel leaves the middle one too
-   narrow to be worth reading. So opening one folds both left sidebars to their
-   icon rails, and closing it gives back exactly what the user had before,
-   unless fit() has since decided the window is too narrow for them anyway.
-
-   It runs from render() rather than from each of the six actions that can open
-   a panel, so nothing can open one and forget. */
-function syncAside(){
-  const on=(['folder','meeting'].includes(S.route)&&((S.wpanel&&S.wid)||S.mpanel))
-        || (S.route==='tasks'&&S.panel);
-  if(on&&!S.asideWas){
-    S.asideWas={rail:S.railmin,list:S.listmin};
-    S.railmin=true;S.listmin=true;S.peek=null;
-  }else if(!on&&S.asideWas){
-    S.railmin=AUTO.rail?true:S.asideWas.rail;
-    S.listmin=AUTO.list?true:S.asideWas.list;
-    S.asideWas=null;
-  }
-}
 function render(){
-  syncAside();
   document.documentElement.dataset.theme=db.settings.theme;
-  document.documentElement.dataset.th=db.settings.th||'indigo';
+  document.documentElement.dataset.th=db.settings.th||'ocean';
   /* one invariant rather than a clear-the-peek call at every place a modal can
      open: nothing floats over the page while something else is on top of it */
   if(S.settings||S.share||S.addPerson||S.menu)S.peek=null;
   let lc='',main='',aside='';
-  /* The home screen is the one page in the meetings family with no list
-     column — see viewHome(). Everything below it gets one. */
-  if(S.route==='meetings'){lc='';
+  if(S.route==='meetings'){lc=listMeetings();
     main=mhead('Meetings',meetingsState(),`<button class="btn ${db.meetings.length?'p':'s'} sm" data-a="record">${
-      ic('rec',15)}Record meeting</button>`)+viewHome();}
-  else if(S.route==='mlist'){lc=listMeetings();
-    main=mhead('',meetingsState(),`<button class="btn ${db.meetings.length?'p':'s'} sm" data-a="record">${
-      ic('rec',15)}Record meeting</button>`,
-      `<span class="bk" data-a="go" data-p="meetings">${ic('back',15)}Meetings</span> ${ic('chev',13)}
-       <b>${S.view==='recent'?'Recent':'All meetings'}</b>`)+viewMeetings();}
-  else if(S.route==='calendar'){lc='';
-    main=mhead('Calendar','',`<button class="btn p sm" data-a="record">${
-      ic('rec',15)}Record meeting</button>`)+viewCalendar();}
+      ic('rec',15)}Record meeting</button>`)+viewMeetings();}
   else if(S.route==='folder'){lc=listMeetings();
     if(S.wpanel&&S.wid)aside=watchPanel();
     else if(S.mpanel)aside=chatPanel();
     const unf=S.fid==='',f=folder(S.fid);
     const nm=unf?'Unfiled':(f?f.name:'Folder');
     main=mhead('','','',
-      `<span class="bk" data-a="view" data-p="all">${ic('back',15)}All meetings</span> ${ic('chev',13)}
+      `<span class="bk" data-a="go" data-p="meetings">${ic('back',15)}All meetings</span> ${ic('chev',13)}
        ${!unf&&f&&f.parent?`<span class="bk" data-a="view" data-p="f:${f.parent}">${
          esc(folderName(f.parent))}</span> ${ic('chev',13)}`:''}
        <b>${esc(nm)}</b>`)+viewFolder();}
@@ -4901,7 +4079,7 @@ function render(){
     main=mhead('','',
       `<button class="btn s sm" data-a="share" data-p="${S.mid}">${ic('share',15)}Share</button>
        <span class="tbtn" data-a="menu" data-p="meeting:${S.mid}" title="Meeting options">${ic('dots',18)}</span>`,
-      `<span class="bk" data-a="view" data-p="all">${ic('back',15)}All meetings</span> ${ic('chev',13)}
+      `<span class="bk" data-a="go" data-p="meetings">${ic('back',15)}All meetings</span> ${ic('chev',13)}
        ${mfo&&mfo.parent?`<span class="bk" data-a="view" data-p="f:${mfo.parent}">${
          esc(folderName(mfo.parent))}</span> ${ic('chev',13)}`:''}
        <span class="bk" data-a="view" data-p="${mf===''?'unfiled':'f:'+mf}">${
@@ -4909,12 +4087,12 @@ function render(){
        <b>${esc(m?m.title:'')}</b>`)+viewMeeting();
     if(S.wpanel&&S.wid)aside=watchPanel();
     else if(S.mpanel)aside=chatPanel();}
-  else if(S.route==='speech'){lc=listSpeechNav();
+  else if(S.route==='speech'){lc=listSpeech();
     main=mhead('Speech to Text',db.transcripts.filter(t=>t.when==='today').length+' today')+viewSpeech();}
-  else if(S.route==='vocabulary'){lc=listSpeechNav();
+  else if(S.route==='vocabulary'){lc=listVocab();
     main=mhead('Vocabulary',db.vocab.length+' terms',
       `<button class="btn p sm" data-a="focusterm">${ic('plus',15)}Add term</button>`)+viewVocab();}
-  else if(S.route==='insights'){lc='';
+  else if(S.route==='insights'){lc=listInsights();
     main=mhead('Insights',RANGES[S.range].label)+viewInsights();}
   else if(S.route==='tasks'){lc=listTasks();
     main=mhead('Tasks',openTasks().length+' open · '+overdue().length+' overdue')+viewTasks();
@@ -4962,11 +4140,12 @@ function render(){
    the call has already cost something. Everything else waits to be asked for. */
 const BUBACTS=[['record','rec','Record a meeting'],['ask','spark','Ask the assistant'],
                ['more','dots','More']];
-/* The bottom-right corner, 24px clear of both edges — the same inset on each
-   side, which is what makes it read as parked in the corner rather than
-   floating somewhere down the right-hand side. It is draggable, so this is
-   only where it starts and where "Reset position" puts it back. */
-function bubHome(){return {x:FW()-84,y:FH()-84};}
+/* bottom right, but clear of the Ask dock that now runs along the foot of a
+   meeting or a project — and clear of the room the hover pill needs to grow
+   into. Draggable, if the user wants it elsewhere. */
+/* It used to rest a third of the way up the window, on top of whatever row
+   happened to be there. Bottom-right corner: still reachable, over far less. */
+function bubHome(){return {x:FW()-84,y:FH()-232};}
 const bubMode=()=>S.rec?'meet':S.bub.rec?'dict':'idle';
 /* Which edge the control is anchored to. Everything that changes its width —
    growing into a pill on hover, becoming the recording pill, collapsing back —
@@ -5008,7 +4187,7 @@ function renderBubble(){
   const sig=[mode,mode==='meet'&&S.rec.paused,S.wpeek,S.wopen,S.wsay,S.walert,
              open.length,open.map(w=>w.id).join(',')].join('|');
   const side=bubSide();
-  b.y=Math.max(72,Math.min(b.y,FH()-80));
+  b.y=Math.max(72,Math.min(b.y,FH()-96));
   /* the popover is taller than the pill, so it drops below it near the top */
   const head=(S.wpeek||S.wopen||S.wsay)?424:mode==='idle'?150:120;
   /* the class list is what decides the width — idle is a fixed 60px box with an
@@ -5316,11 +4495,11 @@ function stopRecording(){
       questions:[['Who signs off the DPA on Acme\'s side?','00:21']]};
     m.genAt='3:26 pm';
     if(m.transcript[4])m.transcript[4][3]='Source of task 1';
-    const nt=[{id:'n'+Date.now(),title:'Send the revised pricing sheet on Thursday',mid:m.id,due:'Fri 14 Aug',
+    const nt=[{id:'n'+Date.now(),title:'Send the revised pricing sheet on Thursday',mid:m.id,due:'Thu 14 Aug',
       late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I will send the revised sheet through by Thursday.',who:'You',at:'00:38'},
-     {id:'n'+(Date.now()+1),title:'Get Legal to review the data-processing addendum',mid:m.id,due:'Fri 14 Aug',
+     {id:'n'+(Date.now()+1),title:'Get Legal to review the data-processing addendum',mid:m.id,due:'Fri 15 Aug',
       late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I want to flag the data-processing addendum again.',who:'Tom Ellis',at:'00:21'},
-     {id:'n'+(Date.now()+2),title:"Invite Acme's platform team to the deep-dive",mid:m.id,due:'Tue 18 Aug',
+     {id:'n'+(Date.now()+2),title:"Invite Acme's platform team to the deep-dive",mid:m.id,due:'Mon 18 Aug',
       late:false,pri:'',done:false,grp:'Upcoming',quote:'Can we get the platform team into the deep-dive this time?',who:'Tom Ellis',at:'00:47'}];
     db.tasks.push(...nt);m.fups=3;
     S.busy=false;S.tab='notes';render();
@@ -5380,8 +4559,7 @@ function resetDemo(hard){
   clearTimeout(SAYT);
   Object.assign(S,{route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:hard?'new':'c1',
     settings:false,share:false,menu:null,panel:false,q:'',tq:'',vq:'',taskFilter:'all',
-    showDone:false,speakers:'All speakers',range:'week',week:0,
-    rec:null,rec2:null,busy:false,typing:false,addPerson:false,
+    showDone:false,speakers:'All speakers',rec:null,rec2:null,busy:false,typing:false,addPerson:false,
     wid:null,wpanel:false,wfilter:'all',wdone:false,wpeek:null,wopen:false,walert:false,wsay:null,wseen:[],
     peek:null});
   pkStop();
@@ -5403,29 +4581,22 @@ document.addEventListener('click',e=>{
   case 'noop':return;
   case 'demo':stop();demo(p);return;
   case 'go':stop();pkDismiss();S.route=p;S.q='';S.panel=false;S.menu=null;S.mpanel=false;S.fid=null;S.wpanel=false;
-    if(p==='calendar')S.week=0;
     S.view=p==='tasks'?'all':p==='speech'?'today':p==='vocabulary'?'all':'all';render();return;
-  case 'calnav':stop();S.week=p==='0'?0:S.week+(+p);render();return;
-  case 'calev':{stop();const e=allEvents().find(x=>x.id===p);if(!e)return;
-    toast(`${ic('cal',15)}<span><b>${esc(e.title)}</b> — ${relDay(e.date)}, ${
-      clockLabel(e.s)}–${clockLabel(e.e)}${e.who?'. With '+esc(e.who):''}.
-      AIT-Scribe will offer to take notes when it starts.</span>`,4200,'info');return;}
   case 'view':{stop();S.view=p;S.q='';S.menu=null;S.mpanel=false;pkDismiss();
     /* Tasks, Speech and Vocabulary filter their own list in place — only the
        meetings family reads a view as somewhere to go. */
     if(S.route==='tasks'){S.panel=false;render();return}
     if(isSpeech(S.route)){render();return}
-    if(S.route==='insights'){render();return}
     if(p.startsWith('f:')){
       /* a folder has its own page: sub-folders, rolled-up notes and its meetings */
       const fid=p.slice(2);const f=folder(fid);
-      if(!f){S.route='mlist';S.view='all';render();return}
+      if(!f){S.route='meetings';S.view='all';render();return}
       if(f.parent)S.openF[f.parent]=true;
       S.route='folder';S.fid=fid;S.mid=null;render();return;}
     if(p==='unfiled'){S.route='folder';S.fid='';S.mid=null;render();return;}
-    /* everything else is a filter on the flat meeting list, so a detail page
-       steps back out to that list rather than just re-highlighting the sidebar */
-    S.route='mlist';S.mid=null;render();return;}
+    /* everything else is a filter on the meeting list, so a detail page steps
+       back out to that list rather than just re-highlighting the sidebar */
+    S.route='meetings';S.mid=null;render();return;}
   case 'foldtoggle':stop();S.openF[p]=!S.openF[p];render();return;
   case 'newfolder':{stop();
     /* p is either a parent folder id, '' for a new top-level folder, or
@@ -5465,7 +4636,7 @@ document.addEventListener('click',e=>{
     if(S.route==='folder'&&gone.includes(S.fid)){
       /* step up to the parent if there is one, otherwise out to all meetings */
       if(f.parent&&!gone.includes(f.parent)){S.fid=f.parent;S.view='f:'+f.parent}
-      else {S.route='mlist';S.view='all';S.fid=null}}
+      else {S.route='meetings';S.view='all';S.fid=null}}
     S.menu=null;render();
     toast(`<b>${esc(f.name)}</b> deleted. ${n?`${n} meeting${n>1?'s':''} now Unfiled`
       :'It was empty'} — no notes were removed.`,3400,'warn');return;}
@@ -5507,8 +4678,7 @@ document.addEventListener('click',e=>{
       render();toast('<b>Notes regenerated</b> from your notes and the transcript.')},2000);return;}
   case 'confirmDelete':stop();S.settings=false;S.menu='confirm:'+p;render();return;
   case 'delmeeting':{stop();db.meetings=db.meetings.filter(m=>m.id!==p);
-    db.tasks=db.tasks.filter(t=>t.mid!==p);S.menu=null;
-    S.route=S.route==='meeting'?'mlist':S.route;S.view='all';render();
+    db.tasks=db.tasks.filter(t=>t.mid!==p);S.menu=null;S.route='meetings';render();
     toast('Meeting moved to <b>Recently deleted</b>. 30 days to restore.');return;}
   case 'ackWatch':{stop();const m=meeting(p);if(m)m.woAck=true;render();
     toast(`${ic('radar',15)}<span>Hidden. The Watchouts tab still has ${
