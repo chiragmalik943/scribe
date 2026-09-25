@@ -25,14 +25,13 @@ function folderRows(f){
   return folderRow(f,false)+kids.map(k=>folderRow(k,true)).join('');
 }
 function listMeetings(){
-  const all=db.meetings.length,rec=db.meetings.filter(m=>['Today','Yesterday'].includes(m.group)).length;
+  const all=db.meetings.length;
   return `<div class="listcol">
    <div class="srch" data-a="expandlist" title="Search meetings and transcripts">${ic('search',15)}<input placeholder="Search meetings and transcripts" data-a="q" value="${esc(S.q)}"></div>
    <div class="lbody">
     <div class="views">
      ${v(false,'grid','Meetings home','','go','meetings')}
-     ${v(S.view==='all','list','All meetings',cnt(all),'view','all')}
-     ${v(S.view==='recent','clock','Recent',cnt(rec),'view','recent')}
+     ${v(S.view==='all'||S.view==='recent','list','All meetings',cnt(all),'view','all')}
     </div>
     ${db.meetings.length?`<div class="slabel">Folders</div>
     <div class="views">

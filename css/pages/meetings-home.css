@@ -145,6 +145,7 @@
 /* ── the project brief ────────────────────────────────────────────────── */
 .brief{margin:var(--s5) 0 var(--s7)}
 .bsec.lead .flead{margin:0}
+.bsec.lead .flead+.flead{margin-top:12px}
 /* One column, like the rest of a detail page: three sub-headings stacked with
    the same rhythm as the sections below them, instead of a row of boxes that
    made "Who's doing what" compete for attention with "Where things stand". */

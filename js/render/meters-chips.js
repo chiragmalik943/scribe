@@ -51,6 +51,21 @@ function capList(key,rows,cap){
    own format under a shared heading. `hideIfEmpty` drops the whole section
    (heading included) when there is nothing to show — for content that is
    only worth naming when it exists, like Decisions on a call that had none. */
+/* The lead section on a detail page. A one-line summary is one paragraph;
+   AI notes that ran long are several, split on a blank line so the section
+   reads as prose rather than one dense block — see .sec p+p for the gap
+   between them. */
+function summaryBlock(text){
+  const paras=String(text||'').split(/\n{2,}/).map(p=>p.trim()).filter(Boolean);
+  return `<div class="sec"><h3>Summary</h3>${paras.length
+    ?paras.map(p=>`<p>${esc(p)}</p>`).join('')
+    :'<div class="sbe">This call has not been summarised yet.</div>'}</div>`;
+}
+/* The small, panel-scale stand-in for .empty — used inside a .pnl in the
+   narrow side column of a detail page, where nothing in the list is not a
+   dead end, just nothing due right now. */
+const cardEmpty=(icon,text)=>`<div class="pnlempty"><span class="ico">${
+  ic(icon,18,1.6)}</span><p>${text}</p></div>`;
 function secBlock(o){
   const rows=o.rows||[],n=rows.length;
   if(!n&&o.hideIfEmpty)return '';

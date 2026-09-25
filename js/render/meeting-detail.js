@@ -3,12 +3,14 @@
 /* ══════════════════════════════════ meeting detail ══════════════════════════════════ */
 /* Avatars only, capped so a twelve-person all-hands does not push the meta row
    onto a second line — the remainder becomes a +N chip. Names live in the
-   attendee popover now. */
-function faces(m,max=6){
-  const shown=m.people.slice(0,max),rest=m.people.length-shown.length;
+   attendee popover now. Takes a plain people array rather than a meeting, so
+   the same stack does a meeting's own attendees and a project's rolled-up
+   members. */
+function faces(people,max=6){
+  const shown=people.slice(0,max),rest=people.length-shown.length;
   return `<span class="faces">${shown.map(p=>
     `<i style="background:${p.c}" title="${esc(p.n)}">${p.i}</i>`).join('')}${
-    rest>0?`<i class="more" title="${esc(m.people.slice(max).map(x=>x.n).join(', '))}">+${rest}</i>`:''}</span>`;
+    rest>0?`<i class="more" title="${esc(people.slice(max).map(x=>x.n).join(', '))}">+${rest}</i>`:''}</span>`;
 }
 /* `dur` is the running time, or '' while the call is still being recorded and
    there is not one yet. */
@@ -17,7 +19,7 @@ function titleBlock(m,dur){
     <h1 class="h" data-a="rename" data-p="${m.id}" style="cursor:text">${esc(m.title)}
       <span class="edit">${ic('edit',15)}</span></h1>
     <div class="metarow">
-      <span class="mi people" data-a="menu" data-p="people:${m.id}" title="Attendees">${faces(m,5)}
+      <span class="mi people" data-a="menu" data-p="people:${m.id}" title="Attendees">${faces(m.people,5)}
         <span><b>${m.people.length}</b> attendee${m.people.length===1?'':'s'}</span>${ic('chevd',11)}</span>
       <span class="sp"></span>
       <span class="mi">${ic('cal',13)}<span><b>${m.day}</b>, ${m.time}</span></span>
@@ -83,6 +85,17 @@ function viewMeeting(){
   if(S.tab==='notes'){
     const recRow=d=>`<li><span>${esc(d[0])}</span>
       <span class="jump" data-a="jump" data-p="${d[1]}">${d[1]}</span></li>`;
+    /* Two columns, one for reading and one for doing. The left carries the
+       narrative — what was said, what got decided, what's still open — with
+       real typographic hierarchy between them (a lead paragraph, then two
+       record-style lists). The right is the same width and shape as the
+       project page's own side column: the other calls this one sits beside,
+       then what's still open from it, so neither page has to be relearned
+       once you know the other. */
+    const openMy=mytasks.filter(t=>!t.done);
+    const mf=m.folder,related=folderMeetings(mf).filter(x=>x.id!==m.id);
+    const {shown:rrows,more:rmore}=capList('meeting:'+m.id+':related',related.map(x=>meetingRow(x)),5);
+    const {shown:orows,more:omore}=capList('meeting:'+m.id+':tasks',openMy.map(t=>taskRow(t,true)),5);
     body=`${tabs}${actbar(
       `${ic('spark',14)}Generated ${m.genAt||'2:49 pm'} from your notes and the transcript.`,
       `<button class="btn q sm ico" data-a="copymd" data-p="${m.id}"
@@ -91,18 +104,25 @@ function viewMeeting(){
          title="Download .md">${ic('md',15)}</button>
        <button class="btn q sm ico" data-a="menu" data-p="meeting:${m.id}"
          title="Regenerate, export, delete">${ic('dots',15)}</button>`)}
-      <div class="notesgrid">
-        <div class="sec"><h3>Summary</h3><p>${esc(m.notes.summary)}</p></div>
-        ${secBlock({key:'notes:'+m.id+':dec',title:'Decisions',
-          rows:m.notes.decisions.map(recRow),tag:'bul',hideIfEmpty:true})}
-        ${secBlock({key:'notes:'+m.id+':q',title:'Open questions',
-          rows:m.notes.questions.map(recRow),tag:'bul',hideIfEmpty:true})}
-        ${secBlock({key:'notes:'+m.id+':tasks',title:'Tasks',
-          rows:mytasks.map(t=>taskRow(t)),
-          action:mytasks.length?`<span data-a="go" data-p="tasks">View in Tasks ${ic('chev',12)}</span>`:'',
-          empty:'No tasks came out of this meeting.',
-          hint:mytasks.length?'Owners and dates were taken from what was said on the call.':''})}
-      </div>`;
+      <div class="notesgrid"><div class="dcols">
+        <div class="dmain">
+          ${summaryBlock(m.notes.summary)}
+          ${secBlock({key:'notes:'+m.id+':dec',title:'Decisions',
+            rows:m.notes.decisions.map(recRow),tag:'bul',hideIfEmpty:true})}
+          ${secBlock({key:'notes:'+m.id+':q',title:'Open questions',
+            rows:m.notes.questions.map(recRow),tag:'bul',hideIfEmpty:true})}
+        </div>
+        <div class="dside">
+          ${pnl('Meetings',related.length,
+            related.length?`<span data-a="view" data-p="${mf===''?'unfiled':'f:'+mf}">${
+              esc(folderName(mf))} ${ic('chev',12)}</span>`:'',
+            related.length?`<div class="list">${rrows.join('')}</div>${rmore}`
+              :cardEmpty('users','No other calls are filed alongside this one yet.'),true)}
+          ${pnl('Open tasks',openMy.length,'',
+            openMy.length?`<div class="list">${orows.join('')}</div>${omore}`
+              :cardEmpty('checkc','Nothing came out of this call — no task was assigned.'),true)}
+        </div>
+      </div></div>`;
   } else if(S.tab==='watch'){
     body=`${tabs}${watchBody(m,wo,woOpen,false)}`;
   } else if(S.tab==='mynotes'){

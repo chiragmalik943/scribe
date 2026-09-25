@@ -82,9 +82,7 @@ function render(){
       ic('rec',15)}Record meeting</button>`)+viewHome();}
   else if(S.route==='mlist'){lc=listMeetings();
     main=mhead('',meetingsState(),`<button class="btn ${db.meetings.length?'p':'s'} sm" data-a="record">${
-      ic('rec',15)}Record meeting</button>`,
-      `<span class="bk" data-a="go" data-p="meetings">${ic('back',15)}Meetings</span> ${ic('chev',13)}
-       <b>${S.view==='recent'?'Recent':'All meetings'}</b>`)+viewMeetings();}
+      ic('rec',15)}Record meeting</button>`,crumbTrail())+viewMeetings();}
   else if(S.route==='folder'){
     const unf=S.fid==='',f=folder(S.fid);
     /* The tree is folder navigation — useful while browsing the top-level
@@ -94,23 +92,12 @@ function render(){
     lc=(!unf&&f&&!f.parent)?listMeetings():'';
     if(S.wpanel&&S.wid)aside=watchPanel();
     else if(S.mpanel)aside=chatPanel();
-    const nm=unf?'Unfiled':(f?f.name:'Folder');
-    main=mhead('','','',
-      `<span class="bk" data-a="view" data-p="all">${ic('back',15)}All meetings</span> ${ic('chev',13)}
-       ${!unf&&f&&f.parent?`<span class="bk" data-a="view" data-p="f:${f.parent}">${
-         esc(folderName(f.parent))}</span> ${ic('chev',13)}`:''}
-       <b>${esc(nm)}</b>`)+viewFolder();}
-  else if(S.route==='meeting'){const m=meeting(S.mid);
-    const mf=m?m.folder:'',mfo=folder(mf);
+    main=mhead('','','',crumbTrail())+viewFolder();}
+  else if(S.route==='meeting'){
     main=mhead('','',
       `<button class="btn s sm" data-a="share" data-p="${S.mid}">${ic('share',15)}Share</button>
        <span class="tbtn" data-a="menu" data-p="meeting:${S.mid}" title="Meeting options">${ic('dots',18)}</span>`,
-      `<span class="bk" data-a="view" data-p="all">${ic('back',15)}All meetings</span> ${ic('chev',13)}
-       ${mfo&&mfo.parent?`<span class="bk" data-a="view" data-p="f:${mfo.parent}">${
-         esc(folderName(mfo.parent))}</span> ${ic('chev',13)}`:''}
-       <span class="bk" data-a="view" data-p="${mf===''?'unfiled':'f:'+mf}">${
-         esc(mf===''?'Unfiled':folderName(mf))}</span> ${ic('chev',13)}
-       <b>${esc(m?m.title:'')}</b>`)+viewMeeting();
+      crumbTrail())+viewMeeting();
     if(S.wpanel&&S.wid)aside=watchPanel();
     else if(S.mpanel)aside=chatPanel();}
   else if(S.route==='speech'){lc=listSpeechNav();
@@ -146,6 +133,7 @@ function render(){
   lastRenderSig=renderSig();
   animateBars(bars);
   tips($('#app'));
+  fitCrumb();
   tipHide();
   renderBubble();
 }

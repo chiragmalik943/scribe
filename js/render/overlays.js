@@ -151,6 +151,16 @@ function menuEl(){
       </div>`}).join('')}</div>
     <hr><a data-a="addperson" data-p="${id}">${ic('userplus',15)}Add person…</a>
     <div class="fn">Only people with an email can be sent the notes.</div></div>`;}
+  if(kind==='fpeople'){const f=folder(id);if(!f)return '';const pos=S.menuXY||{x:300,y:200};
+   const mem=folderMembers(id),n=folderMeetings(id).length;
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="left:${clampX(pos.x,276)}px;top:${clampY(pos.y,340)}px;width:276px">
+    <div class="mh">${mem.length} member${mem.length===1?'':'s'}</div>
+    <div style="max-height:246px;overflow-y:auto">${mem.map(x=>
+      `<div class="prow"><span class="av" style="background:${x.c}">${x.i}</span>
+        <span class="nm">${esc(x.n)}${x.e?`<span>${esc(x.e)}</span>`:'<span>No email</span>'}</span></div>`).join('')}</div>
+    <hr><div class="fn">Rolled up from the ${n} call${n===1?'':'s'} filed in this project — not
+      editable here, since no one is added to a project directly.</div></div>`;}
   if(kind==='bubmore'){const pos=S.menuXY||{x:FW()-280,y:FH()-320};const g=db.settings;
    return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
    <div class="menu" style="left:${clampX(pos.x,252)}px;top:${clampY(pos.y,300)}px;width:252px">
@@ -221,6 +231,15 @@ function menuEl(){
         <button class="btn s" data-a="closemenu" style="flex:1;justify-content:center">Close</button>
         <button class="btn s" data-a="closemenu" style="flex:1;justify-content:center;
           color:var(--dangerInk);border-color:var(--dangerLine)">Cancel</button></div></div></div>`;
+  if(kind==='crumbmenu'){
+   /* reads the same crumbData() the top bar itself just built from, so the
+      dropdown can never list a folder the trail does not agree it passed
+      through */
+   const d=crumbData();if(!d||!d.mids.length)return '';const pos=S.menuXY||{x:100,y:60};
+   return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>
+   <div class="menu" style="left:${clampX(pos.x,224)}px;top:${clampY(pos.y,200)}px;width:224px">
+    <div class="mh">In between</div>
+    ${d.mids.map(m=>`<a data-a="view" data-p="${esc(m.par)}">${ic('folder',15)}${esc(m.label)}</a>`).join('')}</div>`;}
   if(kind==='confirm'){const m=meeting(id);
    return `<div class="scrim" data-a="closemenu"></div>
    <div class="modal" style="width:400px;flex-direction:column">

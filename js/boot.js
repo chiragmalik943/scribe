@@ -33,7 +33,7 @@ function fit(){
   if(wantRail!==AUTO.rail){AUTO.rail=wantRail;S.railmin=wantRail;ch=true}
   if(ch&&S.peek){pkStop();S.peek=null;}
   if(ch&&BOOTED)render();
-  else if(BOOTED)renderBubble();
+  else if(BOOTED){renderBubble();fitCrumb();}
 }
 window.addEventListener('resize',fit);
 fit();render();BOOTED=true;

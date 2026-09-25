@@ -178,14 +178,33 @@
 .tbtn:hover{background:var(--sunk);color:var(--ink2)}
 .tbtn.hasbadge:after{content:'';position:absolute;top:5px;right:5px;width:6px;height:6px;
   border-radius:50%;background:var(--danger);box-shadow:0 0 0 2px var(--surf)}
-/* the trail reads as one path: quiet steps, one solid destination */
-.crumb{display:flex;align-items:center;gap:var(--s1);font-size:12.5px;color:var(--ter);min-width:0}
-.crumb>.ic{color:var(--ter);opacity:.7}
-.crumb b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* the trail reads as one path: quiet steps, one solid destination.
+   overflow:hidden is what makes fitCrumb()'s scrollWidth-vs-clientWidth
+   overflow check meaningful — without it the row would just spill into
+   whatever sits next to it in the top bar rather than reporting overflow. */
+.crumb{display:flex;align-items:center;gap:var(--s1);font-size:12.5px;color:var(--ter);
+  min-width:0;overflow:hidden}
+.crumb .ic{color:var(--ter);opacity:.7;flex:0 0 auto}
+.crumb b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:22px}
 .crumb .bk{cursor:pointer;display:flex;align-items:center;gap:5px;padding:3px 6px;
-  border-radius:var(--r1);color:var(--sec);transition:background var(--tr),color var(--tr)}
+  border-radius:var(--r1);color:var(--sec);white-space:nowrap;flex:0 0 auto;
+  transition:background var(--tr),color var(--tr)}
 .crumb .bk:hover{color:var(--ink2);background:var(--sunk)}
 .crumb b{color:var(--ink);font-weight:600;font-family:var(--f-head);font-size:14px;
   padding-left:2px}
+/* ── overflow: the folders in between collapse into one "···" step ───────
+   .mids is every folder between the root and the current page. When the full
+   trail would not fit the top bar — long names, a narrow window — fitCrumb()
+   (chrome.js) measures the overflow after layout and adds .collapsed, which
+   swaps .mids for the dots button; clicking it opens the same folders in a
+   dropdown (menuEl()'s 'crumbmenu' case) rather than losing them. A trail
+   with nothing to collapse never grows a dots button in the first place, so
+   the common one- or two-step crumb is unchanged. */
+.crumb .mids{display:flex;align-items:center;gap:var(--s1);flex:0 0 auto}
+.crumb .ell{display:none;cursor:pointer;align-items:center;padding:3px 8px;flex:0 0 auto;
+  border-radius:var(--r1);color:var(--sec);transition:background var(--tr),color var(--tr)}
+.crumb .ell:hover{color:var(--ink2);background:var(--sunk)}
+.crumb.collapsed .mids{display:none}
+.crumb.collapsed .ell{display:flex}
 .body{flex:1;--bp:28px;padding:var(--bp);overflow-y:auto;display:flex;flex-direction:column}
 

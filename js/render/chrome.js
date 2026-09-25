@@ -66,3 +66,57 @@ const v=(on,icon,label,right,act,par)=>`<a class="${on?'on':''}" data-a="${act}"
 const cnt=n=>`<span class="n">${n}</span>`;
 const pill=n=>`<span class="npill">${n}</span>`;
 
+/* ── breadcrumb trail ─────────────────────────────────────────────────────
+   One shape for every route that carries a crumb: a `root` that is always
+   there and always a link, zero or more `mids` — the folders standing
+   between the root and wherever the user is now — and a `current` label,
+   which is the page itself and never a link. Built once, here, so the top
+   bar and the "···" dropdown that opens when the trail is collapsed are
+   reading the exact same list and can never disagree about what's hidden. */
+function crumbData(){
+  if(S.route==='mlist')
+    return {root:{label:'Meetings',act:'go',par:'meetings'},mids:[],
+      current:S.view==='recent'?'Recent':'All meetings'};
+  if(S.route==='folder'){
+    const unf=S.fid==='',f=folder(S.fid);
+    const mids=[];
+    if(!unf&&f&&f.parent)mids.push({label:folderName(f.parent),par:'f:'+f.parent});
+    return {root:{label:'All meetings',act:'view',par:'all'},mids,
+      current:unf?'Unfiled':(f?f.name:'Folder')};
+  }
+  if(S.route==='meeting'){
+    const m=meeting(S.mid),mf=m?m.folder:'',mfo=folder(mf);
+    const mids=[];
+    if(mfo&&mfo.parent)mids.push({label:folderName(mfo.parent),par:'f:'+mfo.parent});
+    mids.push({label:mf===''?'Unfiled':folderName(mf),par:mf===''?'unfiled':'f:'+mf});
+    return {root:{label:'All meetings',act:'view',par:'all'},mids,current:m?m.title:''};
+  }
+  return null;
+}
+/* The dots button and the folders it can stand in for are both always in the
+   markup — CSS shows one or the other off a single `.collapsed` class on
+   `.crumb`, so collapsing never re-renders anything, just toggles which half
+   is visible. See fitCrumb() for when that class gets set. */
+function crumbTrail(){
+  const d=crumbData();if(!d)return null;
+  const chev=()=>`<span>${ic('chev',13)}</span>`;
+  const root=`<span class="bk" data-a="${d.root.act}" data-p="${d.root.par}">${
+    ic('back',15)}${esc(d.root.label)}</span>`;
+  const mids=d.mids.map(m=>`<span class="bk" data-a="view" data-p="${esc(m.par)}">${
+    esc(m.label)}</span>${chev()}`).join('');
+  const ell=d.mids.length?`<span class="ell" data-a="menu" data-p="crumbmenu:"
+    title="Show the ${d.mids.length} folder${d.mids.length>1?'s':''} in between">${ic('dots',13)}</span>${chev()}`:'';
+  return `${root}${chev()}${ell}<span class="mids">${mids}</span><b>${esc(d.current)}</b>`;
+}
+/* Whether the full trail fits is a question about live pixel widths — the
+   name of whatever folder or meeting the user is looking at, and however
+   wide the window currently is — so it's answered after layout rather than
+   guessed at while the HTML above is being strung together. Collapsing only
+   ever removes width from the row, so one measurement is enough: there is no
+   case where doing it again would want to re-expand. */
+function fitCrumb(){
+  const el=$('.crumb');if(!el)return;
+  el.classList.remove('collapsed');
+  if(el.scrollWidth>el.clientWidth)el.classList.add('collapsed');
+}
+

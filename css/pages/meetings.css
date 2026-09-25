@@ -178,6 +178,7 @@
    losing the line — about 66 characters, which the summary was hitting by
    accident at one window width and overshooting at every other */
 .sec p{font-size:14.5px;line-height:1.7;color:var(--ink2);max-width:66ch}
+.sec p+p{margin-top:12px}
 /* ── a record row ────────────────────────────────────────────────────────
    Decisions and open questions are records, not prose. As a bulleted list with
    a 4px dot they read as one paragraph of run-on sentences; as rows with a

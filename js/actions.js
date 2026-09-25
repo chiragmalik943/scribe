@@ -10,18 +10,19 @@ const LINES=[['00:04','Jennifer Walsh','Thanks for making the time — let us st
  ['00:55','Jennifer Walsh','Yes. Procurement alone was not enough last round.'],
  ['01:04','You','On environments — I will get the GCP project set up for you this week so it is ready for the deep-dive.'],
  ['01:13','Tom Ellis','Good. And we are still holding the eighteenth for the deep-dive itself.']];
-/* What the assistant catches as the call runs, keyed to the transcript line
-   that triggers it. `after` is the line index it fires on, so the watchout
-   always arrives just behind something the user can see was said. */
+/* What the assistant catches as the call runs. `at` is the fixed second on
+   the recording clock it fires at — 15s and 30s — so the demo is repeatable
+   rather than landing at a slightly different moment (tied to transcript-line
+   timing) on every run. */
 const LIVEW=[
- {after:7,type:'conflict',
+ {at:15,type:'conflict',
   title:'GCP is being set up, but the client called AWS a security requirement',
   why:'On the kickoff Jennifer said everything runs in their AWS account and called it a security requirement rather than a preference. A GCP environment would not clear their security review, and the work is being committed to now.',
   now:{tx:'On environments — I will get the GCP project set up for you this week so it is ready for the deep-dive.',who:'You',at:'01:04'},
   ref:{tx:'One thing to be clear on — everything runs in our AWS account. That is a security requirement, not a preference.',who:'Jennifer Walsh',mid:'m1',mt:'Acme kickoff',date:'11 Aug 2026',at:'25:30'},
   say:'Just a quick heads up before I set anything up — on the kickoff Jennifer said everything has to run in your AWS account. Should I be standing up AWS rather than GCP?',
   age:'just now'},
- {after:8,type:'discrepancy',
+ {at:30,type:'discrepancy',
   title:'The deep-dive is on the eighteenth, but pricing is not due until Thursday the twentieth',
   why:'Jennifer needs the revised sheet before her internal review, and the deep-dive was meant to follow that conversation, not precede it. One of the two dates has to move.',
   now:{tx:'And we are still holding the eighteenth for the deep-dive itself.',who:'Tom Ellis',at:'01:13'},
@@ -47,10 +48,11 @@ function startRecording(){
       S.rec.secs++;
       if(S.rec.next<LINES.length&&S.rec.secs>=(S.rec.next+1)*3){
         S.rec.lines.push(LINES[S.rec.next]);S.rec.next++;}
-      /* the assistant is a beat behind the line that triggered it, which is
-         also what makes the pill feel like it is listening rather than scripted */
+      /* fixed to the recording clock rather than to how far the transcript has
+         gotten, so the watchout always lands on the same second instead of
+         drifting with render/tick timing */
       const w=LIVEW[S.rec.wnext];
-      if(w&&db.settings.woOn&&S.rec.next>=w.after&&S.rec.secs>=w.after*3+2){
+      if(w&&db.settings.woOn&&S.rec.secs>=w.at){
         S.rec.wnext++;
         const on={conflict:db.settings.woConflict,discrepancy:db.settings.woDiscrepancy,
                   clarification:db.settings.woClarify}[w.type];

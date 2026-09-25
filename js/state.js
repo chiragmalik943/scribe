@@ -222,6 +222,16 @@ const folderLines=(id,key)=>folderMeetings(id).flatMap(m=>
   (m.notes&&m.notes[key]||[]).map(d=>({tx:d[0],at:d[1],mid:m.id,mt:m.title})));
 const folderTasks=id=>{const ids=folderMeetings(id).map(m=>m.id);
   return db.tasks.filter(t=>ids.includes(t.mid)&&!t.done);};
+/* Every distinct person who has been on a call filed in this project, first-
+   seen order — a roster, not a per-meeting attendee list. `you` is left out,
+   same as everywhere else a room is listed, since the user is always
+   implicitly in it. */
+function folderMembers(id){
+  const seen=new Set(),out=[];
+  folderMeetings(id).forEach(m=>m.people.forEach(p=>{
+    if(p.n==='you'||seen.has(p.n))return;seen.add(p.n);out.push(p);}));
+  return out;
+}
 /* ── the project brief ────────────────────────────────────────────────────
    A folder's `sum` is four sections rather than one paragraph, because the four
    questions a reader actually arrives with are different questions: what is the

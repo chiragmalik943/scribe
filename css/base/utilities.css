@@ -96,6 +96,25 @@
 .trk .due.wn{color:var(--warnInk);font-weight:600}
 .acct .avat{background:var(--fcT);color:var(--fcI)}
 
+/* ══════════════════════════════ detail page columns ══════════════════════════════
+   The meeting and project detail pages share one shape: a wide reading column —
+   summary, decisions, open questions, the narrative content — beside a narrow
+   fixed one that is purely actionable — open tasks, then the meetings around
+   it. Same proportions as .homegrid on purpose, so the two screens that carry
+   a secondary column agree on how wide it is. */
+.dcols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--s7);align-items:start}
+.dcols .dmain{min-width:0}
+.dcols .dside{display:flex;flex-direction:column;gap:var(--s5);min-width:0}
+#frame.w2 .dcols{grid-template-columns:minmax(0,1fr);gap:var(--s6)}
+/* the small, panel-scale version of .empty — a card whose whole job is a list
+   still needs to say *something* when the list is empty, but a 44px icon and
+   a headline sized for a full page read as a dead end at 340px */
+.pnlempty{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:22px 18px}
+.pnlempty .ico{width:32px;height:32px;border-radius:var(--r3);background:var(--sunk);
+  display:flex;align-items:center;justify-content:center;color:var(--ter);margin-bottom:9px}
+.pnlempty p{font-size:12.5px;color:var(--sec);line-height:1.55;max-width:220px}
+
 /* ══════════════════════════════ new responsive ══════════════════════════════ */
 #frame.w2 .homegrid{grid-template-columns:minmax(0,1fr);gap:var(--s5)}
 #frame.w2 .fgrid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}

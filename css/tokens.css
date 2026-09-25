@@ -21,11 +21,14 @@
    Status colours (danger / warn / ok / info) and the shadows are shared across
    themes so a red always reads as a red, and live in the two blocks below. */
 :root{
-  /* Two typefaces. Sentient (a serif) is the DISPLAY face: page titles, card and
-     row titles, section headings, big stats. Onest (a grotesque) is the TEXT face:
-     body copy plus all UI chrome — buttons, tabs, chips, badges, micro-labels,
-     table headers — where a serif at 11px would only add noise. */
-  --f-head:'Sentient',Georgia,'Times New Roman',serif;
+  /* One typeface, everywhere. Onest (a grotesque, variable 100-900) carries
+     page titles, card and row titles, section headings and big stats just as
+     it carries body copy and UI chrome — buttons, tabs, chips, badges,
+     micro-labels, table headers. --f-head and --f-body stay as two variables
+     — call sites still say which role a piece of type is playing — but both
+     resolve to the same family now, so nothing in the app renders in a
+     second typeface. */
+  --f-head:'Onest','Liberation Sans',Arial,sans-serif;
   --f-body:'Onest','Liberation Sans',Arial,sans-serif;
   /* ── scale ──────────────────────────────────────────────────────────────
      Three vocabularies, deliberately short. Before this the file carried
