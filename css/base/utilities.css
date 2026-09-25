@@ -98,11 +98,11 @@
 
 /* ══════════════════════════════ detail page columns ══════════════════════════════
    The meeting and project detail pages share one shape: a wide reading column —
-   summary, decisions, open questions, the narrative content — beside a narrow
-   fixed one that is purely actionable — open tasks, then the meetings around
-   it. Same proportions as .homegrid on purpose, so the two screens that carry
-   a secondary column agree on how wide it is. */
-.dcols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--s7);align-items:start}
+   summary, decisions, open questions, the narrative content — beside a narrower
+   one that is purely actionable — the meetings around it, then open tasks.
+   Fixed 60/40 split, in fr rather than % so the gap is subtracted from the
+   container before the ratio is applied instead of overflowing it. */
+.dcols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:var(--s7);align-items:start}
 .dcols .dmain{min-width:0}
 .dcols .dside{display:flex;flex-direction:column;gap:var(--s5);min-width:0}
 #frame.w2 .dcols{grid-template-columns:minmax(0,1fr);gap:var(--s6)}

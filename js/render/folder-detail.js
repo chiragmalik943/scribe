@@ -116,21 +116,24 @@ function dcolMain(id){
     ${secBlock({key:'roll:'+id+':q',title:'Open questions',rows:qs.map(recRow),tag:'bul',hideIfEmpty:true})}
     </div>`;
 }
-/* The narrow column: what's still open from this project, and the calls it's
-   built from. Both are capped lists that already know how to become "View
-   all N" — see capList()/secBlock() — so a project with forty calls in it
-   degrades the same way a meeting with forty decisions does. */
+/* The narrow column: the calls this project is built from, then what's
+   still open from it — same order and the same capped-list pattern the
+   meeting detail page's side column uses. Both lists are capped at 5 and
+   already know how to become "View all N" — see capList()/secBlock() — so
+   a project with forty calls or forty tasks degrades the same way a
+   meeting with forty decisions does. */
 function dcolSide(id){
   const tasks=folderTasks(id),all=folderMeetings(id);
-  const {shown:mrows,more:mmore}=capList('folder:'+id+':meetings',all.map(m=>meetingRow(m)),6);
+  const {shown:mrows,more:mmore}=capList('folder:'+id+':meetings',all.map(m=>meetingRow(m)),5);
+  const {shown:trows,more:tmore}=capList('folder:'+id+':tasks',tasks.map(t=>taskRow(t,true)),5);
   return `<div class="dside">
-    ${pnl('Open tasks',tasks.length,
-      tasks.length?`<span data-a="go" data-p="tasks">View all ${ic('chev',12)}</span>`:'',
-      tasks.length?`<div class="list">${tasks.map(t=>taskRow(t,true)).join('')}</div>`
-        :cardEmpty('checkc','Nothing open from this project.'),true)}
     ${pnl('Meetings',`${all.length} here`,'',
       all.length?`<div class="list">${mrows.join('')}</div>${mmore}`
         :cardEmpty('users','Nothing filed here yet.'),true)}
+    ${pnl('Open tasks',tasks.length,
+      tasks.length?`<span data-a="go" data-p="tasks">View all ${ic('chev',12)}</span>`:'',
+      tasks.length?`<div class="list">${trows.join('')}</div>${tmore}`
+        :cardEmpty('checkc','Nothing open from this project.'),true)}
     </div>`;
 }
 const dcols=id=>`<div class="dcols">${dcolMain(id)}${dcolSide(id)}</div>`;
