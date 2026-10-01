@@ -1,0 +1,59 @@
+/* Inline editing: a name that turns into a text field in the place it is shown. */
+
+/* ══════════════════════════════ inline edit ══════════════════════════════ */
+/* The field inherits the type of whatever it replaces, so nothing reflows when
+   an edit begins. Its border is 1px and its padding 8px; the negative margin is
+   exactly that, which is what keeps the text where it was. The focus ring is
+   this field's own — the `input:focus-visible` reset in tokens.css is what
+   stops a second one drawing inside it. */
+.ied{font:inherit;letter-spacing:inherit;line-height:inherit;color:var(--ink);
+  background:var(--surf);border:1px solid var(--brand);border-radius:var(--r2);
+  box-shadow:0 0 0 3px var(--ring);padding:0 8px;margin:-1px -9px;
+  min-width:10ch;max-width:calc(100% + 18px);field-sizing:content;
+  cursor:text;outline:0;caret-color:var(--brand)}
+.ied::selection{background:var(--tint);color:var(--ink)}
+.ied::placeholder{color:var(--ter);font-weight:400}
+
+/* headings: the pencil goes while the field is open */
+.titleblk h1.editing,.fhead h1.editing{cursor:default!important}
+.titleblk h1.editing .ied{width:min(640px,100%)}
+.fhead h1.editing .ied{width:min(560px,100%)}
+
+/* a meeting's row — the row stays a row, the title becomes the field */
+.mrow .t .ied{font-size:14px;font-weight:600;width:100%;margin:-1px -9px;
+  max-width:calc(100% + 18px)}
+.mrow .t{overflow:visible}
+
+/* folder cards, big and small, and the home list row */
+.fcd .nm .ied,.fcdsm .nm .ied,.frow .nm .ied{width:calc(100% + 18px);max-width:none;
+  field-sizing:fixed;min-width:0;text-overflow:ellipsis}
+.fcd .nm:has(.ied),.fcdsm .nm:has(.ied),.frow .nm:has(.ied){overflow:visible}
+
+/* sidebar rows: smaller, and the row's own hover/active fill steps aside */
+.views a .lbl .ied{width:calc(100% + 12px);max-width:none;field-sizing:fixed;min-width:0;
+  font-size:13px;margin:-3px -7px;padding:2px 6px;height:26px}
+.views a .lbl:has(.ied){overflow:visible}
+.views a.tmp{cursor:default}
+.views a.tmp:hover{background:transparent}
+
+/* a card that does not exist yet — dashed until it is named */
+.fcd.tmp,.fcdsm.tmp,.frow.tmp{cursor:default;border-style:dashed;background:var(--tint2)}
+.frow.tmp{border:0;background:transparent}
+.fcd.tmp:hover,.fcdsm.tmp:hover{transform:none;box-shadow:none;border-color:var(--line2)}
+.frow.tmp:hover{background:transparent}
+.fcd.tmp .ds{color:var(--ter);font-size:12px}
+.fcdsm.tmp .mt{color:var(--ter)}
+@media (prefers-reduced-motion:no-preference){
+  .fcd.tmp,.fcdsm.tmp{animation:edIn .18s cubic-bezier(.2,.7,.4,1) both}
+  @keyframes edIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+}
+
+/* inside a menu: a row that is a field */
+.medit{display:flex;align-items:center;gap:10px;height:34px;padding:0 var(--s2)}
+.medit .ic{color:var(--ter)}
+.medit .ied{flex:1;min-width:0;width:100%;field-sizing:fixed;font-size:13px;margin:0;
+  height:26px;padding:0 8px;max-width:none}
+
+/* the "another name" chip in Settings */
+.pillx.chipedit{background:transparent;padding:0}
+.ied.chipin{font-size:12.5px;margin:0;width:150px;field-sizing:fixed;height:28px}

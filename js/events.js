@@ -6,6 +6,9 @@ const LANGS=['English (US)','English (UK)','Spanish','French','German'];
 const TIMES=['6:00 AM','7:00 AM','8:00 AM','9:00 AM','12:00 PM','5:00 PM','6:00 PM','8:00 PM'];
 
 document.addEventListener('click',e=>{
+  /* a click inside a name being edited belongs to the field, not to the card,
+     row or heading around it */
+  if(e.target.closest&&e.target.closest('.ied'))return;
   const el=e.target.closest('[data-a]');if(!el)return;
   const a=el.dataset.a,p=el.dataset.p||'';
   const stop=()=>{e.preventDefault();e.stopPropagation()};
@@ -25,6 +28,7 @@ document.addEventListener('click',e=>{
       const fid=p.slice(2);const f=folder(fid);
       if(!f){S.route='mlist';S.view='all';render();return}
       if(f.parent)S.openF[f.parent]=true;
+      if(S.route!=='folder'||S.fid!==fid)S.ftab='overview';
       S.route='folder';S.fid=fid;S.mid=null;render();return;}
     if(p==='unfiled'){S.route='folder';S.fid='';S.mid=null;render();return;}
     /* everything else is a filter on the flat meeting list, so a detail page
@@ -35,35 +39,8 @@ document.addEventListener('click',e=>{
       clockLabel(e.s)}–${clockLabel(e.e)}${e.who?'. With '+esc(e.who):''}.
       AIT-Scribe will offer to take notes when it starts.</span>`,4200,'info');return;}
   case 'foldtoggle':stop();S.openF[p]=!S.openF[p];render();return;
-  case 'newfolder':{stop();
-    /* p is either a parent folder id, '' for a new top-level folder, or
-       '|<meetingId>' when it came from a move-to-folder menu */
-    let parent=p,moveMid='';
-    if(p.indexOf('|')>=0){[parent,moveMid]=p.split('|');}
-    const n=prompt(parent?`${addFolderLabel(parent)} — name it`:'Add Folder — name it','');
-    if(!n||!n.trim()){S.menu=null;render();return}
-    const name=n.trim();
-    if(db.folders.some(f=>f.name.toLowerCase()===name.toLowerCase()&&(f.parent||'')===(parent||''))){
-      S.menu=null;render();toast(`A folder called <b>${esc(name)}</b> is already there.`,3000,'warn');return}
-    const id=newFolderId();
-    const f={id,name};if(parent)f.parent=parent;
-    /* keep sub-folders grouped directly under their parent in the list */
-    if(parent){const last=db.folders.map(x=>x.id).lastIndexOf(
-        (subFolders(parent).slice(-1)[0]||{id:parent}).id);
-      db.folders.splice(last+1,0,f);S.openF[parent]=true;}
-    else db.folders.push(f);
-    if(moveMid){meeting(moveMid).folder=id;}
-    S.menu=null;S.view='f:'+id;
-    /* land on the new folder unless it was created to receive a meeting, in
-       which case stay where the user was */
-    if(!moveMid){S.route='folder';S.fid=id;S.mid=null;S.mpanel=false;}
-    render();
-    toast(moveMid?`<b>${esc(name)}</b> created — the meeting moved into it.`
-      :`<b>${esc(name)}</b> created.`,2800,'ok');return;}
-  case 'renamefolder':{stop();const f=folder(p);if(!f)return;
-    const n=prompt('Rename folder',f.name);
-    if(n&&n.trim())f.name=n.trim();
-    S.menu=null;render();if(n&&n.trim())toast('Folder renamed.');return;}
+  case 'newfolder':stop();newFolderStart(p,el);return;
+  case 'renamefolder':stop();renameFolder(p);return;
   case 'delfolder':{stop();const f=folder(p);if(!f)return;
     const gone=[p,...subFolders(p).map(x=>x.id)];
     const n=db.meetings.filter(m=>gone.includes(m.folder)).length;
@@ -92,28 +69,65 @@ document.addEventListener('click',e=>{
   case 'expandlist':if(!S.listmin&&S.peek!=='list')return;stop();
     S.listmin=false;S.peek=null;pkStop();render();
     setTimeout(()=>{const i=document.querySelector('.srch input');if(i)i.focus()},60);return;
-  case 'open':stop();pkDismiss();S.route='meeting';S.mid=p;S.tab=(S.rec&&S.rec.mid===p)?'mynotes':'notes';
-    S.menu=null;S.tq='';S.speakers='All speakers';render();return;
+  case 'open':stop();pkDismiss();S.route='meeting';S.mid=p;S.tab=(S.rec&&S.rec.mid===p)?'live':'notes';
+    S.menu=null;S.tq='';S.speakers='All speakers';
+    /* a different recording starts from the top, silent */
+    if(S.pmid!==p){S.pmid=p;S.playT=0;S.playing=false;playStop();}
+    render();return;
   case 'tab':stop();S.tab=p;if(p!=='watch')S.wpanel=false;render();return;
   case 'record':stop();startRecording();return;
-  case 'pauseRec':stop();S.rec.paused=!S.rec.paused;render();
-    toast(S.rec.paused?'Paused — nothing is being captured.':'Recording resumed.');return;
+  case 'golive':stop();golive();return;
+  case 'pauseRec':{stop();const r=S.rec;if(!r)return;r.paused=!r.paused;
+    r.ai.push({k:'note',secs:r.secs,tx:r.paused?'Paused. Nothing is captured until you resume.'
+      :'Back to recording. I am listening again.'});
+    S.live.stickA=true;render();
+    toast(r.paused?'Paused — nothing is being captured.':'Recording resumed.');return;}
+  /* the live page: the three capture sources, the note box, and the lines a message came from */
+  case 'recsrc':stop();liveSource(p);return;
+  case 'lsend':{stop();const i=$('#lbox');if(i&&i.value.trim()){const q=i.value;i.value='';liveSay(q);i.focus();}return;}
+  case 'liveline':stop();liveLine(+p);return;
+  case 'livebottom':{stop();const t=$('#'+p);if(!t)return;
+    if(p==='lfeed')S.live.stickA=true;else S.live.stickT=true;
+    toEnd(t);liveJump(t);return;}
   case 'stopRec':stop();stopRecording();return;
-  case 'jump':stop();S.tab='transcript';S.tq='';render();toast(`Jumped to <b>${p}</b> in the transcript.`);return;
-  case 'playpause':stop();S.playing=!S.playing;
-    if(S.playing){timers.push(setInterval(()=>{S.playPos=(S.playPos+1)%80;render()},700))}else clearTimers();
-    render();return;
-  case 'seek':{stop();const r=el.getBoundingClientRect();
-    S.playPos=Math.round((e.clientX-r.left)/r.width*80);render();return;}
-  case 'rename':{stop();const m=meeting(p);const n=prompt('Rename meeting',m.title);
-    if(n&&n.trim()){m.title=n.trim();toast('Renamed.')}S.menu=null;render();return;}
+  /* a timestamp anywhere in the app lands on that second of the transcript, with
+     the line highlighted and the playhead there */
+  case 'jump':stop();{
+    const m=meeting(S.mid);if(!m)return;
+    if(S.tab!=='transcript'){S.tab='transcript';S.tq='';S.speakers='All speakers';render();}
+    seekTo(parseClock(p),true);return;}
+  case 'at':stop();seekTo(+p,false);return;
+  case 'chapter':{stop();const m=meeting(S.mid);if(!m)return;
+    if(SCRUB&&SCRUB.moved)return;
+    const c=mChapters(m)[+p];if(!c)return;seekTo(c.t0,false);
+    if(!S.playing)playToggle();return;}
+  case 'playpause':stop();playToggle();return;
+  case 'seek':{stop();if(SCRUB&&SCRUB.moved)return;
+    const m=meeting(S.mid);if(!m)return;
+    const r=el.getBoundingClientRect();
+    seekTo(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*mTL(m).total,false);return;}
+  case 'speed':{stop();const o=[1,1.5,2];S.speed=o[(o.indexOf(S.speed)+1)%o.length];
+    const b=el;b.innerHTML=S.speed+'&times;';return;}
+  case 'lanes':stop();S.lanes=!S.lanes;render();return;
+  case 'follow':{stop();S.follow=true;PLROW=-9;playIcon();syncPlay(true);return;}
+  /* a project's tabs and the timeline's filter */
+  case 'ftab':stop();S.ftab=p;S.menu=null;render();return;
+  case 'tlf':stop();S.tlf=p;render();return;
+  /* a decision on the timeline opens its call at the second it was made */
+  case 'openat':{stop();const [mid,at]=p.split('|');if(!meeting(mid))return;
+    pkDismiss();S.route='meeting';S.mid=mid;S.tab='transcript';S.menu=null;S.tq='';S.speakers='All speakers';
+    S.wpanel=false;S.mpanel=false;
+    if(S.pmid!==mid){S.pmid=mid;S.playT=0;S.playing=false;playStop();}
+    render();seekTo(parseClock(at),true);return;}
+  case 'whenspoke':stop();S.tab='transcript';S.tq='';S.speakers='All speakers';S.lanes=true;render();return;
+  case 'rename':stop();renameMeeting(p);return;
   case 'movefolder':{stop();const [id,f]=p.split('|');meeting(id).folder=f;S.menu=null;render();
     toast(`Moved to <b>${folderName(f)}</b>.`);return;}
   case 'regen':{stop();S.menu=null;S.busy=true;render();
     setTimeout(()=>{S.busy=false;const m=meeting(p);
       m.genAt='just now';
       render();toast('<b>Notes regenerated</b> from your notes and the transcript.')},2000);return;}
-  case 'confirmDelete':stop();S.settings=false;S.menu='confirm:'+p;render();return;
+  case 'confirmDelete':stop();S.menu='confirm:'+p;render();return;
   case 'delmeeting':{stop();db.meetings=db.meetings.filter(m=>m.id!==p);
     db.tasks=db.tasks.filter(t=>t.mid!==p);S.menu=null;
     S.route=S.route==='meeting'?'mlist':S.route;S.view='all';render();
@@ -122,13 +136,13 @@ document.addEventListener('click',e=>{
     toast(`${ic('radar',15)}<span>Hidden. The Watchouts tab still has ${
       mWatchOpen(p).length} open.</span>`,2800,'info');return;}
   case 'ackNotes':stop();meeting(p).ackd=true;render();return;
-  case 'menu':{stop();S.settings=false;const r=el.getBoundingClientRect();const fr=$('#frame').getBoundingClientRect();
+  case 'menu':{stop();const r=el.getBoundingClientRect();const fr=$('#frame').getBoundingClientRect();
     S.menuXY={x:(r.left-fr.left)/SCALE-140,y:(r.bottom-fr.top)/SCALE+6};
     S.menu=p;render();return;}
   case 'closemenu':stop();S.menu=null;render();return;
-  case 'notifs':stop();S.settings=false;S.menu='notifs:';render();return;
-  case 'shortcuts':stop();S.settings=false;S.menu='shortcuts:';render();return;
-  case 'share':stop();S.settings=false;S.share=p;S.shareOpts={who:'link',notes:true,fups:true,tx:false,exp:'30 days',link:''};
+  case 'notifs':stop();S.menu='notifs:';render();return;
+  case 'shortcuts':stop();S.menu='shortcuts:';render();return;
+  case 'share':stop();S.share=p;S.shareOpts={who:'link',notes:true,fups:true,tx:false,exp:'30 days',link:''};
     S.menu=null;render();return;
   case 'closeShare':stop();S.share=false;render();return;
   case 'sharewho':stop();if(p==='invite'){demo('require a Team plan for private sharing');return}
@@ -140,14 +154,12 @@ document.addEventListener('click',e=>{
     toast('<b>Link created.</b> Revoke it any time from here.');return;
   case 'copylink':stop();toast('Link copied to your clipboard.');return;
   case 'revoke':stop();S.shareOpts.link='';render();toast('Link revoked. It no longer opens.');return;
-  case 'settings':stop();S.settings=true;S.spane=p||'appearance';S.menu=null;render();return;
-  case 'closeSettings':stop();S.settings=false;render();return;
-  case 'spane':stop();S.spane=p;render();return;
+  /* settings is a page: the gear opens it, and closes it again from inside */
+  case 'settings':stop();if(S.route==='settings'&&!p){closeSettings();return}openSettings(p||'appearance');return;
+  case 'closeSettings':stop();closeSettings();return;
+  case 'spane':stop();S.spane=p;S.menu=null;render();return;
   case 'theme':stop();db.settings.theme=p;db.settings.sysTheme=false;render();
-    toast(`${theme(db.settings.th).name} — ${p==='dark'?'dark':'light'} mode.`);return;
-  case 'setth':{stop();if(db.settings.th===p){render();return}
-    db.settings.th=p;render();
-    toast(`${ic('check',15)}<span><b>${esc(theme(p).name)}</b> — ${esc(theme(p).ds)}</span>`,3000,'ok');return;}
+    toast(`${p==='dark'?'Dark':'Light'} mode.`);return;
   case 'tog':{stop();const g=db.settings;g[p]=!g[p];
     if(p==='sysTheme'&&g.sysTheme){g.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
     if(p==='detect'){db.setupDone=g.detect?(g.calendar?3:2):(g.calendar?2:1);
@@ -171,11 +183,10 @@ document.addEventListener('click',e=>{
     toast('Key pasted. Conversation mode can now be turned on.');return;
   case 'connect':stop();db.settings[p]=true;render();
     toast(`<b>${p==='gmail'?'Gmail':p==='gcal'?'Google Calendar':'Slack'} connected.</b> The assistant can now use it — and will still ask first.`);return;
-  case 'addname':{stop();const n=prompt('Another name people call you');
-    if(n&&n.trim()){db.settings.names.push(n.trim());render()}return;}
-  case 'govocab':stop();S.settings=false;S.route='vocabulary';S.view='all';render();return;
-  case 'resetDemo':stop();S.settings=false;resetDemo(true);return;
-  case 'reloadDemo':stop();S.settings=false;resetDemo(false);return;
+  case 'addname':stop();addNameStart();return;
+  case 'govocab':stop();S.setBack=null;S.route='vocabulary';S.view='all';render();return;
+  case 'resetDemo':stop();resetDemo(true);return;
+  case 'reloadDemo':stop();resetDemo(false);return;
   /* ── demo page ─────────────────────────────────────────────────────── */
   case 'dtoast':{stop();
     if(p==='long'){toast('<b>Cloud transcription is off.</b> Dictation is running on this Mac, '+
@@ -219,14 +230,14 @@ document.addEventListener('click',e=>{
     S.wpeek=null;S.wopen=false;S.walert=false;
     if(!S.wseen.includes(p))S.wseen.push(p);
     /* if it was opened from the pill, take the user to the meeting it is in */
-    if(S.route!=='folder'||!S.fid){S.route='meeting';S.mid=w.mid;S.tab='watch';}
+    if(S.route!=='folder'||!S.fid){S.route='meeting';S.mid=w.mid;S.tab=(S.rec&&S.rec.mid===w.mid)?'live':'watch';}
     render();return;}
   case 'wclose':stop();S.wpanel=false;render();return;
   case 'wfilter':stop();S.wfilter=p;render();return;
   case 'wshowdone':stop();S.wdone=!S.wdone;render();return;
   case 'wall':stop();if(!S.rec)return;
     S.wopen=false;S.wpeek=null;S.walert=false;
-    S.route='meeting';S.mid=S.rec.mid;S.tab='watch';render();return;
+    S.route='meeting';S.mid=S.rec.mid;S.tab='live';S.wpanel=false;render();return;
   case 'wresolve':{stop();const w=watchout(p);if(!w)return;
     w.status='resolved';S.wpeek=null;S.walert=false;render();
     toast(`${ic('check',15)}<span><b>Resolved.</b> ${esc(w.title)}</span>`,2800,'ok');return;}
@@ -257,12 +268,13 @@ document.addEventListener('click',e=>{
     /* drives the real control rather than a mock, so what the demo shows is
        what a recording shows */
     clearTimeout(SAYT);
-    db.settings.bubble=true;S.settings=false;S.wpeek=null;S.wopen=false;S.walert=false;S.wsay=null;
+    db.settings.bubble=true;S.wpeek=null;S.wopen=false;S.walert=false;S.wsay=null;
     if(p==='idle'){S.rec=null;S.bub.rec=false;clearTimers();}
     else if(p==='dict'){S.rec=null;S.bub.rec=true;S.bub.secs=7;}
     else{
       S.bub.rec=false;
-      if(!S.rec||S.rec.mid!=='m1')S.rec={mid:'m1',secs:2067,paused:false,lines:[],next:0,wnext:99};
+      if(!S.rec||S.rec.mid!=='m1'){S.rec=liveRec('m1',2067);S.rec.lnext=S.rec.enext=S.rec.wnext=99;
+        S.rec.ai.push({k:'note',secs:2060,tx:'This is the demo recording. Nothing is really being captured.'});}
       S.rec.paused=p==='paused';
       if(p==='peek'){S.wpeek=(mWatchOpen('m1')[0]||{}).id||null;S.walert=true;}
       if(p==='list')S.wopen=true;
@@ -340,7 +352,7 @@ document.addEventListener('click',e=>{
     if(!who||who.n==='you')return;
     m.people.splice(+ix,1);render();
     toast(`<b>${esc(who.n)} removed.</b> They will not be sent the notes.`,2800,'warn');return;}
-  case 'addperson':stop();S.settings=false;S.menu=null;S.addPerson=p;render();
+  case 'addperson':stop();S.menu=null;S.addPerson=p;render();
     setTimeout(()=>{const i=document.querySelector('#pname');if(i)i.focus()},60);return;
   case 'closeperson':stop();S.addPerson=false;render();return;
   case 'saveperson':{stop();const n=(document.querySelector('#pname')||{}).value||'';
@@ -365,6 +377,10 @@ document.addEventListener('input',e=>{
     const n=document.querySelector('[data-a="q"]');if(n){n.focus();n.setSelectionRange(pos,pos)}}
   if(a==='tq'){S.tq=el.value;const pos=el.selectionStart;render();
     const n=document.querySelector('[data-a="tq"]');if(n){n.focus();n.setSelectionRange(pos,pos)}}
+  if(a==='sq'){S.sq=el.value;const pos=el.selectionStart;
+    /* land on the first section that has the words, if this one does not */
+    const hits=paneHits();if(hits&&hits.length&&!hits.includes(S.spane))S.spane=hits[0];
+    render();const n=document.querySelector('[data-a="sq"]');if(n){n.focus();n.setSelectionRange(pos,pos)}}
   if(a==='vq'){S.vq=el.value;const pos=el.selectionStart;render();
     const n=document.querySelector('[data-a="vq"]');if(n){n.focus();n.setSelectionRange(pos,pos)}}
   if(a==='key'){db.settings.anthropicKey=el.value;}
@@ -382,6 +398,7 @@ document.addEventListener('keydown',e=>{
       toast('Term added. It applies to dictation and meetings.');return;}
     if(a==='ask'&&el.value.trim()){const q=el.value;el.value='';askAssistant(q);return;}
     if(a==='mask'&&el.value.trim()){const q=el.value;el.value='';askChat(q);return;}
+    if(a==='lsay'&&el.value.trim()){const q=el.value;el.value='';liveSay(q);return;}
     if(a==='key'){db.settings.anthropicKey=el.value;render();return;}
   }
   if(e.key==='Enter'&&S.addPerson&&(e.target.id==='pname'||e.target.id==='pmail')){
@@ -391,11 +408,11 @@ document.addEventListener('keydown',e=>{
     if(S.addPerson){S.addPerson=false;render();return}
     if(S.menu){S.menu=null;render();return}
     if(S.share){S.share=false;render();return}
-    if(S.settings){S.settings=false;render();return}
+    if(S.route==='settings'){if(S.sq){S.sq='';render();return}closeSettings();return}
     if(S.panel){S.panel=false;render();return}
     if(S.mpanel){S.mpanel=false;render();return}
   }
-  if(e.key===','&&(e.metaKey||e.ctrlKey)){e.preventDefault();S.settings=true;S.spane='appearance';render()}
+  if(e.key===','&&(e.metaKey||e.ctrlKey)){e.preventDefault();if(S.route!=='settings')openSettings('appearance');}
 });
 
 /* ── bubble dragging ──────────────────────────────────────────────────────

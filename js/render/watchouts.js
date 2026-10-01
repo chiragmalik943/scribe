@@ -41,7 +41,7 @@ function watchBody(m,all,open,live){
   const settled=all.filter(w=>w.status!=='open');
   const shown=S.wfilter==='all'?open:open.filter(w=>w.type===S.wfilter);
   if(!all.length){
-    return `<div class="empty" style="padding-bottom:70px"><span class="ico">${ic('radar',22,1.6)}</span>
+    return `<div class="empty" style="padding-bottom:70px"><span class="ico">${ic('radar',22)}</span>
       <h2>Nothing to watch out for</h2>
       <p>${live?'The assistant is reading this call against everything said before it. Anything that contradicts an earlier decision, a number or an open question will appear here — and on the floating pill — as it comes up.'
         :'Nothing in this call contradicted an earlier decision, disagreed with a number already agreed, or left a question hanging.'}</p></div>`;
@@ -59,7 +59,7 @@ function watchBody(m,all,open,live){
          return `<span class="fchip wf ${S.wfilter===t?'on':''}" data-a="wfilter" data-p="${t}">${
            ic(WT[t].icon,14)}${WT[t].plural}${n?`<span class="b">${n}</span>`:''}</span>`}).join('')}`,
       `${settled.length?`<span class="chk" data-a="wshowdone">
-         <span class="cbx ${S.wdone?'on':''}">${ic('check',12,2.6)}</span>Show ${settled.length} settled</span>`:''}
+         <span class="cbx ${S.wdone?'on':''}">${ic('check',12,2)}</span>Show ${settled.length} settled</span>`:''}
        <span class="link" data-a="settings" data-p="ainotes"
          style="font-weight:500;color:var(--ter)">What it looks for</span>`)}
     <div class="wscroll">

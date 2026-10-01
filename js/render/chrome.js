@@ -14,23 +14,46 @@ const isSpeech=r=>['speech','vocabulary'].includes(r);
 /* the meetings family: the home screen, the list behind it, a folder, a call */
 const isMeet=r=>['meetings','mlist','folder','meeting'].includes(r);
 
+/* While a call is being recorded it has its own place in the rail, directly
+   under Meetings, wherever the user has wandered off to. It carries the running
+   time and takes them back. */
+function railLive(){
+  const r=S.rec;if(!r)return '';
+  const here=S.route==='meeting'&&S.mid===r.mid;
+  return `<a class="onair ${here?'here':''} ${r.paused?'pause':''}" data-a="golive" title="${
+    here?'Live meeting':'Back to the live meeting'}">${ic('rec',18)}
+    <span class="lbl">Live meeting</span><span class="rlt rtime">${fmtSecs(r.secs)}</span></a>`;
+}
+/* The same thing in the title bar: the clock, a way back to the call if the user
+   is somewhere else, and Stop — so a recording can always be ended from where
+   you are. */
+function recChip(){
+  const r=S.rec;if(!r)return '';
+  const here=S.route==='meeting'&&S.mid===r.mid;
+  return `<span class="recchip ${r.paused?'pause':''} ${here?'here':''}">
+    <span class="rc-go" ${here?'':'data-a="golive" title="Back to the live meeting"'}>
+      <i class="rdot"></i><b class="rtime">${fmtSecs(r.secs)}</b>
+      <span class="rl">${here?(r.paused?'Paused':'Recording'):'Back to live meeting'}</span></span>
+    <span class="rc-stop" data-a="stopRec" title="Stop recording and generate notes">${ic('stop',13,2)}<span>Stop</span></span></span>`;
+}
 function rail(){
   const items=NAV.map(([k,label,icon])=>{
     const on=(k===S.route)||(k==='speech'&&isSpeech(S.route))||
              (k==='meetings'&&isMeet(S.route));
     return `<a class="${on?'on':''}" data-a="go" data-p="${k}" title="${label}">${
-      ic(icon,18)}<span class="lbl">${label}</span></a>`;}).join('');
+      ic(icon,18)}<span class="lbl">${label}</span></a>${k==='meetings'?railLive():''}`;}).join('');
   return `<div class="rail">
     <div class="slab">Workspace</div>
     <div class="nav">${items}</div><div class="spacer"></div>
     ${colbtn('rail')}
-    <div class="acct" data-a="settings" data-p="acct" title="Account & plan"><span class="top"><span class="avat fc-${db.user.fc||1}">${db.user.initial}</span>
+    <div class="acct ${S.route==='settings'?'on':''}" data-a="settings" data-p="acct" title="Account & plan"><span class="top"><span class="avat fc-${db.user.fc||1}">${db.user.initial}</span>
       <span class="who"><span class="nm">${db.user.name}</span><span class="pl">${db.user.plan} plan</span></span>
       <button class="upg" data-a="demo" data-p="open the upgrade flow">Upgrade</button></span></div></div>`;
 }
 function tools(extra=''){
   const n=overdue().length;
-  return `${extra}<span class="tbtn" data-a="settings" data-p="appearance" title="Settings">${ic('sliders',18)}</span>
+  return `${extra}<span class="tbtn ${S.route==='settings'?'on':''}" data-a="settings" data-p="${S.route==='settings'?'':'appearance'}"
+    title="${S.route==='settings'?'Close settings':'Settings'}">${ic('sliders',18)}</span>
     <span class="tbtn" data-a="shortcuts" title="Keyboard shortcuts">${ic('help',18)}</span>
     <span class="tbtn ${n?'hasbadge':''}" data-a="notifs" title="Notifications">${ic('bell',18)}</span>`;
 }
@@ -45,10 +68,10 @@ function topbar(){
     :`<div class="ttl"><h1 class="h">${t.title}</h1>${t.state?`<span class="state">${t.state}</span>`:''}</div>`;
   return `<div class="topbar">
     <span class="lights">
-      <i class="r" data-a="win" data-p="close" title="Close">${ic('x',8,3)}</i>
-      <i class="y" data-a="win" data-p="min" title="Minimize">${ic('minus',8,3)}</i>
-      <i class="g" data-a="win" data-p="zoom" title="Fill the screen">${ic('expand',8,3)}</i></span>
-    ${head}<span class="r">${tools()}${t.actions}</span></div>`;
+      <i class="r" data-a="win" data-p="close" title="Close">${ic('x',8,1.5)}</i>
+      <i class="y" data-a="win" data-p="min" title="Minimize">${ic('minus',8,1.5)}</i>
+      <i class="g" data-a="win" data-p="zoom" title="Fill the screen">${ic('expand',8,1.5)}</i></span>
+    ${head}<span class="r">${tools(recChip())}${t.actions}</span></div>`;
 }
 /* the collapse control that sits at the foot of the list column */
 function lfoot(){return `<div class="lfoot">${colbtn('list')}</div>`;}

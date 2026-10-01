@@ -16,8 +16,9 @@ function faces(people,max=6){
    there is not one yet. */
 function titleBlock(m,dur){
   return `<div class="titleblk">
-    <h1 class="h" data-a="rename" data-p="${m.id}" style="cursor:text">${esc(m.title)}
-      <span class="edit">${ic('edit',15)}</span></h1>
+    <h1 class="h${isEd('meeting',m.id,'h1')?' editing':''}" ${edAct('meeting',m.id,'h1','rename')} style="cursor:text">${
+      ename('meeting',m.id,'h1',m.title)}${isEd('meeting',m.id,'h1')?'':`
+      <span class="edit">${ic('edit',15)}</span>`}</h1>
     <div class="metarow">
       <span class="mi people" data-a="menu" data-p="people:${m.id}" title="Attendees">${faces(m.people,5)}
         <span><b>${m.people.length}</b> attendee${m.people.length===1?'':'s'}</span>${ic('chevd',11)}</span>
@@ -36,48 +37,16 @@ function viewMeeting(){
   const wTab=`<a class="${S.tab==='watch'?'on':''}" data-a="tab" data-p="watch">${ic('radar',14)}Watchouts${
     woOpen.length?`<span class="cnt${woHot?' hot':''}">${woOpen.length}</span>`:''}</a>`;
   const tabs=`<div class="tabs">
-    ${rec?`<a class="${S.tab==='mynotes'?'on':''}" data-a="tab" data-p="mynotes">My notes</a>
-      ${wTab}
-      <a class="off">${ic('spark',14)}AI notes <span class="cnt">after you stop</span></a>
-      <a class="${S.tab==='transcript'?'on':''}" data-a="tab" data-p="transcript">Transcript <span class="cnt">live</span></a>`
-     :`<a class="${S.tab==='notes'?'on':''}" data-a="tab" data-p="notes">${ic('spark',14)}AI notes</a>
-      ${wTab}
-      <a class="${S.tab==='mynotes'?'on':''}" data-a="tab" data-p="mynotes">My notes</a>
-      <a class="${S.tab==='transcript'?'on':''}" data-a="tab" data-p="transcript">Transcript</a>`}</div>`;
+    <a class="${S.tab==='notes'?'on':''}" data-a="tab" data-p="notes">${ic('spark',14)}AI notes</a>
+    ${wTab}
+    <a class="${S.tab==='mynotes'?'on':''}" data-a="tab" data-p="mynotes">My notes</a>
+    <a class="${S.tab==='transcript'?'on':''}" data-a="tab" data-p="transcript">Transcript</a></div>`;
   let body='';
-  if(rec){
-    const r=S.rec,mm=String(Math.floor(r.secs/60)).padStart(2,'0'),ss=String(r.secs%60).padStart(2,'0');
-    body=`<div class="recbar ${r.paused?'pause':''}"><span class="rdot"></span>
-      <b>${r.paused?'Paused':'Recording'}</b><span class="t">${mm}:${ss}</span>
-      <span class="s">· ${r.paused?'nothing is being captured':'both sides captured'}</span>
-      <span class="a">
-        ${woOpen.length?`<span class="wdot w-${woHot?'conflict':woOpen[0].type}" data-a="tab" data-p="watch"
-          style="cursor:pointer">${ic('radar',12)}${woOpen.length} watchout${woOpen.length>1?'s':''}</span>`:''}
-        <button class="btn s sm" data-a="stopRec">${ic('stop',14)}Stop &amp; generate notes</button></span></div>
-     <div style="margin:var(--s4) 0 var(--s6);display:flex;align-items:center;gap:var(--s4)">
-      ${meterBars(74,!r.paused,r.secs)}
-      <span class="hint" style="margin-left:auto;display:flex;align-items:center;
-        gap:6px;flex:0 0 auto">${ic('spark',13)}Pause, stop and watchouts are on the floating pill</span></div>${tabs}`;
-    if(S.tab==='watch'){body+=watchBody(m,wo,woOpen,true);}
-    else if(S.tab==='transcript'){
-      body+=`<div style="flex:1;overflow-y:auto">${r.lines.map(l=>
-        `<div class="trs ${l[3]==='spoken'?'said':''}"><span class="tm">${l[0]}</span>
-          <span><span class="spk">${l[1]}${l[3]==='spoken'?`<span class="badge" style="margin:0 0 0 8px">${
-            ic('speak',11)}raised by the assistant</span>`:''}</span>
-          <span class="tx">${esc(l[2])}</span></span></div>`).join('')||
-        `<div class="hint" style="padding:var(--s5) 2px">Listening… lines appear here as people speak.</div>`}</div>`;
-    }else{
-      body+=`<div class="notebox"><div class="ln" contenteditable="true" data-a="noop">${
-        esc(m.mynotes).replace(/\n/g,'<br>')}</div>
-        <div class="hint" style="margin-top:10px">Jot key points as they come up — AI notes expand them into
-        a summary, decisions and tasks when you stop.</div></div>`;
-    }
-    return `<div class="body">${titleBlock(m,'')}${body}
-      ${S.mpanel?'':askDock('Ask anything about this call so far…')}</div>`;
-  }
+  /* a call that is still being recorded is the live page, not a finished meeting */
+  if(rec)return viewLive(m);
   if(S.busy){
     return `<div class="body">${titleBlock(m,m.dur)}
-      <div class="empty"><span class="ico">${ic('spark',22,1.6)}</span>
+      <div class="empty"><span class="ico">${ic('spark',22)}</span>
       <h2>Generating notes…</h2><p>Reading your notes and the transcript together. This usually takes a few seconds.</p>
       <div class="a typing"><i></i><i></i><i></i></div></div></div>`;
   }
@@ -93,8 +62,6 @@ function viewMeeting(){
        then what's still open from it, so neither page has to be relearned
        once you know the other. */
     const openMy=mytasks.filter(t=>!t.done);
-    const mf=m.folder,related=folderMeetings(mf).filter(x=>x.id!==m.id);
-    const {shown:rrows,more:rmore}=capList('meeting:'+m.id+':related',related.map(x=>meetingRow(x)),5);
     const {shown:orows,more:omore}=capList('meeting:'+m.id+':tasks',openMy.map(t=>taskRow(t,true)),5);
     body=`${tabs}${actbar(
       `${ic('spark',14)}Generated ${m.genAt||'2:49 pm'} from your notes and the transcript.`,
@@ -111,13 +78,9 @@ function viewMeeting(){
             rows:m.notes.decisions.map(recRow),tag:'bul',hideIfEmpty:true})}
           ${secBlock({key:'notes:'+m.id+':q',title:'Open questions',
             rows:m.notes.questions.map(recRow),tag:'bul',hideIfEmpty:true})}
+          ${whoSpokeBlock(m)}
         </div>
         <div class="dside">
-          ${pnl('Meetings',related.length,
-            related.length?`<span data-a="view" data-p="${mf===''?'unfiled':'f:'+mf}">${
-              esc(folderName(mf))} ${ic('chev',12)}</span>`:'',
-            related.length?`<div class="list">${rrows.join('')}</div>${rmore}`
-              :cardEmpty('users','No other calls are filed alongside this one yet.'),true)}
           ${pnl('Open tasks',openMy.length,'',
             openMy.length?`<div class="list">${orows.join('')}</div>${omore}`
               :cardEmpty('checkc','Nothing came out of this call — no task was assigned.'),true)}
@@ -132,26 +95,7 @@ function viewMeeting(){
       <div class="notebox" style="flex:1"><div class="ln" contenteditable="true">${
       esc(m.mynotes).replace(/\n/g,'<br>')}</div></div>`;
   } else {
-    const spk=['All speakers',...new Set(m.transcript.map(t=>t[1]))];
-    const q=S.tq.toLowerCase();
-    const rows=m.transcript.filter(t=>(S.speakers==='All speakers'||t[1]===S.speakers)&&
-      (!q||t[2].toLowerCase().includes(q)));
-    body=`${tabs}${actbar(
-      `<span class="srch" style="margin:0;width:230px">${ic('search',15)}
-        <input placeholder="Search this transcript" data-a="tq" value="${esc(S.tq)}"></span>
-       ${spk.map(x=>`<span class="fchip ${S.speakers===x?'on':''}" data-a="spk" data-p="${esc(x)}">${esc(x)}</span>`).join('')}`,
-      `<button class="btn q sm ico" data-a="demo" data-p="copy the transcript to your clipboard"
-         title="Copy the transcript">${ic('copy',15)}</button>
-       <button class="btn q sm ico" data-a="demo" data-p="export the transcript"
-         title="Export the transcript">${ic('down',15)}</button>`)}
-      <div style="flex:1;overflow-y:auto">${rows.length?rows.map(t=>{
-        let tx=esc(t[2]);
-        if(q)tx=tx.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>');
-        return `<div class="trs ${t[3]?'hl':''}"><span class="tm" data-a="jump" data-p="${t[0]}">${t[0]}</span>
-          <span><span class="spk">${esc(t[1])}</span><span class="tx">${tx}</span>
-          ${t[3]?`<span class="badge">${ic('list',12)}${t[3]}</span>`:''}</span></div>`}).join('')
-        :`<div class="hint" style="padding:24px 4px">Nothing in this transcript matches.</div>`}</div>
-      ${player(m)}`;
+    body=transcriptTab(m,tabs);
   }
   return `<div class="body">${titleBlock(m,m.dur)}
     ${woOpen.length&&S.tab==='notes'&&!m.woAck?`<div class="notice ${woHot?'dg':'warn'}"
@@ -165,26 +109,11 @@ function viewMeeting(){
     ${body}
     ${S.mpanel?'':askDock('Ask anything about this meeting…')}</div>`;
 }
-function player(m){
-  const bars=[];for(let i=0;i<80;i++)bars.push(6+Math.round(18*Math.abs(Math.sin(i*0.55))*Math.abs(Math.cos(i*0.23))));
-  return `<div class="player"><span class="pb" data-a="playpause" title="Play the recording">${ic(S.playing?'pause':'play',15,2)}</span>
-    <span class="tm">${fmtPos(m)}</span>
-    <span class="scrub" data-a="seek">${bars.map((h,i)=>
-      `<i class="${i<S.playPos?'p':''}" style="height:${h}px"></i>`).join('')}</span>
-    <span class="tm">${m.dur}</span>
-    <button class="btn q sm" data-a="demo" data-p="change playback speed"
-      title="Playback speed">1&times;</button></div>`;
-}
-function fmtPos(m){
-  const total=parseInt(m.dur.split(':')[0])*60+parseInt(m.dur.split(':')[1]);
-  const s=Math.round(total*S.playPos/80);
-  return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-}
 function taskRow(t,compact){
   const m=meeting(t.mid);
   return `<div class="trk ${t.done?'done':''} ${S.tid===t.id&&S.panel?'on':''}" data-a="opentask" data-p="${t.id}">
     <span class="cbx ${t.done?'on':''}" data-a="toggletask" data-p="${t.id}"
-      title="${t.done?'Mark not done':'Mark done'}">${ic('check',12,2.6)}</span>
+      title="${t.done?'Mark not done':'Mark done'}">${ic('check',12,2)}</span>
     <span style="flex:1"><span class="t">${esc(t.title)}</span>
       <span class="m">${compact
         ?`<span class="${t.late&&!t.done?'late':''}">${t.done?'Done':t.due}</span>`

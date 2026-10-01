@@ -1,36 +1,98 @@
 // User action handlers (mutate state, e.g. create/delete items). 
 
 /* ══════════════════════════════════ actions ══════════════════════════════════ */
-const LINES=[['00:04','Jennifer Walsh','Thanks for making the time — let us start with where the pricing landed.'],
- ['00:12','You','Sure. I have the revised sheet, I just need to confirm the seat count with you.'],
- ['00:21','Tom Ellis','Before we go too far, I want to flag the data-processing addendum again.'],
- ['00:29','Jennifer Walsh','Noted. Let us take pricing first and come back to Legal.'],
- ['00:38','You','Understood — I will send the revised sheet through by Thursday.'],
- ['00:47','Tom Ellis','And can we get the platform team into the deep-dive this time?'],
- ['00:55','Jennifer Walsh','Yes. Procurement alone was not enough last round.'],
- ['01:04','You','On environments — I will get the GCP project set up for you this week so it is ready for the deep-dive.'],
- ['01:13','Tom Ellis','Good. And we are still holding the eighteenth for the deep-dive itself.']];
+/* ── the scripted call ────────────────────────────────────────────────────
+   There is no microphone here, so a recording plays a short scripted call. Each
+   line is spoken at a fixed second on the recording clock, which keeps the demo
+   repeatable and lets the notes the assistant makes be tied to the second they
+   came from. A line only reaches the transcript if the source that carries it
+   is switched on: "You" comes through the microphone, everyone else through
+   system audio. Mute one and that side of the call goes missing, exactly as it
+   would for real. */
+const LN=(s,who,tx)=>[fmtClock(s),who,tx];
+const LINES=[
+ LN(2,'Jennifer Walsh','Thanks for making the time — let us start with where the pricing landed.'),
+ LN(6,'You','Sure. I have the revised sheet, I just need to confirm the seat count with you.'),
+ LN(10,'Tom Ellis','Before we go too far, I want to flag the data-processing addendum again.'),
+ LN(14,'Jennifer Walsh','Noted. Let us take pricing first and come back to Legal.'),
+ LN(18,'You','Understood — I will send the revised sheet through by Thursday the twentieth.'),
+ LN(22,'Tom Ellis','And can we get the platform team into the deep-dive this time?'),
+ LN(26,'Jennifer Walsh','Yes. Procurement alone was not enough last round.'),
+ LN(30,'You','On environments — I will get the GCP project set up for you this week so it is ready for the deep-dive.'),
+ LN(34,'Tom Ellis','And we are still holding the eighteenth for the deep-dive itself.')];
+/* What the assistant writes down as the call runs, and the second it does it.
+   `ref` is the line it came from — an event is dropped if that line was never
+   captured, because the assistant cannot note what it did not hear. `plain` is
+   the same note without markup, which is what ends up in the finished notes. */
+const AIEV=[
+ {at:3,k:'chapter',t0:2,title:'Pricing and the DPA',tx:'New chapter: <b>Pricing and the DPA</b>.',ref:2},
+ {at:4,k:'agenda',plain:'Where the pricing landed',tx:'Added to the agenda: <b>Where the pricing landed</b>.',ref:2},
+ {at:7,k:'question',plain:'What seat count does the revised sheet assume?',
+  tx:'Question noted: <b>What seat count does the revised sheet assume?</b>',ref:6},
+ {at:11,k:'agenda',plain:'Data-processing addendum (DPA)',tx:'Added to the agenda: <b>Data-processing addendum (DPA)</b>.',ref:10},
+ {at:12,k:'task',plain:'Get Legal to review the data-processing addendum',due:'Fri 14 Aug',pri:'hi',
+  tx:'Task noted: <b>Get Legal to review the data-processing addendum</b>.',ref:10},
+ {at:15,k:'decision',plain:'Pricing is taken first and Legal comes after.',
+  tx:'Decision noted: <b>pricing first, Legal after</b>.',ref:14},
+ {at:19,k:'task',plain:'Send the revised pricing sheet on Thursday',due:'Thu 20 Aug',pri:'hi',
+  tx:'Task noted — you committed to this: <b>Send the revised pricing sheet</b>, due <b>Thu 20 Aug</b>.',ref:18},
+ {at:23,k:'chapter',t0:22,title:'Technical deep-dive',tx:'New chapter: <b>Technical deep-dive</b>.',ref:22},
+ {at:24,k:'task',plain:"Invite Acme's platform team to the deep-dive",due:'Tue 18 Aug',pri:'',
+  tx:"Task noted: <b>Invite Acme's platform team to the deep-dive</b>.",ref:22},
+ {at:27,k:'decision',plain:"Acme's platform team attends the deep-dive.",
+  tx:"Decision noted: <b>Acme's platform team attends the deep-dive</b>.",ref:26},
+ {at:31,k:'chapter',t0:30,title:'Environments and timing',tx:'New chapter: <b>Environments and timing</b>.',ref:30},
+ {at:35,k:'agenda',plain:'Holding 18 Aug for the deep-dive',tx:'Added to the agenda: <b>Holding 18 Aug for the deep-dive</b>.',ref:34}];
 /* What the assistant catches as the call runs. `at` is the fixed second on
-   the recording clock it fires at — 15s and 30s — so the demo is repeatable
-   rather than landing at a slightly different moment (tied to transcript-line
-   timing) on every run. */
+   the recording clock it fires at, so the demo is repeatable rather than landing
+   at a slightly different moment on every run. Each fires only if the line that
+   triggers it was captured. */
 const LIVEW=[
- {at:15,type:'conflict',
+ {at:31,type:'conflict',
   title:'GCP is being set up, but the client called AWS a security requirement',
   why:'On the kickoff Jennifer said everything runs in their AWS account and called it a security requirement rather than a preference. A GCP environment would not clear their security review, and the work is being committed to now.',
-  now:{tx:'On environments — I will get the GCP project set up for you this week so it is ready for the deep-dive.',who:'You',at:'01:04'},
+  now:{tx:'On environments — I will get the GCP project set up for you this week so it is ready for the deep-dive.',who:'You',at:'00:30'},
   ref:{tx:'One thing to be clear on — everything runs in our AWS account. That is a security requirement, not a preference.',who:'Jennifer Walsh',mid:'m1',mt:'Acme kickoff',date:'11 Aug 2026',at:'25:30'},
   say:'Just a quick heads up before I set anything up — on the kickoff Jennifer said everything has to run in your AWS account. Should I be standing up AWS rather than GCP?',
   age:'just now'},
- {at:30,type:'discrepancy',
+ {at:36,type:'discrepancy',
   title:'The deep-dive is on the eighteenth, but pricing is not due until Thursday the twentieth',
   why:'Jennifer needs the revised sheet before her internal review, and the deep-dive was meant to follow that conversation, not precede it. One of the two dates has to move.',
-  now:{tx:'And we are still holding the eighteenth for the deep-dive itself.',who:'Tom Ellis',at:'01:13'},
-  ref:{tx:'Understood — I will send the revised sheet through by Thursday.',who:'You',mid:null,mt:'Earlier in this call',date:'',at:'00:38'},
-  say:'One sequencing thing — the pricing sheet lands Thursday, which is after the eighteenth. Do we want the deep-dive after that conversation instead?',
+  now:{tx:'And we are still holding the eighteenth for the deep-dive itself.',who:'Tom Ellis',at:'00:34'},
+  ref:{tx:'Understood — I will send the revised sheet through by Thursday the twentieth.',who:'You',mid:null,mt:'Earlier in this call',date:'',at:'00:18'},
+  say:'One sequencing thing — the pricing sheet lands Thursday the twentieth, which is after the eighteenth. Do we want the deep-dive after that conversation instead?',
   age:'just now'}];
 
+/* where the call goes by the second; also the only place the page is told a
+   second has passed, so nothing re-renders on a tick */
+function liveTick(){
+  const r=S.rec;if(!r)return;
+  if(!r.paused){
+    r.secs++;
+    while(r.lnext<LINES.length&&parseClock(LINES[r.lnext][0])<=r.secs){
+      const l=LINES[r.lnext++];
+      if(spkKey(l[1])==='you'?r.mic:r.sys)r.lines.push(l);else r.missed++;
+    }
+    while(r.enext<AIEV.length&&AIEV[r.enext].at<=r.secs){
+      const e=AIEV[r.enext++];
+      if(e.ref!=null&&!lineAt(r,e.ref))continue;
+      r.ai.push(Object.assign({},e,{secs:r.secs}));
+    }
+    const w=LIVEW[r.wnext];
+    if(w&&r.secs>=w.at){
+      r.wnext++;
+      const on={conflict:db.settings.woConflict,discrepancy:db.settings.woDiscrepancy,
+                clarification:db.settings.woClarify}[w.type];
+      if(db.settings.woOn&&on&&lineAt(r,parseClock(w.now.at))){
+        wFire(Object.assign({id:'w'+Date.now(),mid:r.mid,status:'open'},w));return;}
+    }
+  }
+  liveSync();renderBubble();
+}
+const liveRec=(mid,secs)=>({mid,secs,paused:false,mic:true,sys:db.settings.hearOthers!==false,
+  scr:!!db.settings.recScreen,lines:[],ai:[],lnext:0,enext:0,wnext:0,missed:0});
 function startRecording(){
+  if(S.rec){golive();return}
   if(S.bub&&S.bub.rec){S.bub.rec=false;S.bub.secs=0;S.rec2=null;}
   const id='m'+(Date.now()%100000);
   const m={id,title:'New recording',people:[F('Jennifer Walsh','J','jennifer.walsh@acme.com'),F('Tom Ellis','T','t.ellis@acme.com'),F('you','M')],
@@ -38,58 +100,55 @@ function startRecording(){
     dur:'00:00',folder:'client',fups:0,mynotes:'',transcript:[],
     notes:{summary:'',decisions:[],questions:[]}};
   db.meetings.unshift(m);
-  S.rec={mid:id,secs:0,paused:false,lines:[],next:0,wnext:0};
-  S.route='meeting';S.mid=id;S.tab='mynotes';
+  S.rec=liveRec(id,0);
+  const r=S.rec,heard=[r.mic?'your microphone':'',r.sys?'the other participants':'',r.scr?'the screen':''].filter(Boolean);
+  r.ai.push({k:'note',secs:0,tx:`Recording. I am listening to <b>${heard.join(', ').replace(/, ([^,]*)$/,' and $1')||'nothing yet'}</b>. `+
+    `I will write down agenda items, questions, tasks and decisions here as they come up.`});
+  S.route='meeting';S.mid=id;S.tab='live';S.menu=null;S.panel=false;S.mpanel=false;
+  S.live={stickA:true,stickT:true};
   S.wpeek=null;S.wopen=false;S.walert=false;S.wsay=null;S.wfilter='all';
   clearTimers();
-  timers.push(setInterval(()=>{
-    if(!S.rec)return;
-    if(!S.rec.paused){
-      S.rec.secs++;
-      if(S.rec.next<LINES.length&&S.rec.secs>=(S.rec.next+1)*3){
-        S.rec.lines.push(LINES[S.rec.next]);S.rec.next++;}
-      /* fixed to the recording clock rather than to how far the transcript has
-         gotten, so the watchout always lands on the same second instead of
-         drifting with render/tick timing */
-      const w=LIVEW[S.rec.wnext];
-      if(w&&db.settings.woOn&&S.rec.secs>=w.at){
-        S.rec.wnext++;
-        const on={conflict:db.settings.woConflict,discrepancy:db.settings.woDiscrepancy,
-                  clarification:db.settings.woClarify}[w.type];
-        if(on){wFire(Object.assign({id:'w'+Date.now(),mid:S.rec.mid,status:'open'},w));return}
-      }
-    }
-    if(S.route==='meeting'&&S.mid===S.rec.mid)render();
-    else renderBubble();
-  },1000));
+  timers.push(setInterval(liveTick,1000));
   render();
-  toast(`<b>Recording started.</b> The pill carries the controls — watch for watchouts on its badge.`,3600);
+  toast(`<b>Recording started.</b> The timer and Stop are in the top bar; the pill floats over other apps.`,3600);
+}
+function golive(){
+  if(!S.rec)return;
+  pkDismiss();
+  S.route='meeting';S.mid=S.rec.mid;S.tab='live';S.menu=null;S.panel=false;S.mpanel=false;S.fid=null;
+  S.wpanel=false;render();
 }
 function stopRecording(){
   const r=S.rec;if(!r)return;const m=meeting(r.mid);
   clearTimers();clearTimeout(SAYT);
   S.rec=null;S.busy=true;S.wpeek=null;S.wopen=false;S.walert=false;S.wsay=null;
-  const mm=String(Math.floor(r.secs/60)).padStart(2,'0'),ss=String(r.secs%60).padStart(2,'0');
-  m.dur=`${mm}:${ss}`;m.title='Acme follow-up call';
+  /* a recording stopped from some other page is shown where its notes will be */
+  S.route='meeting';S.mid=m.id;S.mpanel=false;S.wpanel=false;S.tab='notes';
+  m.dur=fmtClock(r.secs);m.title='Acme follow-up call';
   m.transcript=r.lines.map(l=>[l[0],l[1],l[2],'']);
   render();
   setTimeout(()=>{
-    m.notes={summary:'A short follow-up with Acme. Pricing is close to final and will be sent on Thursday; Tom re-raised the data-processing addendum as the outstanding blocker, and both sides agreed the platform team joins the technical deep-dive rather than procurement alone.',
-      decisions:[['Revised pricing sheet goes out on Thursday.','00:38'],
-                 ["Acme's platform team attends the deep-dive.",'00:55']],
-      questions:[['Who signs off the DPA on Acme\'s side?','00:21']]};
+    const ev=k=>r.ai.filter(a=>a.k===k);
+    const clock=a=>a.ref!=null?fmtClock(a.ref):fmtClock(a.secs);
+    const tasks=ev('task');
+    m.chapters=ev('chapter').map((a,i)=>[i===0?0:a.t0,a.title]);
+    m.notes={
+      summary:r.lines.length>2
+        ?'A short follow-up with Acme. Pricing is close to final and the revised sheet goes out on Thursday the twentieth; Tom re-raised the data-processing addendum as the open item for Legal, and both sides agreed the platform team joins the technical deep-dive rather than procurement alone.'
+        :'Not much was captured — only a few lines made it into the transcript, so there is little to summarise.',
+      decisions:ev('decision').map(a=>[a.plain,clock(a)]),
+      questions:ev('question').map(a=>[a.plain,clock(a)])};
     m.genAt='3:26 pm';
-    if(m.transcript[4])m.transcript[4][3]='Source of task 1';
-    const nt=[{id:'n'+Date.now(),title:'Send the revised pricing sheet on Thursday',mid:m.id,due:'Fri 14 Aug',
-      late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I will send the revised sheet through by Thursday.',who:'You',at:'00:38'},
-     {id:'n'+(Date.now()+1),title:'Get Legal to review the data-processing addendum',mid:m.id,due:'Fri 14 Aug',
-      late:false,pri:'hi',done:false,grp:'Upcoming',quote:'I want to flag the data-processing addendum again.',who:'Tom Ellis',at:'00:21'},
-     {id:'n'+(Date.now()+2),title:"Invite Acme's platform team to the deep-dive",mid:m.id,due:'Tue 18 Aug',
-      late:false,pri:'',done:false,grp:'Upcoming',quote:'Can we get the platform team into the deep-dive this time?',who:'Tom Ellis',at:'00:47'}];
-    db.tasks.push(...nt);m.fups=3;
+    const stamp=Date.now();
+    const nt=tasks.map((a,i)=>{
+      const row=m.transcript.find(t=>t[0]===clock(a));
+      if(row)row[3]='Source of task '+(i+1);
+      return {id:'n'+(stamp+i),title:a.plain,mid:m.id,due:a.due,late:false,pri:a.pri,done:false,grp:'Upcoming',
+        quote:row?row[2]:'',who:row?row[1]:'',at:clock(a)};});
+    db.tasks.push(...nt);m.fups=nt.length;
     S.busy=false;S.tab='notes';render();
     const w=mWatchOpen(m.id);
-    toast(`<b>Notes ready.</b> 3 tasks were added to Tasks.`,3600);
+    toast(nt.length?`<b>Notes ready.</b> ${nt.length} task${nt.length>1?'s were':' was'} added to Tasks.`:'<b>Notes ready.</b>',3600);
     if(w.length)setTimeout(()=>toast(`${ic('radar',15)}<span><b>${w.length} watchout${
       w.length>1?'s':''} still open</b> on this call — they are on the Watchouts tab.</span>`,
       4000,hasConflict(w)?'dg':'warn'),900);
@@ -137,13 +196,13 @@ function askAssistant(q){
   },1200);
 }
 function resetDemo(hard){
-  clearTimers();const mode=db.settings.theme,th=db.settings.th,bub=db.settings.bubble;
-  db=freshDb();db.settings.theme=mode;db.settings.th=th;db.settings.bubble=bub;
+  clearTimers();const mode=db.settings.theme,bub=db.settings.bubble;
+  db=freshDb();db.settings.theme=mode;db.settings.bubble=bub;
   if(hard){db.meetings=[];db.tasks=[];db.transcripts=[];db.convos=[];db.setupDone=0;
     db.settings.detect=false;db.settings.calendar=false;S.firstRun=true;}
   clearTimeout(SAYT);
   Object.assign(S,{route:'meetings',view:'all',mid:null,tab:'notes',tid:null,cid:hard?'new':'c1',
-    settings:false,share:false,menu:null,panel:false,q:'',tq:'',vq:'',taskFilter:'all',
+    setBack:null,sq:'',share:false,menu:null,panel:false,q:'',tq:'',vq:'',taskFilter:'all',
     showDone:false,speakers:'All speakers',range:'week',
     rec:null,rec2:null,busy:false,typing:false,addPerson:false,
     wid:null,wpanel:false,wfilter:'all',wdone:false,wpeek:null,wopen:false,walert:false,wsay:null,wseen:[],

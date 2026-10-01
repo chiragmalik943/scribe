@@ -28,14 +28,14 @@ function chatPanel(){
       <span class="tbtn" data-a="mchat" title="Close">${ic('x',17)}</span></span></div>
    <div class="pb2">
     ${msgs.length?msgs.map(x=>`<div class="msg ${x.r}">
-        <span class="who">${x.r==='u'?db.user.initial:ic('spark',14,2)}</span>
+        <span class="who">${x.r==='u'?db.user.initial:ic('spark',14,1.75)}</span>
         <span class="tx">${x.tx}</span></div>`).join('')
       :`<div class="cempty">Ask anything about <b>${esc(name)}</b> — the assistant reads ${
         proj?`the ${n} call${n===1?'':'s'} filed in this project`
             :"this call's transcript and notes"} only, and answers from what was actually said.
         <div class="cchips">${(proj?FCHIPS:MCHIPS).map(([q,i])=>
           `<span data-a="mask" data-p="${esc(q)}">${ic(i,15)}${q}</span>`).join('')}</div></div>`}
-    ${S.mtyping?`<div class="msg a"><span class="who">${ic('spark',14,2)}</span>
+    ${S.mtyping?`<div class="msg a"><span class="who">${ic('spark',14,1.75)}</span>
       <span class="tx typing"><i></i><i></i><i></i></span></div>`:''}
    </div>
    <div class="cfoot"><div class="comp"><div class="compbox">
@@ -183,7 +183,7 @@ function tips(root){
     el.setAttribute('aria-selected',el.classList.contains('on')?'true':'false');
     if(el.classList.contains('off'))el.setAttribute('aria-disabled','true');
   });
-  root.querySelectorAll('.nav a,.subnav a,.views a,.menu a,.mnav a').forEach(el=>{
+  root.querySelectorAll('.nav a,.subnav a,.views a,.menu a').forEach(el=>{
     if(el.getAttribute('role')==='button')el.setAttribute('role','link');
     if(el.classList.contains('on'))el.setAttribute('aria-current','true');
   });
@@ -274,7 +274,7 @@ let PKZONE=null,PKINT=null,PKCLOSE=null,PKMS=0,PKX=0,PKY=0,PKLX=0,PKLY=0,PKNEW=f
 const listOpen=()=>!S.listmin||S.peek==='list';
 document.addEventListener('mousemove',e=>{PKX=e.clientX;PKY=e.clientY},{passive:true});
 
-const pkBusy=()=>S.settings||S.share||S.addPerson||S.menu||BDRAG;
+const pkBusy=()=>S.share||S.addPerson||S.menu||BDRAG;
 function pkZone(t){
   if(!t||!t.closest)return null;
   if(t.closest('.rail'))return 'rail';

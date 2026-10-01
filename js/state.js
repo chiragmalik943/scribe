@@ -14,7 +14,13 @@ function mKey(m){
 const freshDb=()=>{const x=seed();x.meetings.sort((a,b)=>mKey(b)-mKey(a));return x;};
 let db=freshDb();
 const S={route:'meetings',view:'all',mid:null,fid:null,tab:'notes',tid:null,cid:'c1',
-  settings:false,spane:'appearance',share:false,menu:null,panel:false,
+  /* settings is a page of its own now (route 'settings'); setBack remembers the
+     page it was opened from so Back and Esc can return there */
+  spane:'appearance',setBack:null,sq:'',share:false,menu:null,panel:false,
+  /* inline editing — see inline-edit.js */
+  edit:null,
+  /* the project page's own tabs, and the timeline's filter */
+  ftab:'overview',tlf:'all',
   /* twelve top-level folders with eighty-odd children between them: the tree
      opens closed and the page you are on expands its own branch */
   openF:{client:true},
@@ -32,7 +38,11 @@ const S={route:'meetings',view:'all',mid:null,fid:null,tab:'notes',tid:null,cid:
   wpeek:null,wopen:false,walert:false,wsay:null,wseen:[],
   railmin:false,listmin:false,q:'',tq:'',vq:'',taskFilter:'all',showDone:false,
   speakers:'All speakers',range:'week',
-  rec:null,playing:false,playPos:44,busy:false,typing:false,firstRun:false,
+  rec:null,busy:false,typing:false,firstRun:false,
+  /* the recording player: where it is (seconds), whether it is running, how fast,
+     whether the transcript is scrolling along with it, and whether the
+     who-spoke-when lanes are showing */
+  playT:0,playing:false,speed:1,follow:true,lanes:true,pmid:null,
   addPerson:false,menuXY:null,zoom:false,
   /* per-section "view all" state on a detail page, keyed by a string unique
      to that one list (e.g. 'notes:m1:dec') so expanding one section never

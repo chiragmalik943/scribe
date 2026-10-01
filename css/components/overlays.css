@@ -7,17 +7,6 @@
   max-width:calc(100% - 28px);max-height:calc(100% - 28px);overflow:hidden;display:flex;
   animation:mdin .18s cubic-bezier(.2,.9,.3,1)}
 @keyframes mdin{from{opacity:0;transform:translate(-50%,-48%) scale(.985)}}
-.mnav{width:220px;flex:0 0 auto;background:var(--rail);border-right:1px solid var(--line);
-  padding:var(--s5) var(--s2);display:flex;flex-direction:column;gap:1px;overflow-y:auto}
-.mnav h3{font-family:var(--f-head);font-size:15px;font-weight:600;padding:0 10px var(--s4)}
-.mnav .gl{font-family:var(--f-body);font-size:11px;font-weight:600;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--ter);padding:var(--s4) 10px 5px}
-.mnav a{display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;border-radius:var(--r2);
-  color:var(--ink2);font-size:13px;cursor:pointer;transition:background var(--tr),color var(--tr)}
-.mnav a:hover{background:var(--sunk)}
-.mnav a.on{background:var(--tint);color:var(--brandInk);font-weight:600}
-.mnav a .ic{color:var(--ter)}
-.mnav a.on .ic{color:var(--brandInk)}
 .mbody{flex:1;display:flex;flex-direction:column;min-width:0}
 .mtop{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s5) var(--s6) var(--s4);
   border-bottom:1px solid var(--line)}

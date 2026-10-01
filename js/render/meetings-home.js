@@ -11,7 +11,7 @@ function folderCard(f){
         ts=folderTasks(f.id),ws=fWatchOpen(f.id);
   return `<div class="fcd ${fcls(f.id)}" data-a="view" data-p="f:${f.id}"
       title="${esc(f.name)}">
-    <div class="top">${fwell(f.id,36)}<span class="nm">${esc(f.name)}</span>
+    <div class="top">${fwell(f.id,36)}<span class="nm">${ename('folder',f.id,'card',f.name)}</span>
       <span class="fm" data-a="menu" data-p="fmenu:${f.id}" title="Folder options">${ic('dots',14)}</span></div>
     ${kids.length
       ?`<div class="subs">${kids.slice(0,3).map(k=>`<span>${esc(k.name)}</span>`).join('')}${
@@ -33,7 +33,7 @@ function folderCardSmall(f){
   return `<div class="fcdsm ${fcls(f.id)}" data-a="view" data-p="f:${f.id}" title="${esc(f.name)}">
     <div class="top">${fwell(f.id,30)}
       <span class="fm" data-a="menu" data-p="fmenu:${f.id}" title="Folder options">${ic('dots',13)}</span></div>
-    <span class="nm">${esc(f.name)}</span>
+    <span class="nm">${ename('folder',f.id,'card',f.name)}</span>
     <span class="mt"><b>${ms.length}</b> meeting${ms.length===1?'':'s'}${
       ts.length?`<span class="dotc"></span><b>${ts.length}</b> task${ts.length===1?'':'s'}`:''}</span>
   </div>`;
@@ -53,8 +53,10 @@ function folderPanel(tops,unf){
   </span>`;
   const action=`${toggle}<span data-a="newfolder" data-p="">${ic('folderplus',13)}New folder</span>`;
   const body=grid
-    ?`<div class="fgridsm">${tops.map(folderCardSmall).join('')}${unf?unfiledCardSmall(unf):''}</div>`
-    :`<div class="flist">${tops.map(folderRowHome).join('')}</div>${
+    ?`<div class="fgridsm">${tops.map(folderCardSmall).join('')}${
+        edNewHere('small','')?newFolderTemp('small',''):''}${unf?unfiledCardSmall(unf):''}</div>`
+    :`<div class="flist">${tops.map(folderRowHome).join('')}${
+        edNewHere('frow','')?newFolderTemp('frow',''):''}</div>${
         unf?`<div class="flist"><div class="frow unf" data-a="view" data-p="unfiled">
           <span class="fi">${ic('file',16)}</span>
           <span class="bd"><span class="nm">Unfiled</span>
@@ -90,7 +92,7 @@ function viewHome(){
     <span class="act"><button class="btn t sm" data-a="dismissOk">Dismiss</button></span></div>`:'';
   if(!db.meetings.length&&!tops.length)return `<div class="body">${setup}
     <div class="empty" style="${setup?'justify-content:flex-start;padding-top:64px':''}">
-      <span class="ico">${ic('cal',22,1.6)}</span>
+      <span class="ico">${ic('cal',22)}</span>
       <h2>No meetings yet</h2>
       <p>Turn on call detection and AIT-Scribe will take the notes, work out which
         folder the call belongs in, and file it for you.</p>
@@ -118,7 +120,7 @@ function folderRowHome(f){
         ts=folderTasks(f.id),ws=fWatchOpen(f.id);
   return `<div class="frow ${fcls(f.id)}" data-a="view" data-p="f:${f.id}" title="${esc(f.name)}">
     <span class="fi">${ic(folderMeta(f.id).ic,17)}</span>
-    <span class="bd"><span class="nm">${esc(f.name)}</span>
+    <span class="bd"><span class="nm">${ename('folder',f.id,'card',f.name)}</span>
       <span class="s">${kids.length
         ?esc(kids.slice(0,4).map(k=>k.name).join(' · '))+(kids.length>4?` +${kids.length-4}`:'')
         :'No sub-folders yet'}</span></span>

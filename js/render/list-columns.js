@@ -10,19 +10,20 @@ function folderRow(f,sub){
   const open=!!S.openF[f.id];
   const tw=kids.length
     ? `<span class="tw ${open?'o':''}" data-a="foldtoggle" data-p="${f.id}"
-        title="${open?'Collapse':'Expand'}">${ic('chev',11,2.4)}</span>`
+        title="${open?'Collapse':'Expand'}">${ic('chev',11,1.75)}</span>`
     : (sub?'':`<span class="tw sp"></span>`);
   return `<a class="fdr ${fcls(f.id)} ${S.view==='f:'+f.id?'on':''}${sub?' sub':''}"
      data-a="view" data-p="f:${f.id}"
      title="${esc(sub?folderPath(f.id):f.name)}">${tw}${ic(sub?'folder':ficon(f.id),sub?15:16)}
-    <span class="lbl">${esc(f.name)}</span>
+    <span class="lbl">${ename('folder',f.id,'row',f.name)}</span>
     <span class="fm" data-a="menu" data-p="fmenu:${f.id}" title="Folder options">${ic('dots',14)}</span>
     ${cnt(folderCount(f.id))}</a>`;
 }
 function folderRows(f){
-  const kids=subFolders(f.id);
-  if(!kids.length||!S.openF[f.id])return folderRow(f,false);
-  return folderRow(f,false)+kids.map(k=>folderRow(k,true)).join('');
+  const kids=subFolders(f.id),adding=edNewHere('row',f.id);
+  if(!adding&&(!kids.length||!S.openF[f.id]))return folderRow(f,false);
+  return folderRow(f,false)+kids.map(k=>folderRow(k,true)).join('')+
+    (adding?newFolderTemp('row',f.id):'');
 }
 function listMeetings(){
   const all=db.meetings.length;
@@ -36,6 +37,7 @@ function listMeetings(){
     ${db.meetings.length?`<div class="slabel">Folders</div>
     <div class="views">
      ${topFolders().map(f=>folderRows(f)).join('')}
+     ${edNewHere('row','')?newFolderTemp('row',''):''}
      ${folderCount('')?v(S.view==='unfiled','folder','Unfiled',
         cnt(folderCount('')),'view','unfiled'):''}
      <a data-a="newfolder" data-p="" style="color:var(--ter)" title="Create a new folder">${

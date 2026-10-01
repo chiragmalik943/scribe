@@ -5,13 +5,13 @@
    another reads it: a folder's icon, the tag on a meeting row, an event in the
    calendar, a series in the insights charts. --fcI is the ink (and the fill for
    solid marks), --fcT the tint it sits on. Each slot is hand-tuned for dark
-   mode rather than inverted, the same way the themes are.
+   mode rather than inverted, the same way the Ocean palette is.
 
    The rule this palette follows: colour identifies, it does not decorate. A
    slot is always tied to a folder, so the same green means "Projects" on the
    home page, in the sidebar, on a meeting row and in the calendar.
 
-   The six are the system's brand and accents — indigo, purple, success green,
+   The six are the system's accents — indigo, purple, success green,
    orange, error rose, cyan — each pulled to the weight that clears 4.5:1 on
    the surface it prints on, since these carry text and 11px labels, not just
    fills. */

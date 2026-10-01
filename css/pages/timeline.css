@@ -1,0 +1,42 @@
+/* The project timeline tab. */
+
+/* ══════════════════════════════ timeline ══════════════════════════════ */
+/* A spine with a node per update. The node carries the kind, the text beside it
+   says what happened and where it came from, and the whole entry is the link —
+   so the page reads as a story and works as an index. Updates that have not
+   happened yet sit above "now" on a dashed spine with hollow nodes: the same
+   shape, plainly not yet true. */
+.actbar .tlcount{font-size:12px;color:var(--ter);font-variant-numeric:tabular-nums}
+.tl{max-width:860px;padding-bottom:var(--s6)}
+.tlg{margin-bottom:var(--s5)}
+.tlh{display:flex;align-items:baseline;gap:10px;padding:0 0 var(--s2) 0;margin-bottom:var(--s1);
+  border-bottom:1px solid var(--hair)}
+.tlh b{font-family:var(--f-head);font-size:14px;font-weight:600;letter-spacing:-.006em}
+.tlh span{font-size:12px;color:var(--ter)}
+.tlg.up .tlh b{color:var(--brandInk)}
+
+.tle{--kb:var(--tint);--ki:var(--brandInk);position:relative;display:grid;
+  grid-template-columns:34px minmax(0,1fr);gap:0 var(--s2);padding:var(--s1) 0 0}
+.tle.k-decision{--kb:var(--okTint);--ki:var(--okInk)}
+.tle.k-watch{--kb:var(--wcT);--ki:var(--wcI)}
+.tle.k-task{--kb:var(--warnTint);--ki:var(--warnInk)}
+.tle.k-task.late{--kb:var(--dangerTint);--ki:var(--dangerInk)}
+.tln{width:30px;height:30px;margin:4px 0 0 2px;border-radius:50%;background:var(--kb);color:var(--ki);
+  display:flex;align-items:center;justify-content:center;position:relative;z-index:1;
+  box-shadow:0 0 0 4px var(--surf)}
+/* the spine runs from under one node to the top of the next */
+.tle:before{content:'';position:absolute;left:16px;top:36px;bottom:-12px;width:2px;background:var(--line)}
+.tle:last-child:before{display:none}
+.tlc{min-width:0;padding:6px 12px 8px;border-radius:var(--r2);cursor:pointer;margin-bottom:var(--s1);
+  transition:background var(--tr)}
+.tlc:hover{background:var(--sunk)}
+.tlt{font-family:var(--f-head);font-size:14px;font-weight:600;line-height:1.4;letter-spacing:-.005em;color:var(--ink)}
+.tle.k-decision .tlt,.tle.k-watch .tlt{font-weight:500}
+.tlm{margin-top:2px;font-size:12px;color:var(--ter);line-height:1.5;font-variant-numeric:tabular-nums}
+.tlm .tk{display:inline-block;font-weight:600;color:var(--ki);margin-right:7px}
+.tls{margin-top:5px;font-size:13px;line-height:1.55;color:var(--sec);max-width:640px}
+/* not yet */
+.tle.up .tln{background:var(--surf);color:var(--ter);box-shadow:inset 0 0 0 1.5px var(--line2),0 0 0 4px var(--surf)}
+.tle.up:before{background:none;width:0;border-left:2px dashed var(--line2)}
+.tle.up .tlm .tk{color:var(--sec)}
+.tle.up.late .tln{color:var(--dangerInk)}

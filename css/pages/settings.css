@@ -1,0 +1,43 @@
+/* The settings page: a settings list in the second column, one section at a time in the main area. */
+
+/* ══════════════════════════════ settings page ══════════════════════════════ */
+/* Rows sit in a card per group, with the group's name above it rather than in a
+   strip on top of it — the same arrangement as the rest of the app's lists, just
+   with room to breathe. The page is one reading column; widening the window adds
+   margin, not line length. */
+.body.setpage{padding:var(--s7) var(--s8) var(--s8)}
+.setwrap{width:100%;max-width:800px}
+.sph{margin-bottom:var(--s6)}
+.sph h1{font-family:var(--f-head);font-size:24px;font-weight:600;letter-spacing:-.02em;line-height:1.25}
+.sph p{margin-top:6px;font-size:13.5px;color:var(--sec);line-height:1.55;max-width:600px}
+.setcont{display:flex;flex-direction:column;gap:var(--s6)}
+.setcont>.sgroup,.setcont>.notice,.setcont>.wrapflex{flex:0 0 auto}
+
+.setpage .sghd{display:block;border:0;padding:0 0 var(--s3);background:transparent}
+.setpage .sghd .si{display:none}
+.setpage .sghd>span{display:block}
+.setpage .sghd b{display:block;font-family:var(--f-head);font-size:14px;font-weight:600;
+  letter-spacing:-.005em;text-transform:none;color:var(--ink);white-space:normal}
+.setpage .sghd>span>span{display:block;margin-top:2px;font-size:12.5px;color:var(--sec)}
+.setpage .sghd>span>span:before{content:none}
+.sgcard{border:1px solid var(--line);border-radius:var(--r4);background:var(--surf)}
+.setpage .sgcard>.srow{padding:16px 20px;border-radius:0}
+.setpage .sgcard>.srow:first-child{border-radius:var(--r4) var(--r4) 0 0}
+.setpage .sgcard>.srow:last-child{border-radius:0 0 var(--r4) var(--r4)}
+.setpage .sgcard>.srow:only-child{border-radius:var(--r4)}
+.setpage .srow .s{max-width:520px}
+.setpage .sgcard>.step{padding:16px 20px}
+.setpage .sgcard>.step+.step{border-top:1px solid var(--hair)}
+.setpage .sgcard>.tips{padding:16px 20px}
+.setpage .sgcard>.dwrap{padding:16px 20px}
+.setcont mark{background:var(--tint);color:var(--brandInk);border-radius:3px;padding:0 1px}
+
+/* the gear and the account block say where you are while the page is open */
+.tbtn.on{background:var(--tint);color:var(--brandInk)}
+.acct.on{background:var(--tint)}
+.acct.on .nm{color:var(--brandInk)}
+
+#frame.w2 .body.setpage{padding:var(--s5) var(--s5) var(--s7)}
+#frame.w1 .body.setpage{padding:var(--s4) var(--s4) var(--s6)}
+#frame.w1 .sph h1{font-size:21px}
+#frame.w1 .setpage .srow .a,#frame.w1 .setpage .step .a{padding-left:0}

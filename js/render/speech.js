@@ -14,7 +14,7 @@ function viewSpeech(){
      label for the timer, since there is nothing left to try. */
   const card=live?`<div class="card dictcard">
       <div class="dichead">
-        <span class="holdbtn live">${ic('mic',19,2)}Listening…</span>
+        <span class="holdbtn live">${ic('mic',19,2.5)}Listening…</span>
         <span class="dicstat">
           <span class="statusline"><span class="d" style="background:var(--danger)"></span>
             Recording · MacBook Air Microphone · release <span class="kbd">${db.settings.hotkey}</span> to paste</span>
@@ -23,7 +23,7 @@ function viewSpeech(){
       <div class="dicmeter live">${meterBars(64,true,secs)}</div></div>`
     :`<div class="card dictcard">
       <div class="dichead">
-        <span class="holdbtn" data-a="holdstart">${ic('mic',18,2)}Hold <span class="kb">${
+        <span class="holdbtn" data-a="holdstart">${ic('mic',18,2.25)}Hold <span class="kb">${
           db.settings.hotkey}</span> to talk</span>
         <span class="dicstat">
           <span class="statusline"><span class="d" style="background:var(--ok)"></span>

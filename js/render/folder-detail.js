@@ -10,10 +10,11 @@
 function meetingRow(m,showFolder,people){
   const live=S.rec&&S.rec.mid===m.id;
   return `<div class="mrow" data-a="open" data-p="${m.id}">
-    <span><span class="t">${esc(m.title)}${live?'':mwDot(m.id)}</span>
+    <span><span class="t">${ename('meeting',m.id,'row',m.title)}${live?'':mwDot(m.id)}</span>
       <span class="s">${people?peopleLine(m):m.people.length+' attendee'+
         (m.people.length===1?'':'s')} · ${live?'recording now':m.dur}</span></span>
     ${live?'':`<span class="macts" ${showFolder?'style="opacity:1;pointer-events:auto"':''}>
+      <span data-a="rename" data-p="${m.id}" title="Rename">${ic('edit',14)}</span>
       <span data-a="menu" data-p="folder:${m.id}" title="Move to folder">${ic('folder',14)}</span>
       <span data-a="share" data-p="${m.id}" title="Share">${ic('share',14)}</span>
       <span class="dg" data-a="confirmDelete" data-p="${m.id}" title="Delete">${ic('trash',14)}</span></span>`}
@@ -63,8 +64,10 @@ function viewFolder(){
   const head=`<div class="fhead">
     <span class="fi ${unfiled?'':'fw '+fcls(id)}">${
       ic(unfiled?'file':folderMeta(id).ic,21)}</span>
-    <span class="ft"><h1 class="h" ${unfiled?'':`data-a="renamefolder" data-p="${id}" style="cursor:text"`}>${
-        esc(unfiled?'Unfiled':f.name)}${unfiled?'':`<span class="edit">${ic('edit',15)}</span>`}</h1>
+    <span class="ft"><h1 class="h${!unfiled&&isEd('folder',id,'h1')?' editing':''}" ${
+        unfiled?'':`${edAct('folder',id,'h1','renamefolder')} style="cursor:text"`}>${
+        unfiled?'Unfiled':ename('folder',id,'h1',f.name)}${
+        unfiled||isEd('folder',id,'h1')?'':`<span class="edit">${ic('edit',15)}</span>`}</h1>
       <span class="fs metarow">${fs}</span></span>
     <span class="fa">
       ${unfiled?'':`<button class="btn q sm ico" data-a="menu" data-p="fmenu:${id}"
@@ -78,7 +81,7 @@ function viewFolder(){
         <span>AIT&#8209;Scribe could not tell where these belonged. Use ${ic('folder',13)} on a row
         to file one — you can create a folder from the same menu.</span></div>
       ${all.length?`<div class="list">${all.map(m=>meetingRow(m,true)).join('')}</div>`
-        :`<div class="empty" style="padding-bottom:60px"><span class="ico">${ic('check',22,1.6)}</span>
+        :`<div class="empty" style="padding-bottom:60px"><span class="ico">${ic('check',22)}</span>
           <h2>Everything is filed</h2><p>Nothing is waiting for a folder.</p></div>`}</div>`;
   }
 
@@ -88,7 +91,8 @@ function viewFolder(){
     const cards=`<div class="ghd">Folders <span class="n">· ${kids.length}</span>
         <span class="go" data-a="newfolder" data-p="${id}" style="margin-left:auto"
           title="${esc(addFolderLabel(id))}">${ic('folderplus',13)}New folder</span></div>
-      <div class="fgrid">${kids.map(folderCard).join('')}</div>`;
+      <div class="fgrid">${kids.map(folderCard).join('')}${
+        edNewHere('card',id)?newFolderTemp('card',id):''}</div>`;
     return `<div class="body">${head}${cards}</div>`;
   }
 
@@ -96,10 +100,12 @@ function viewFolder(){
      in the same two-column shape a meeting's own notes use: a wide reading
      column — the brief, decisions, open questions — beside a narrow one for
      what's actionable right now — open tasks, then the meetings themselves. */
-  const band=watchBand(id);
-  const cols=dcols(id);
-
-  return `<div class="body${S.mpanel?'':' docked'}">${head}${band}${cols}
+  /* Overview says where the project stands; Timeline says how it got there */
+  const tl=S.ftab==='timeline';
+  const tabs=`<div class="tabs">
+    <a class="${tl?'':'on'}" data-a="ftab" data-p="overview">${ic('spark',14)}Overview</a>
+    <a class="${tl?'on':''}" data-a="ftab" data-p="timeline">${ic('milestone',14)}Timeline</a></div>`;
+  return `<div class="body${S.mpanel?'':' docked'}">${head}${tabs}${tl?timelineView(id):watchBand(id)+dcols(id)}
     ${S.mpanel?'':askDock('Ask anything about '+(f?f.name:'this project')+'…',true)}</div>`;
 }
 /* The wide column: the project's own brief (its "summary" — see folderBrief's

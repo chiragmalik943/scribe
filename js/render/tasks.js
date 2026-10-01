@@ -18,14 +18,14 @@ function viewTasks(){
       <input placeholder="Search tasks" data-a="q" value="${esc(S.q)}"></span>
     <span class="r">
       <span class="chk" data-a="showdone"><span class="cbx ${S.showDone?'on':''}">${
-        ic('check',12,2.6)}</span>Show completed</span>
+        ic('check',12,2)}</span>Show completed</span>
       <button class="btn q sm" data-a="demo" data-p="switch to a calendar view"
         title="Switch to a calendar view">${ic('cal',15)}Calendar</button>
     </span></div>`:'';
   const add=`<div class="addrow">${ic('plus',17)}
     <input placeholder="Add a task…" data-a="addtask"></div>`;
   if(!list.length) return `<div class="body">${toolbar}${add}
-    <div class="empty" style="padding-bottom:60px"><span class="ico">${ic('checkc',22,1.6)}</span>
+    <div class="empty" style="padding-bottom:60px"><span class="ico">${ic('checkc',22)}</span>
     <h2>${db.tasks.length?'Nothing here':'No tasks yet'}</h2>
     <p>${db.tasks.length?'No tasks match this view. Try another filter.':
       'Tasks appear here automatically after each meeting is summarised — or add one in the field above.'}</p>

@@ -9,7 +9,7 @@ runs — no server, bundler, or `npm install` required.
 ```
 index.html                 Entry point: page shell + <link>/<script> includes
 css/
-  tokens.css                Design tokens & the six theme palettes (light+dark)
+  tokens.css                Design tokens & the Ocean palette (light + dark)
   base/                     App shell chrome and shared primitives
     window-chrome.css         Window frame, title bar, rail, list column, main
     buttons.css                Buttons
@@ -18,7 +18,7 @@ css/
     utilities.css                 Section panel, filter chips, scroll containment, misc tweaks
   components/                Reusable UI widgets used across pages
     overlays.css               Modals, menus, toasts
-    folder-tree.css             Sidebar folder tree + theme picker
+    folder-tree.css             Sidebar folder tree
     notifications.css            Toast variants + system notification banners
     panel-controls.css            Tab action bar, hover-peek, panel motion, tooltips
     bubble.css                     Floating recording bubble
@@ -31,7 +31,6 @@ css/
     meetings-home.css                Folder/data palette + meetings home screen
 js/
   icons.js                   Inline SVG icon path data
-  themes.js                  Theme metadata for the theme picker
   data.js                    Seed/mock data (meetings, folders, tasks, vocab, ...)
   state.js                   Global application state
   render/                    One file per screen/section's render function

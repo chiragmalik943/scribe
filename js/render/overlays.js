@@ -24,13 +24,13 @@ function shareModal(){
       <div><div class="ghd" style="margin-bottom:9px">What the link includes</div>
         <div style="border:1px solid var(--line);border-radius:var(--r3)">
           <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="notes">
-            <span class="cbx ${sh.notes?'on':''}">${ic('check',12,2.6)}</span>
+            <span class="cbx ${sh.notes?'on':''}">${ic('check',12,2)}</span>
             <span><span class="t">AI notes</span><span class="s">Summary, decisions and tasks.</span></span></div>
           <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="fups">
-            <span class="cbx ${sh.fups?'on':''}">${ic('check',12,2.6)}</span>
+            <span class="cbx ${sh.fups?'on':''}">${ic('check',12,2)}</span>
             <span><span class="t">Tasks</span><span class="s">With owners and dates.</span></span></div>
           <div class="srow" style="padding:12px 14px" data-a="shareinc" data-p="tx">
-            <span class="cbx ${sh.tx?'on':''}">${ic('check',12,2.6)}</span>
+            <span class="cbx ${sh.tx?'on':''}">${ic('check',12,2)}</span>
             <span><span class="t">Full transcript</span>
             <span class="s" style="color:var(--warnInk)">${ic('alert',12)} Everything that was said, word for word — including anything off-topic.</span></span></div>
         </div></div>
@@ -92,7 +92,8 @@ function menuEl(){
       `<a data-a="movefolder" data-p="${id}|${x.id}" ${i?'style="padding-left:26px"':''}>${
         ic('folder',15)}${esc(x.name)}
       ${m.folder===x.id?`<span class="k">${ic('check',13)}</span>`:''}</a>`).join('')).join('')}
-    <hr><a data-a="newfolder" data-p="|${id}">${ic('folderplus',15)}Add Folder…</a></div>`;}
+    <hr>${edNewHere('menu','')?newFolderTemp('menu',''):
+      `<a data-a="newfolder" data-p="|${id}">${ic('folderplus',15)}Add Folder…</a>`}</div>`;}
   if(kind==='fmenu'){const f=folder(id);if(!f)return '';const pos=S.menuXY||{x:300,y:240};
    const kids=subFolders(id);
    return `<div class="scrim" style="background:transparent" data-a="closemenu"></div>

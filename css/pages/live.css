@@ -1,0 +1,198 @@
+/* The live meeting page, and the recording controls that follow a call around the app. */
+
+/* ══════════════════════════════ recording, anywhere in the app ══════════════════════════════ */
+.rdot{width:9px;height:9px;border-radius:50%;background:var(--danger);flex:0 0 auto;
+  animation:pulse 1.6s infinite}
+.rtime{font-variant-numeric:tabular-nums}
+
+/* The title-bar chip. Two parts that read as one: the clock (and, away from the
+   call, the way back to it) and Stop. Tinted rather than solid red so it stays
+   noticeable without shouting over every page for the length of a call. */
+.recchip{display:inline-flex;align-items:center;height:32px;border-radius:var(--rF);
+  background:var(--dangerTint);box-shadow:inset 0 0 0 1px var(--dangerLine);
+  margin-right:var(--s2);flex:0 0 auto;white-space:nowrap}
+.rc-go{display:inline-flex;align-items:center;gap:8px;height:100%;padding:0 12px 0 13px;
+  border-radius:var(--rF) 0 0 var(--rF);color:var(--dangerInk);
+  font-size:12.5px;font-weight:600;transition:background var(--tr)}
+.rc-go[data-a]{cursor:pointer}
+.rc-go[data-a]:hover{background:var(--dangerLine)}
+.rc-go b{font-weight:600;font-size:13px;letter-spacing:.01em}
+.rc-go .rl{font-weight:500;color:var(--dangerInk);opacity:.9}
+.rc-stop{display:inline-flex;align-items:center;gap:6px;height:24px;margin:0 4px 0 2px;padding:0 11px 0 9px;
+  border-radius:var(--rF);background:var(--danger);color:var(--dangerOn);cursor:pointer;
+  font-size:12px;font-weight:600;transition:filter var(--tr)}
+.rc-stop:hover{filter:brightness(1.07)}
+.rc-stop:active{transform:translateY(.5px)}
+.recchip.pause{background:var(--warnTint);box-shadow:inset 0 0 0 1px var(--warnLine)}
+.recchip.pause .rc-go,.recchip.pause .rc-go .rl{color:var(--warnInk)}
+.recchip.pause .rc-go[data-a]:hover{background:var(--warnLine)}
+.recchip.pause .rdot,.ctlbar.pause .rdot{background:var(--warn);animation:none}
+.recchip.pause .rc-stop{background:var(--warnInk);color:var(--warnTint)}
+#frame.w2 .recchip .rl{display:none}
+#frame.w2 .rc-go{padding:0 8px 0 11px}
+#frame.w1 .rc-stop span{display:none}
+#frame.w1 .rc-stop{padding:0 8px}
+
+/* the rail item sits directly under Meetings */
+.nav a.onair .ic{color:var(--danger)}
+.nav a.onair .rlt{margin-left:auto;font-size:12px;font-weight:600;color:var(--dangerInk)}
+.nav a.onair.here{background:var(--sunk);color:var(--ink);font-weight:600}
+.nav a.onair.pause .ic{color:var(--warnInk)}
+.nav a.onair.pause .rlt{color:var(--warnInk)}
+.nav a.onair:not(.pause) .ic{animation:pulse 1.6s infinite}
+.app.railmin .nav a.onair .rlt{display:none}
+
+/* ══════════════════════════════ the live page ══════════════════════════════ */
+/* The page fits the window: only the two columns scroll, so the title, the
+   capture controls and the note box stay where they are while the call runs. */
+.body.live{overflow:hidden}
+.body.live>.titleblk{margin-bottom:0}
+.body.live>.lcols{flex:1 1 auto;min-height:0}
+
+/* ── capture controls ─────────────────────────────────────────────────────
+   One bar: the clock, the three things that can be captured, and the two things
+   that end or interrupt a capture. Each source is a switch with a plain name for
+   what it hears, a state word that is not colour alone, and a level meter so it
+   is obvious at a glance that sound is arriving. */
+.live .ctlbar{display:flex;align-items:center;gap:var(--s3) var(--s5);flex-wrap:wrap;flex:0 0 auto;
+  margin:var(--s4) 0;padding:10px var(--s3) 10px var(--s4);background:var(--sunk);border-radius:var(--r3)}
+.live .cstat{display:flex;align-items:center;gap:12px}
+.live .cstat .rdot{width:10px;height:10px;box-shadow:0 0 0 4px var(--dangerLine)}
+.live .ctlbar.pause .rdot{box-shadow:0 0 0 4px var(--warnLine)}
+.live .cstat .ct{display:flex;flex-direction:column;line-height:1.2;gap:1px}
+.live .cstat .ct b{font-size:11.5px;font-weight:600;color:var(--sec);letter-spacing:.01em}
+.live .cstat .rtime{font-family:var(--f-head);font-size:20px;font-weight:600;color:var(--ink);
+  letter-spacing:.005em;line-height:1.15}
+.live .ctlbar.pause .cstat .rtime{color:var(--warnInk)}
+.live .csrc{display:flex;gap:var(--s2);flex-wrap:wrap}
+.live .rsrc{display:inline-flex;align-items:center;gap:10px;height:42px;padding:0 13px 0 7px;
+  border-radius:var(--r2);background:var(--surf);box-shadow:inset 0 0 0 1px var(--line2);
+  cursor:pointer;transition:box-shadow var(--tr),background var(--tr)}
+.live .rsrc:hover{box-shadow:inset 0 0 0 1px var(--brand)}
+.live .rsrc .si{width:28px;height:28px;border-radius:var(--r1);flex:0 0 auto;display:flex;
+  align-items:center;justify-content:center;background:var(--tint);color:var(--brandInk);
+  transition:background var(--tr),color var(--tr)}
+.live .rsrc.off .si{background:var(--dangerTint);color:var(--dangerInk)}
+.live .rsrc .sb{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.live .rsrc .sb b{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+.live .rsrc .sb span{font-size:11.5px;color:var(--ter);white-space:nowrap}
+.live .rsrc.off .sb b{color:var(--sec)}
+.live .rsrc.off .sb span{color:var(--dangerInk)}
+.live .lmeter{display:inline-flex;align-items:center;gap:2px;height:20px;margin-left:2px}
+.live .lmeter i{width:2.5px;border-radius:2px;background:var(--meterOff);height:3px;
+  transition:height .5s linear,background var(--tr)}
+.live .lmeter.on i{background:var(--brand)}
+.live .cact{margin-left:auto;display:flex;gap:var(--s2);flex:0 0 auto}
+
+/* ── the two columns ──────────────────────────────────────────────────────
+   Divided by a hairline, not boxed: the headers and a rule are enough to say
+   there are two places to look. */
+.live .lcols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);
+  grid-template-rows:minmax(0,1fr)}
+.live .lcol{display:flex;flex-direction:column;min-width:0;min-height:0}
+.live .lcol.ai{padding-right:var(--s5)}
+.live .lcol.tx{padding-left:var(--s5);border-left:1px solid var(--line)}
+.live .lhd{display:flex;align-items:center;gap:var(--s3);flex:0 0 auto;min-height:36px;
+  padding-bottom:var(--s2);border-bottom:1px solid var(--hair)}
+.live .lt{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-head);
+  font-size:14px;font-weight:600;letter-spacing:-.006em;white-space:nowrap}
+.live .lt .ic{color:var(--brandInk)}
+.live .lst{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-body);
+  font-size:11.5px;font-weight:500;color:var(--ter);letter-spacing:0}
+.live .lst i{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:0 0 auto;
+  animation:pulse 1.6s infinite}
+.live .lst.live i{background:var(--danger)}
+.live .lcnt{margin-left:auto;display:flex;align-items:center;gap:var(--s1);flex:0 0 auto}
+.live .lcnt .lines{font-size:11.5px;color:var(--ter);font-variant-numeric:tabular-nums}
+.live .lc{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 7px;
+  border-radius:var(--rF);background:var(--sunk);color:var(--sec);font-size:11.5px;font-weight:600;
+  font-variant-numeric:tabular-nums;transition:opacity var(--tr)}
+.live .lc.zero{opacity:.55}
+.live .lc.k-agenda .ic{color:var(--infoInk)}
+.live .lc.k-question .ic{color:var(--warnInk)}
+.live .lc.k-task .ic{color:var(--brandInk)}
+.live .lc.k-decision .ic{color:var(--okInk)}
+.live .lc.k-watch .ic{color:var(--dangerInk)}
+
+.live .lbodywrap{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.live .lfeed,.live .ltx{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
+  margin:0 calc(-1 * var(--s2));padding:var(--s2) var(--s2) var(--s4)}
+/* "back to latest" appears only in the column that has been scrolled away from the end */
+.live .jumpbot{position:absolute;left:50%;bottom:10px;transform:translate(-50%,6px);
+  display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px 0 11px;
+  background:var(--ink);color:var(--surf);border-radius:var(--rF);font-size:12px;font-weight:600;
+  box-shadow:var(--e2);cursor:pointer;opacity:0;pointer-events:none;
+  transition:opacity var(--tr),transform var(--tr)}
+.live .lbodywrap.away .jumpbot{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+
+/* ── Scribe's messages ────────────────────────────────────────────────── */
+.live .am{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;padding:9px 0;align-items:start}
+.live .am .who{width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--brandInk);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.live .am .hd{display:flex;align-items:center;gap:8px;min-height:22px;margin-bottom:3px}
+.live .am .kc{display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 8px 0 6px;
+  border-radius:var(--rF);background:var(--sunk);color:var(--sec);font-size:11.5px;font-weight:600}
+.live .am.k-agenda .kc .ic{color:var(--infoInk)}
+.live .am.k-question .kc .ic{color:var(--warnInk)}
+.live .am.k-task .kc .ic{color:var(--brandInk)}
+.live .am.k-decision .kc .ic{color:var(--okInk)}
+.live .am.k-chapter .kc .ic,.live .am.k-note .kc .ic{color:var(--ter)}
+.live .am .at{margin-left:auto;font-size:11.5px;color:var(--ter);font-variant-numeric:tabular-nums}
+.live .am .tx{font-size:13.5px;line-height:1.55;color:var(--ink2)}
+.live .am .tx b{color:var(--ink);font-weight:600}
+.live .am .wbtns{display:flex;gap:var(--s2);margin-top:var(--s2);flex-wrap:wrap}
+.live .am.k-watch .who{background:var(--wcT);color:var(--wcI)}
+.live .am.k-watch .tx{color:var(--ink2)}
+.live .am .kst{font-size:11.5px;color:var(--ter)}
+/* the line of the call a message came from: a quotation with its attribution,
+   and a way to see it where it was said */
+.live .am .rf{display:block;margin-top:7px;padding:3px 0 3px 10px;border-left:2px solid var(--line2);
+  cursor:pointer;border-radius:0 var(--r1) var(--r1) 0;transition:border-color var(--tr),background var(--tr)}
+.live .am .rf:hover{border-left-color:var(--brand);background:var(--tint2)}
+.live .am .rf .q{display:block;font-size:12.5px;line-height:1.5;color:var(--sec)}
+.live .am .rf .by{display:block;font-size:11.5px;color:var(--ter);margin-top:1px;font-variant-numeric:tabular-nums}
+/* what the person typed */
+.live .am.you{display:flex;justify-content:flex-end;padding:6px 0}
+.live .am.you .bd{max-width:86%}
+.live .am.you .tx{background:var(--tint);color:var(--ink);padding:8px 13px;border-radius:var(--r4);
+  border-bottom-right-radius:var(--r1)}
+.live .am.new{animation:amIn .32s cubic-bezier(.2,.7,.3,1)}
+@keyframes amIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.live .lcomp{flex:0 0 auto;padding-top:var(--s3)}
+.live .lcomp .compbox{padding:6px 6px 6px 14px}
+.live .lcomp .sendb{width:30px;height:30px;border-radius:var(--r2);background:var(--brandFill);color:var(--brandOn);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer;
+  transition:background var(--tr)}
+.live .lcomp .sendb:hover{background:var(--brandFillHov)}
+
+/* ── the live transcript ──────────────────────────────────────────────── */
+.live .ltx .trs{border-left:2px solid transparent}
+.live .ltx .trs.new{animation:amIn .32s cubic-bezier(.2,.7,.3,1)}
+.live .ltx .trs.flash{animation:lflash 2.2s ease-out}
+@keyframes lflash{0%,25%{background:var(--tint)}100%{background:transparent}}
+.live .lidle{display:flex;align-items:center;gap:9px;padding:14px 12px;font-size:12.5px;color:var(--ter)}
+.live .lidle .ic{flex:0 0 auto}
+.live .lidle .typing{display:inline-flex;align-items:center}
+.live .lidle .typing i{background:var(--ter);margin-right:3px}
+.live .lidle.off .typing i{animation:none}
+
+/* narrower than a laptop: the columns stack, assistant over transcript */
+#frame.w2 .live .lcols{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);
+  row-gap:var(--s4)}
+#frame.w2 .live .lcol.ai{padding-right:0}
+#frame.w2 .live .lcol.tx{padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:var(--s3)}
+#frame.w1 .live .rsrc .sb span{display:none}
+#frame.w1 .live .rsrc{height:36px}
+#frame.w1 .live .cact{margin-left:0;width:100%}
+
+/* a column that has been squeezed (a detail panel is open beside the page) drops
+   its status words first, then the counters shrink to their numbers */
+.live .lcol{container-type:inline-size}
+@container (max-width:440px){
+  .live .lst{display:none}
+  .live .lhd{gap:var(--s2)}
+  .live .lcnt{gap:3px}
+  .live .lc{padding:0 6px 0 5px;gap:4px}
+}
+.app.hasaside .live .rsrc .lmeter{display:none}

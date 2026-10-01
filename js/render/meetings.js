@@ -28,7 +28,7 @@ function viewMeetings(){
     m.transcript.map(t=>t[2]).join(' ')).toLowerCase().includes(S.q.toLowerCase()));
   if(!list.length) return `<div class="body">
     <div class="empty">
-      <span class="ico">${ic('cal',22,1.6)}</span>
+      <span class="ico">${ic('cal',22)}</span>
       <h2>${S.q?'No meetings match':'No meetings yet'}</h2>
       <p>${S.q?'Try a different search, or clear it to see everything.':
         'Turn on call detection and AIT-Scribe will take the notes, work out which folder the call belongs in, and file it for you.'}</p>

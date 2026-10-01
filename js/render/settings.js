@@ -8,36 +8,24 @@ const SNAV=[['MEETINGS',[['meet','Detection & capture','cal'],['ainotes','AI not
  ['GENERAL',[['appearance','Appearance','sun'],['acct','Account & plan','users'],['priv','Privacy & data','shield']]],
  ['DEMO',[['components','Notifications & dialogs','chip']]]];
 const tog=(k,on,dis)=>`<span class="tog ${on?'on':''} ${dis?'dis':''}" data-a="${dis?'togdis':'tog'}" data-p="${k}"><i></i></span>`;
+const sgcard=rows=>`<div class="sgcard">${rows}</div>`;
 const sgroup=(icon,t,s,rows)=>`<div class="sgroup"><div class="sghd"><span class="si">${ic(icon,16)}</span>
-  <span><b>${t}</b><span>${s}</span></span></div>${rows}</div>`;
+  <span><b>${t}</b><span>${s}</span></span></div>${sgcard(rows)}</div>`;
 const srow=(t,s,a)=>`<div class="srow"><span><span class="t">${t}</span><span class="s">${s}</span></span>
   <span class="a">${a}</span></div>`;
 const st=db=>db.settings;
 
-function settingsPane(){
+function settingsPane(k){
   const g=db.settings;
-  switch(S.spane){
+  switch(k||S.spane){
   case 'appearance':return ['Appearance','How AIT-Scribe looks on this Mac',
     sgroup('sun','Light or dark','Applies immediately, on this Mac only',
       `<div class="srow"><span><span class="t">Mode</span>
-        <span class="s">Every theme ships a hand-tuned dark set rather than an inversion of its
-        light one, so contrast holds in both.</span></span>
+        <span class="s">The dark set is hand-tuned rather than an inversion of the light one,
+        so contrast holds in both.</span></span>
         <span class="a"><span class="fchip ${g.theme==='light'&&!g.sysTheme?'on':''}" data-a="theme" data-p="light">${ic('sun',14)}Light</span>
           <span class="fchip ${g.theme==='dark'&&!g.sysTheme?'on':''}" data-a="theme" data-p="dark">${ic('moon',14)}Dark</span></span></div>`+
       srow('Match my system','Follow macOS appearance and switch automatically.',tog('sysTheme',g.sysTheme)))+
-    sgroup('sliders','Theme',`${THEMES.length} themes · currently ${theme(g.th).name}, ${g.theme} mode`,
-      `<div class="thgrid">${THEMES.map(t=>{
-        const on=g.th===t.id, pv=t.pv[g.theme==='dark'?'dark':'light'];
-        return `<div class="thcard ${on?'on':''}" data-a="setth" data-p="${t.id}" title="Use the ${t.name} theme">
-          <div class="prev">
-            <i class="a" style="background:${pv[0]}"></i>
-            <i style="background:${pv[1]}"></i>
-            <i class="b" style="background:${pv[3]}"></i>
-            <i class="b" style="background:${pv[2]}"></i></div>
-          <div class="nm">${esc(t.name)}<span class="tick">${ic('check',11,3)}</span></div>
-          <div class="ds">${esc(t.ds)}</div>
-          <div class="dots">${t.sw.map(c=>`<i style="background:${c}"></i>`).join('')}
-            <span class="modes">LIGHT · DARK</span></div></div>`}).join('')}</div>`)+
     sgroup('reset','Demo controls','Not part of the real product',
       srow('Reset to first run','Clears all meetings, tasks and transcripts and replays the empty first-run state with setup incomplete.',
         `<button class="btn s sm" data-a="resetDemo">${ic('reset',14)}Reset demo</button>`)+
@@ -135,7 +123,7 @@ function settingsPane(){
        Text chat over your meetings already works without any keys.</span></div>`)+
     `<div class="sgroup"><div class="sghd"><span class="si">${ic('key',16)}</span>
       <span><b>What you need</b><span>Two of the three are optional — the assistant tells you which</span></span></div>
-      <div class="step"><span class="num ${g.anthropicKey?'done':''}">${g.anthropicKey?ic('check',13,2.6):'1'}</span>
+      <div class="sgcard"><div class="step"><span class="num ${g.anthropicKey?'done':''}">${g.anthropicKey?ic('check',13,2):'1'}</span>
         <span style="flex:1"><span class="t">Anthropic API key <span class="pillx">Required</span></span>
           <span class="s">Generates the assistant's replies. Charged to your Anthropic account, not ours.</span>
           <div style="display:flex;gap:9px;margin-top:10px;align-items:center;flex-wrap:wrap">
@@ -143,7 +131,7 @@ function settingsPane(){
               ${ic('eye',15)}</span>
             <button class="btn s sm" data-a="pastekey">Paste</button>
             <span class="link" data-a="demo" data-p="open console.anthropic.com in your browser">Where do I get one? ↗</span></div></span></div>
-      <div class="step"><span class="num ${g.spoken?'done':'wait'}">${g.spoken?ic('check',13,2.6):'2'}</span>
+      <div class="step"><span class="num ${g.spoken?'done':'wait'}">${g.spoken?ic('check',13,2):'2'}</span>
         <span style="flex:1"><span class="t">Spoken replies <span class="pillx">Optional</span></span>
           <span class="s">Reads answers aloud with an ElevenLabs voice. Leave this off for a normal text-only chat — no second key needed.</span></span>
         <span class="a">${tog('spoken',g.spoken)}</span></div>
@@ -151,7 +139,7 @@ function settingsPane(){
         <span style="flex:1"><span class="t">Conversation hotkey <span class="pillx">Optional</span></span>
           <span class="s">Hold to talk to the assistant from anywhere, like dictation.</span></span>
         <span class="a"><span class="keycap">${g.convoHotkey}</span>
-          <button class="btn s sm" data-a="demo" data-p="record a new shortcut">Change</button></span></div></div>`+
+          <button class="btn s sm" data-a="demo" data-p="record a new shortcut">Change</button></span></div></div></div>`+
     sgroup('spark','Conversation mode','Available once step 1 is complete',
       srow('Enable conversation mode',g.anthropicKey?'Ready to go. Hold your hotkey anywhere to talk.':
         'Add an Anthropic key above to turn this on. Nothing is sent anywhere until you do.',
@@ -162,7 +150,7 @@ function settingsPane(){
         tog('askFirst',g.askFirst)))+
     `<div class="sgroup"><div class="sghd"><span class="si">${ic('plug',16)}</span>
       <span><b>What it may do</b><span>Each action needs the connector beside it</span></span></div>
-      ${srow('Create and update tasks','In AIT-Scribe. No connector needed.',tog('actFollowups',g.actFollowups))}
+      <div class="sgcard">${srow('Create and update tasks','In AIT-Scribe. No connector needed.',tog('actFollowups',g.actFollowups))}
       ${srow('Draft emails','Writes a draft in Gmail. Never sends without you pressing send.',
         g.gmail?`<span class="pri ok">${ic('check',12)}Connected</span>`:`<span class="pri">Not connected</span>
         <button class="btn s sm" data-a="connect" data-p="gmail">Connect Gmail</button>`)}
@@ -171,7 +159,7 @@ function settingsPane(){
         <button class="btn s sm" data-a="connect" data-p="gcal">Connect Calendar</button>`)}
       ${srow('Post a recap to Slack','Posts to a channel you pick, as you.',
         g.slack?`<span class="pri ok">${ic('check',12)}Connected</span>`:`<span class="pri">Not connected</span>
-        <button class="btn s sm" data-a="connect" data-p="slack">Connect Slack</button>`)}</div>`+
+        <button class="btn s sm" data-a="connect" data-p="slack">Connect Slack</button>`)}</div></div>`+
     sgroup('list','Activity','A record of everything the assistant did',
       srow('Action log','Every action, when it ran, and whether you approved it. Kept for 90 days.',
         `<button class="btn s sm" data-a="demo" data-p="open the action log">Open log</button>`))];
@@ -182,7 +170,8 @@ function settingsPane(){
     sgroup('users','Who you are','So the assistant knows which commitments are yours',
       srow('Names people call you','Beyond your account name — nicknames and shortenings used in meetings.',
         g.names.map(n=>`<span class="pillx">${esc(n)}</span>`).join('')+
-        `<button class="btn s sm" data-a="addname">${ic('plus',13)}Add</button>`))+
+        (isEd('name','','chip')&&!EDUSED?`<span class="pillx chipedit">${edField('name','','','chipin')}</span>`
+          :`<button class="btn s sm" data-a="addname">${ic('plus',13)}Add</button>`)))+
     sgroup('bell','Reminders','Quiet by design — a daily summary, not a ping per meeting',
       srow('Daily summary','One notification with everything still open.',
         tog('daily',g.daily)+`<span class="sel" data-a="cycletime" data-p="dailyAt">${g.dailyAt} ${ic('chevd',12)}</span>`)+
@@ -241,8 +230,8 @@ function settingsPane(){
         <button class="btn s sm" data-a="share" data-p="${(db.meetings[0]||{}).id||''}">Share sheet</button>
         <button class="btn s sm" data-a="addperson" data-p="${(db.meetings[0]||{}).id||''}">Add person</button>
         <button class="btn s sm" data-a="shortcuts">Keyboard shortcuts</button></div>
-      <div class="dnote">Opening one closes this Settings window, which is the real behaviour —
-        two scrims never stack. Press <span class="kbd">Esc</span> to come back.</div></div>`)+
+      <div class="dnote">Each one opens over this page and leaves it where it was.
+        Press <span class="kbd">Esc</span> to dismiss.</div></div>`)+
     sgroup('list','Menus and popovers','Anchored to whatever was clicked',
       `<div class="dwrap"><div class="dbtns">
         <button class="btn s sm" data-a="notifs">Notification tray</button>
@@ -270,12 +259,7 @@ function settingsPane(){
       <div class="dgrid dchips w-clarification"><span class="wchip">${ic('help',12)}Clarification</span>
         <span class="wstat"><i></i>2 clarifications</span></div>
       <div class="dnote">The pill only interrupts for a conflict — everything else waits on the badge.
-        Close this window to see it; the states above are set on the real control, not a mock.</div></div>`)+
-    sgroup('sliders','Native prompts','Browser prompts stand in for the real macOS sheets',
-      `<div class="dwrap"><div class="dbtns">
-        <button class="btn s sm" data-a="rename" data-p="${(db.meetings[0]||{}).id||''}">Rename a meeting</button>
-        <button class="btn s sm" data-a="newfolder" data-p="">New folder</button>
-        <button class="btn s sm" data-a="addname">Add a name</button></div></div>`)+
+        It floats over this page like any other; the states above are set on the real control, not a mock.</div></div>`)+
     sgroup('spark','Inline states','Not transient — the vocabulary the components above are built from',
       `<div class="dwrap">
         <div class="dgrid dchips"><span class="pri hi">${ic('flag',12)}High</span>
@@ -286,7 +270,7 @@ function settingsPane(){
           <span class="live">${ic('rec',12)}Recording</span></div>
         <div class="dgrid dchips"><span class="kbd">Fn</span><span class="keycap">⌃⌥Space</span>
           ${tog('demoTogA',g.demoTogA!==false)}${tog('demoTogB',!!g.demoTogB)}${tog('demoTogC',false,true)}
-          <span class="cbx on">${ic('check',12,2.6)}</span><span class="cbx"></span>
+          <span class="cbx on">${ic('check',12,2)}</span><span class="cbx"></span>
           <span class="rdo on"></span><span class="rdo"></span></div>
         <div class="dgrid dchips"><span class="fchip on">Selected</span><span class="fchip">Unselected</span>
           <span class="fchip">Overdue<span class="b">2</span></span>
@@ -317,18 +301,86 @@ function settingsPane(){
   }
   return ['','',''];
 }
-function settingsModal(){
-  /* a pane id that no longer exists used to render an empty white modal with
-     no heading and no way to tell what had happened */
-  if(!SNAV.some(([,items])=>items.some(([k])=>k===S.spane)))S.spane=SNAV[0][1][0][0];
+/* ══════════════════════════════════ the settings page ══════════════════════════════════ */
+/* Settings is a place, not a dialog. It takes the whole window: the app's rail
+   stays where it is, the second column becomes the list of settings with a
+   search box, and the main area holds one section at a time. Where the user
+   came from is remembered (`S.setBack`), so the crumb, Esc and the gear all go
+   straight back to it. */
+const SPANE=SNAV.flatMap(([g,items])=>items.map(([k,l,i])=>({k,l,i,g})));
+function openSettings(pane){
+  if(S.route!=='settings'){
+    S.setBack={route:S.route,mid:S.mid,fid:S.fid,view:S.view,tab:S.tab,ftab:S.ftab,cid:S.cid,
+      tid:S.tid,panel:S.panel,mpanel:S.mpanel,wpanel:S.wpanel,wid:S.wid};
+    S.sq='';
+  }
+  S.route='settings';S.spane=pane||S.spane||'appearance';
+  S.menu=null;S.share=false;S.addPerson=false;S.peek=null;
+  render();
+}
+function closeSettings(){
+  const b=S.setBack;S.setBack=null;S.menu=null;S.sq='';
+  if(b)Object.assign(S,b);else{S.route='meetings';S.mid=null;S.fid=null;}
+  render();
+}
+function backLabel(){
+  const b=S.setBack||{};
+  if(b.route==='meeting'){const m=meeting(b.mid);return m?m.title:'Meeting';}
+  if(b.route==='folder')return b.fid===''?'Unfiled':(folder(b.fid)||{name:'Folder'}).name;
+  return {meetings:'Meetings',mlist:'All meetings',speech:'Speech to Text',vocabulary:'Vocabulary',
+    insights:'Insights',tasks:'Tasks',assistant:'AI Assistant'}[b.route]||'Meetings';
+}
+function settingsCrumb(){
+  return `<span class="bk" data-a="closeSettings" title="Back to ${esc(backLabel())}">${ic('back',15)}${esc(backLabel())}</span>
+    <span>${ic('chev',13)}</span><b>Settings</b>`;
+}
+/* What each section says, as plain text — the search reads it, so a setting can
+   be found by what it does and not only by what its section is called. */
+function paneText(k){
+  const keep=EDUSED;                       /* indexing must not use up the one edit field */
+  const [t,s,c]=settingsPane(k);
+  EDUSED=keep;
+  return (t+' '+s+' '+c).replace(/<[^>]*>/g,' ').replace(/&[a-z#0-9]+;/g,' ').replace(/\s+/g,' ').toLowerCase();
+}
+function paneHits(){
+  const q=(S.sq||'').trim().toLowerCase();if(!q)return null;
+  return SPANE.filter(p=>p.l.toLowerCase().includes(q)||paneText(p.k).includes(q)).map(p=>p.k);
+}
+function listSettings(){
+  const hits=paneHits();
+  const groups=SNAV.map(([grp,items])=>{
+    const rows=items.filter(([k])=>!hits||hits.includes(k));
+    if(!rows.length)return '';
+    return `<div class="slabel">${grp}</div><div class="views">${rows.map(([k,l,i])=>
+      `<a class="${S.spane===k?'on':''}" data-a="spane" data-p="${k}" title="${l}">${ic(i,16)}<span class="lbl">${l}</span></a>`).join('')}</div>`;
+  }).join('');
+  return `<div class="listcol"><div class="lhead"><b>Settings</b></div>
+    <div class="srch" data-a="expandlist" title="Search settings">${ic('search',15)}<input placeholder="Search settings"
+      data-a="sq" value="${esc(S.sq)}"></div>
+    <div class="lbody">${groups||`<div class="emptylist"><b>Nothing matches</b>No setting mentions “${esc(S.sq)}”.</div>`}</div></div>`;
+}
+function viewSettings(){
+  /* a section id that no longer exists must not leave a heading-less page */
+  if(!SPANE.some(p=>p.k===S.spane))S.spane=SPANE[0].k;
   const [t,s,c]=settingsPane();
-  const nav=SNAV.map(([grp,items])=>`<div class="gl">${grp}</div>`+
-    items.map(([k,l,i])=>`<a class="${S.spane===k?'on':''}" data-a="spane" data-p="${k}" title="${l}">${
-      ic(i,15)}<span class="lbl">${l}</span></a>`).join('')).join('');
-  return `<div class="scrim" data-a="closeSettings"></div>
-    <div class="modal" style="width:1000px;height:700px">
-      <div class="mnav"><h3 class="h">Settings</h3>${nav}</div>
-      <div class="mbody"><div class="mtop"><span><h2 class="h">${t}</h2><p>${s}</p></span>
-        <span class="x" data-a="closeSettings" title="Close settings">${ic('x',15)}</span></div>
-        <div class="mcont">${c}</div></div></div>`;
+  return `<div class="body setpage"><div class="setwrap">
+    <div class="sph"><h1 class="h">${t}</h1><p>${s}</p></div>
+    <div class="setcont">${c}</div></div></div>`;
+}
+/* the words a search found, marked where they are on the page */
+function markSettings(){
+  const q=(S.sq||'').trim(),root=$('.setcont');if(!q||!root)return;
+  const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'ig');
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];
+  while(w.nextNode())nodes.push(w.currentNode);
+  nodes.forEach(n=>{
+    const par=n.parentNode;if(!par||/^(SCRIPT|STYLE|INPUT|TEXTAREA|MARK)$/.test(par.nodeName))return;
+    const tx=n.nodeValue;re.lastIndex=0;if(!re.test(tx))return;
+    const f=document.createDocumentFragment();let last=0,m;re.lastIndex=0;
+    while((m=re.exec(tx))){
+      if(!m[0].length){re.lastIndex++;continue}
+      f.append(tx.slice(last,m.index));const k=document.createElement('mark');k.textContent=m[0];f.append(k);
+      last=m.index+m[0].length;}
+    f.append(tx.slice(last));n.replaceWith(f);
+  });
 }

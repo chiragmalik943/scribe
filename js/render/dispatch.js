@@ -61,19 +61,19 @@ function animateBars(was){
    `.body` is the scroll container on most pages; the meeting-notes and
    watchouts tabs scroll their own inner region instead so the title and tabs
    above them can stay in place, hence the extra selectors. */
-const renderSig=()=>[S.route,S.mid,S.fid,S.tab,S.view].join('|');
-const SCROLL_HOSTS=['.body','.notesgrid','.wscroll'];
+const renderSig=()=>[S.route,S.mid,S.fid,S.tab,S.view,S.ftab,S.route==='settings'?S.spane:''].join('|');
+const SCROLL_HOSTS=['.body','.notesgrid','.wscroll','.trscroll','.lfeed','.ltx'];
 let lastRenderSig='';
 function render(){
   syncAside();
+  edBefore();liveBefore();
   const bars=measureBars();
   const prevScrolls=SCROLL_HOSTS.map(sel=>{const el=$(sel);return el?el.scrollTop:null;});
   const samePage=renderSig()===lastRenderSig;
   document.documentElement.dataset.theme=db.settings.theme;
-  document.documentElement.dataset.th=db.settings.th||'indigo';
   /* one invariant rather than a clear-the-peek call at every place a modal can
      open: nothing floats over the page while something else is on top of it */
-  if(S.settings||S.share||S.addPerson||S.menu)S.peek=null;
+  if(S.share||S.addPerson||S.menu)S.peek=null;
   let lc='',main='',aside='';
   /* The home screen is the one page in the meetings family with no list
      column — see viewHome(). Everything below it gets one. */
@@ -110,6 +110,8 @@ function render(){
   else if(S.route==='tasks'){lc=listTasks();
     main=mhead('Tasks',openTasks().length+' open · '+overdue().length+' overdue')+viewTasks();
     if(S.panel)aside=taskPanel();}
+  else if(S.route==='settings'){lc=listSettings();
+    main=mhead('','','',settingsCrumb())+viewSettings();}
   else if(S.route==='assistant'){lc=listConvos();
     const c=db.convos.find(x=>x.id===S.cid);
     main=mhead(c?'':'AI Assistant','',c?`<button class="btn s sm" data-a="demo" data-p="share this conversation">${
@@ -127,15 +129,18 @@ function render(){
     <div class="app ${cls}" style="--railw:${S.railmin?72:260}px">
       ${pkR?gap(72):''}${rail()}${pkL?gap(56):''}${lc}
       <div class="main">${main}</div>${aside}</div>
-    ${S.settings?settingsModal():''}${S.share?shareModal():''}${S.addPerson?addPersonModal():''}${menuEl()}</div>`;
+    ${S.share?shareModal():''}${S.addPerson?addPersonModal():''}${menuEl()}</div>`;
   if(samePage)SCROLL_HOSTS.forEach((sel,i)=>{
     if(prevScrolls[i]==null)return;const el=$(sel);if(el)el.scrollTop=prevScrolls[i];});
   lastRenderSig=renderSig();
   animateBars(bars);
   tips($('#app'));
+  markSettings();
   fitCrumb();
   tipHide();
   renderBubble();
+  liveAfter();
+  edAfter();
 }
 /* ── floating bubble ──────────────────────────────────────────────────────
    An always-on control that in the real app floats over other windows. It lives
@@ -230,7 +235,7 @@ function renderBubble(){
 function bubIdle(side){
   const opts=`<div class="bopts">${BUBACTS.map(([k,i,l])=>
     `<span class="hopt" data-a="bubact" data-p="${k}" title="${l}">${ic(i,17)}</span>`).join('')}</div>`;
-  const core=`<div class="bcore" data-a="bubtalk" title="Click to dictate">${ic('mic',22,2)}</div>`;
+  const core=`<div class="bcore" data-a="bubtalk" title="Click to dictate">${ic('mic',22,2.75)}</div>`;
   return `<div class="bhome">${side==='right'?opts+core:core+opts}</div>`;
 }
 function pillDict(){
@@ -241,7 +246,7 @@ function pillDict(){
     <span class="plabel">Listening</span>
     <span class="psub ptime">${fmtSecs(b.secs)}</span>
     <span class="pdiv"></span>
-    <span class="pbtn stop nodrag" data-a="bubtalk" title="Stop and paste at your cursor">${ic('stop',14,2.2)}</span>
+    <span class="pbtn stop nodrag" data-a="bubtalk" title="Stop and paste at your cursor">${ic('stop',14,2)}</span>
     </div>`;
 }
 function pillMeet(){
@@ -253,7 +258,7 @@ function pillMeet(){
       <span class="pdiv"></span>
       <span class="plabel">Speaking…</span>
       <span class="pbar"><i></i></span>
-      <span class="pbtn nodrag" data-a="wcancel" title="Do not say it">${ic('x',15,2.2)}</span></div>`;}
+      <span class="pbtn nodrag" data-a="wcancel" title="Do not say it">${ic('x',15,2)}</span></div>`;}
   return `${(S.wpeek||S.wopen)?wpop():''}
     <div class="pill">
     <span class="pmark">${ic('spark',17)}</span>
@@ -262,8 +267,8 @@ function pillMeet(){
       :`<span class="pmeter live">${pmBars(9,r.secs,true)}</span>`}
     <span class="pdiv"></span>
     <span class="pbtn nodrag" data-a="pauseRec" title="${r.paused?'Resume recording':'Pause recording'}">${
-      ic(r.paused?'play':'pause',15,2.2)}</span>
-    <span class="pbtn stop nodrag" data-a="stopRec" title="Stop and generate notes">${ic('stop',14,2.2)}</span>
+      ic(r.paused?'play':'pause',15,2)}</span>
+    <span class="pbtn stop nodrag" data-a="stopRec" title="Stop and generate notes">${ic('stop',14,2)}</span>
     ${open.length?`<span class="pbtn nodrag ${S.wopen?'on':''}" data-a="bubwatch"
       title="${open.length} watchout${open.length>1?'s':''} — click to review">${ic('radar',17)}<i class="b ${
         hot?'hot':''}">${open.length}</i></span>`:''}
@@ -377,6 +382,8 @@ function wayCancel(){
 /* surfaces the next scripted watchout while a recording runs */
 function wFire(x){
   db.watchouts.unshift(x);
+  /* the call's own page says so too, in the assistant's column */
+  if(S.rec&&S.rec.mid===x.mid)S.rec.ai.push({k:'watch',wid:x.id,secs:S.rec.secs});
   const conflict=x.type==='conflict';
   const peekFor=db.settings.woPeek;
   const shouldPeek=peekFor==='all'||(peekFor==='conflict'&&conflict);

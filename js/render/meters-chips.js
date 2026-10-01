@@ -65,7 +65,7 @@ function summaryBlock(text){
    narrow side column of a detail page, where nothing in the list is not a
    dead end, just nothing due right now. */
 const cardEmpty=(icon,text)=>`<div class="pnlempty"><span class="ico">${
-  ic(icon,18,1.6)}</span><p>${text}</p></div>`;
+  ic(icon,18)}</span><p>${text}</p></div>`;
 function secBlock(o){
   const rows=o.rows||[],n=rows.length;
   if(!n&&o.hideIfEmpty)return '';

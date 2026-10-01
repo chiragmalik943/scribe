@@ -6,7 +6,7 @@ function viewAssistant(){
   const off=!db.settings.convo;
   if(!c||!db.convos.length||S.cid==='new'){
     return `<div class="body"><div class="empty">
-      <span class="ico">${ic('spark',22,1.6)}</span><h2>Ask about your meetings</h2>
+      <span class="ico">${ic('spark',22)}</span><h2>Ask about your meetings</h2>
       <p>The assistant searches your transcripts, summarises calls and drafts your tasks.
         It only sees what you have recorded in AIT&#8209;Scribe.</p>
       <div class="chips">

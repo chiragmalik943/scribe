@@ -28,10 +28,6 @@
 #frame.w2 .topbar{gap:10px;padding:0 12px 0 16px}
 #frame.w2 .topbar .state{display:none}
 #frame.w2 .topbar h1{font-size:19px}
-#frame.w2 .mnav{width:60px;flex-basis:60px;padding:14px 8px;align-items:center}
-#frame.w2 .mnav h3,#frame.w2 .mnav .gl,#frame.w2 .mnav .lbl{display:none}
-#frame.w2 .mnav a{justify-content:center;width:40px;height:40px;padding:0}
-#frame.w1 .mnav{display:none}
 #frame.w2 .chart{height:112px}
 #frame.w2 .stat .big{font-size:23px}
 #frame.w2 .metrics{gap:var(--s4)}

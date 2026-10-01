@@ -1,0 +1,31 @@
+/* Speakers: the colour slots, the share bar and its legend. */
+
+/* ══════════════════════════════ speakers ══════════════════════════════ */
+/* A speaker's colour is a class that sets one variable, so a mark, a dot or a
+   lane can all take it with `var(--spc)`. Slots come from tokens.css; nothing in
+   here knows a hex. */
+.s1{--spc:var(--sp1)}.s2{--spc:var(--sp2)}.s3{--spc:var(--sp3)}.s4{--spc:var(--sp4)}
+.s5{--spc:var(--sp5)}.s6{--spc:var(--sp6)}.s7{--spc:var(--sp7)}.s8{--spc:var(--sp8)}
+.sO{--spc:var(--spO)}
+.sdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--spc);
+  flex:0 0 auto}
+
+/* ── who spoke: one stacked bar and its legend ───────────────────────────
+   Segments are separated by a 2px gap of the surface behind them, not by a
+   stroke, and the ends are rounded as one shape. Every colour has its name and
+   share written beside it in the legend. */
+.sec.who .wsbar{display:flex;gap:2px;height:14px;margin:2px 0 var(--s4)}
+.wsbar i{display:block;min-width:3px;background:var(--spc);border-radius:3px;
+  transition:opacity var(--tr),filter var(--tr)}
+.wsbar i:first-child{border-radius:7px 3px 3px 7px}
+.wsbar i:last-child{border-radius:3px 7px 7px 3px}
+.wsbar i:only-child{border-radius:7px}
+.wsbar:hover i{opacity:.5}
+.wsbar:hover i:hover{opacity:1}
+.wsleg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:2px var(--s5)}
+.wsi{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13.5px;
+  border-bottom:1px solid var(--hair)}
+.wsi .sdot{width:10px;height:10px;border-radius:3px}
+.wsi .nm{flex:1;min-width:0;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wsi .pc{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.wsi .tm{width:44px;text-align:right;font-size:12px;color:var(--ter);font-variant-numeric:tabular-nums}
